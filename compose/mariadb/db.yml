@@ -1,0 +1,36 @@
+services:
+  mariadb:
+    image: mariadb:11-ubi
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: changeit
+      MYSQL_DATABASE: midas
+      MYSQL_USER: midas
+      MYSQL_PASSWORD: changeit
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ../../src/main/resources/sql/mariadb.init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+
+      # Comment out the following lines to disable skipping the login
+      PMA_USER: midas
+      PMA_PASSWORD: changeit
+    ports:
+      - "42069:80"
+    depends_on:
+      - mariadb
+
+volumes:
+  mariadb_data:
+
+networks:
+  default:
+    name: midas-shared-network
