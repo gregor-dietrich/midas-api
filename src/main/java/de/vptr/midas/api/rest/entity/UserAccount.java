@@ -1,5 +1,6 @@
 package de.vptr.midas.api.rest.entity;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -33,6 +34,9 @@ public class UserAccount extends PanacheEntityBase {
 
     // Helper method to get users associated with this account
     public List<User> getAssociatedUsers() {
+        if (this.userAccountMetas == null) {
+            return Collections.emptyList();
+        }
         return this.userAccountMetas.stream()
                 .map(meta -> meta.user)
                 .toList();

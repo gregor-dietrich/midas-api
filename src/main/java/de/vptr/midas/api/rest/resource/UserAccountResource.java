@@ -3,6 +3,7 @@ package de.vptr.midas.api.rest.resource;
 import java.math.BigDecimal;
 import java.util.List;
 
+import de.vptr.midas.api.rest.dto.UserAccountDto;
 import de.vptr.midas.api.rest.entity.User;
 import de.vptr.midas.api.rest.entity.UserAccount;
 import de.vptr.midas.api.rest.entity.UserAccountMeta;
@@ -104,7 +105,7 @@ public class UserAccountResource {
     @RolesAllowed({ "user-group:add" })
     public Response createAccount(final UserAccount account) {
         final UserAccount created = this.accountService.createAccount(account);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return Response.status(Response.Status.CREATED).entity(UserAccountDto.fromEntity(created)).build();
     }
 
     @PUT
@@ -113,7 +114,7 @@ public class UserAccountResource {
     public Response updateAccount(@PathParam("id") final Long id, final UserAccount account) {
         account.id = id;
         final UserAccount updated = this.accountService.updateAccount(account);
-        return Response.ok(updated).build();
+        return Response.ok(UserAccountDto.fromEntity(updated)).build();
     }
 
     @PATCH
@@ -122,7 +123,7 @@ public class UserAccountResource {
     public Response patchAccount(@PathParam("id") final Long id, final UserAccount account) {
         account.id = id;
         final UserAccount updated = this.accountService.patchAccount(account);
-        return Response.ok(updated).build();
+        return Response.ok(UserAccountDto.fromEntity(updated)).build();
     }
 
     @DELETE
