@@ -71,7 +71,7 @@ public class UserPaymentService {
         // Complete replacement (PUT semantics)
         existingPayment.targetAccount = payment.targetAccount;
         existingPayment.sourceAccount = payment.sourceAccount;
-        existingPayment.user = payment.user;
+        existingPayment.userId = payment.userId;
         existingPayment.comment = payment.comment;
         existingPayment.date = payment.date;
         existingPayment.amount = payment.amount;
@@ -95,8 +95,8 @@ public class UserPaymentService {
         if (payment.sourceAccount != null) {
             existingPayment.sourceAccount = payment.sourceAccount;
         }
-        if (payment.user != null) {
-            existingPayment.user = payment.user;
+        if (payment.userId != null) {
+            existingPayment.userId = payment.userId;
         }
         if (payment.comment != null) {
             existingPayment.comment = payment.comment;

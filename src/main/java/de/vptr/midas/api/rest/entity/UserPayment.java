@@ -29,7 +29,7 @@ public class UserPayment extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    public User user;
+    public User userId;
 
     @NotBlank
     public String comment;

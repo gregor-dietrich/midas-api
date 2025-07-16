@@ -25,14 +25,14 @@ public class UserAccountResource {
     UserAccountService accountService;
 
     @GET
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<UserAccount> getAllAccounts() {
         return this.accountService.getAllAccounts();
     }
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getAccount(@PathParam("id") final Long id) {
         return this.accountService.findById(id)
                 .map(account -> Response.ok(account).build())
@@ -41,7 +41,7 @@ public class UserAccountResource {
 
     @GET
     @Path("/name/{name}")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getAccountByName(@PathParam("name") final String name) {
         return this.accountService.findByName(name)
                 .map(account -> Response.ok(account).build())
@@ -50,42 +50,42 @@ public class UserAccountResource {
 
     @GET
     @Path("/{id}/users")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<User> getAssociatedUsers(@PathParam("id") final Long accountId) {
         return this.accountService.getAssociatedUsers(accountId);
     }
 
     @GET
     @Path("/user/{userId}")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<UserAccount> getAccountsForUser(@PathParam("userId") final Long userId) {
         return this.accountService.getAccountsForUser(userId);
     }
 
     @GET
     @Path("/{id}/payments")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<UserPayment> getAccountPayments(@PathParam("id") final Long accountId) {
         return this.accountService.getAccountPayments(accountId);
     }
 
     @GET
     @Path("/{id}/payments/outgoing")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<UserPayment> getOutgoingPayments(@PathParam("id") final Long accountId) {
         return this.accountService.getOutgoingPayments(accountId);
     }
 
     @GET
     @Path("/{id}/payments/incoming")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<UserPayment> getIncomingPayments(@PathParam("id") final Long accountId) {
         return this.accountService.getIncomingPayments(accountId);
     }
 
     @GET
     @Path("/{id}/balance")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getAccountBalance(@PathParam("id") final Long accountId) {
         final BigDecimal balance = this.accountService.getAccountBalance(accountId);
         return Response.ok().entity("{\"balance\": " + balance + "}").build();
@@ -93,7 +93,7 @@ public class UserAccountResource {
 
     @GET
     @Path("/user/{userId}/account/{accountId}/check")
-    @RolesAllowed({ "user-account:edit", "user-account:delete" })
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response checkUserAccountAssociation(@PathParam("userId") final Long userId,
             @PathParam("accountId") final Long accountId) {
         final boolean isAssociated = this.accountService.isUserAssociatedWithAccount(userId, accountId);
@@ -101,7 +101,7 @@ public class UserAccountResource {
     }
 
     @POST
-    @RolesAllowed({ "user-account:add" })
+    @RolesAllowed({ "user-group:add" })
     public Response createAccount(final UserAccount account) {
         final UserAccount created = this.accountService.createAccount(account);
         return Response.status(Response.Status.CREATED).entity(created).build();
@@ -109,7 +109,7 @@ public class UserAccountResource {
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed({ "user-account:edit" })
+    @RolesAllowed({ "user-group:edit" })
     public Response updateAccount(@PathParam("id") final Long id, final UserAccount account) {
         account.id = id;
         final UserAccount updated = this.accountService.updateAccount(account);
@@ -118,7 +118,7 @@ public class UserAccountResource {
 
     @PATCH
     @Path("/{id}")
-    @RolesAllowed({ "user-account:edit" })
+    @RolesAllowed({ "user-group:edit" })
     public Response patchAccount(@PathParam("id") final Long id, final UserAccount account) {
         account.id = id;
         final UserAccount updated = this.accountService.patchAccount(account);
@@ -127,7 +127,7 @@ public class UserAccountResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "user-account:delete" })
+    @RolesAllowed({ "user-group:delete" })
     public Response deleteAccount(@PathParam("id") final Long id) {
         final boolean deleted = this.accountService.deleteAccount(id);
         if (deleted) {
@@ -138,7 +138,7 @@ public class UserAccountResource {
 
     @POST
     @Path("/{accountId}/users/{userId}")
-    @RolesAllowed({ "user-account:edit" })
+    @RolesAllowed({ "user-group:edit" })
     public Response associateUserWithAccount(@PathParam("accountId") final Long accountId,
             @PathParam("userId") final Long userId) {
         final UserAccountMeta meta = this.accountService.associateUserWithAccount(userId, accountId);
@@ -147,7 +147,7 @@ public class UserAccountResource {
 
     @DELETE
     @Path("/{accountId}/users/{userId}")
-    @RolesAllowed({ "user-account:edit" })
+    @RolesAllowed({ "user-group:edit" })
     public Response removeUserFromAccount(@PathParam("accountId") final Long accountId,
             @PathParam("userId") final Long userId) {
         final boolean removed = this.accountService.removeUserFromAccount(userId, accountId);
