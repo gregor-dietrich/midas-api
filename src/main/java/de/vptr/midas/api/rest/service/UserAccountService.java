@@ -169,4 +169,20 @@ public class UserAccountService {
     public boolean isUserAssociatedWithAccount(final Long userId, final Long accountId) {
         return UserAccountMeta.existsByUserAndAccount(userId, accountId);
     }
+
+    public List<UserAccount> searchAccounts(final String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return this.getAllAccounts();
+        }
+
+        final String searchTerm = "%" + query.trim().toLowerCase() + "%";
+
+        // Search by account name or associated username
+        return UserAccount.find(
+                "SELECT DISTINCT ua FROM UserAccount ua " +
+                        "LEFT JOIN ua.userAccountMetas uam " +
+                        "LEFT JOIN uam.user u " +
+                        "WHERE LOWER(ua.name) LIKE ?1 OR LOWER(u.username) LIKE ?1",
+                searchTerm).list();
+    }
 }

@@ -156,4 +156,11 @@ public class UserAccountResource {
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
+
+    @GET
+    @Path("/search")
+    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    public List<UserAccount> searchAccounts(@QueryParam("query") final String query) {
+        return this.accountService.searchAccounts(query);
+    }
 }
