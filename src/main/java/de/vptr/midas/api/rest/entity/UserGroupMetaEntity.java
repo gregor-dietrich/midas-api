@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_groups_meta")
-public class UserGroupMeta extends PanacheEntityBase {
+public class UserGroupMetaEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,16 +16,16 @@ public class UserGroupMeta extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    public User user;
+    public UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
-    public UserGroup group;
+    public UserGroupEntity group;
 
     public LocalDateTime timestamp;
 
     // Helper method to find by user and group
-    public static UserGroupMeta findByUserAndGroup(final Long userId, final Long groupId) {
+    public static UserGroupMetaEntity findByUserAndGroup(final Long userId, final Long groupId) {
         return find("user.id = ?1 AND group.id = ?2", userId, groupId).firstResult();
     }
 
@@ -35,12 +35,12 @@ public class UserGroupMeta extends PanacheEntityBase {
     }
 
     // Helper method to find all groups for a user
-    public static List<UserGroupMeta> findByUserId(final Long userId) {
+    public static List<UserGroupMetaEntity> findByUserId(final Long userId) {
         return find("user.id", userId).list();
     }
 
     // Helper method to find all users in a group
-    public static List<UserGroupMeta> findByGroupId(final Long groupId) {
+    public static List<UserGroupMetaEntity> findByGroupId(final Long groupId) {
         return find("group.id", groupId).list();
     }
 }

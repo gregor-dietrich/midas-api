@@ -3,7 +3,7 @@ package de.vptr.midas.api.rest.service;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.UserRank;
+import de.vptr.midas.api.rest.entity.UserRankEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
@@ -12,20 +12,20 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class UserRankService {
 
-    public List<UserRank> getAllRanks() {
-        return UserRank.listAll();
+    public List<UserRankEntity> getAllRanks() {
+        return UserRankEntity.listAll();
     }
 
-    public Optional<UserRank> findById(final Long id) {
-        return UserRank.findByIdOptional(id);
+    public Optional<UserRankEntity> findById(final Long id) {
+        return UserRankEntity.findByIdOptional(id);
     }
 
-    public Optional<UserRank> findByName(final String name) {
-        return UserRank.find("name", name).firstResultOptional();
+    public Optional<UserRankEntity> findByName(final String name) {
+        return UserRankEntity.find("name", name).firstResultOptional();
     }
 
     @Transactional
-    public UserRank createRank(final UserRank rank) {
+    public UserRankEntity createRank(final UserRankEntity rank) {
         // Set default permissions if not provided
         if (rank.postAdd == null)
             rank.postAdd = false;
@@ -69,8 +69,8 @@ public class UserRankService {
     }
 
     @Transactional
-    public UserRank updateRank(final UserRank rank) {
-        final UserRank existingRank = UserRank.findById(rank.id);
+    public UserRankEntity updateRank(final UserRankEntity rank) {
+        final UserRankEntity existingRank = UserRankEntity.findById(rank.id);
         if (existingRank == null) {
             throw new WebApplicationException("User rank not found", Response.Status.NOT_FOUND);
         }
@@ -101,8 +101,8 @@ public class UserRankService {
     }
 
     @Transactional
-    public UserRank patchRank(final UserRank rank) {
-        final UserRank existingRank = UserRank.findById(rank.id);
+    public UserRankEntity patchRank(final UserRankEntity rank) {
+        final UserRankEntity existingRank = UserRankEntity.findById(rank.id);
         if (existingRank == null) {
             throw new WebApplicationException("User rank not found", Response.Status.NOT_FOUND);
         }
@@ -153,6 +153,6 @@ public class UserRankService {
 
     @Transactional
     public boolean deleteRank(final Long id) {
-        return UserRank.deleteById(id);
+        return UserRankEntity.deleteById(id);
     }
 }

@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.User;
-import de.vptr.midas.api.rest.entity.UserRank;
+import de.vptr.midas.api.rest.entity.UserEntity;
+import de.vptr.midas.api.rest.entity.UserRankEntity;
 import de.vptr.midas.api.security.PasswordHashingService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -19,20 +19,20 @@ public class UserService {
     @Inject
     PasswordHashingService passwordHashingService;
 
-    public List<User> getAllUsers() {
-        return User.listAll();
+    public List<UserEntity> getAllUsers() {
+        return UserEntity.listAll();
     }
 
-    public Optional<User> findByUsername(final String username) {
-        return User.find("username", username).firstResultOptional();
+    public Optional<UserEntity> findByUsername(final String username) {
+        return UserEntity.find("username", username).firstResultOptional();
     }
 
-    public Optional<User> findByEmail(final String email) {
-        return User.find("email", email).firstResultOptional();
+    public Optional<UserEntity> findByEmail(final String email) {
+        return UserEntity.find("email", email).firstResultOptional();
     }
 
     @Transactional
-    public User createUser(final User user) {
+    public UserEntity createUser(final UserEntity user) {
         // Validate that password is provided
         if (user.password == null || user.password.trim().isEmpty()) {
             throw new WebApplicationException("Password is required", Response.Status.BAD_REQUEST);
@@ -52,7 +52,7 @@ public class UserService {
         user.lastLogin = user.created;
 
         if (user.rank == null) {
-            user.rank = UserRank.findById(1L);
+            user.rank = UserRankEntity.findById(1L);
         }
 
         if (user.banned == null) {
@@ -67,8 +67,8 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(final User user) {
-        final User existingUser = User.findById(user.id);
+    public UserEntity updateUser(final UserEntity user) {
+        final UserEntity existingUser = UserEntity.findById(user.id);
         if (existingUser == null) {
             throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);
         }
@@ -103,8 +103,8 @@ public class UserService {
     }
 
     @Transactional
-    public User patchUser(final User user) {
-        final User existingUser = User.findById(user.id);
+    public UserEntity patchUser(final UserEntity user) {
+        final UserEntity existingUser = UserEntity.findById(user.id);
         if (existingUser == null) {
             throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);
         }
@@ -150,10 +150,10 @@ public class UserService {
 
     @Transactional
     public boolean deleteUser(final Long id) {
-        return User.deleteById(id);
+        return UserEntity.deleteById(id);
     }
 
-    public List<User> findActiveUsers() {
-        return User.find("activated = true and banned = false").list();
+    public List<UserEntity> findActiveUsers() {
+        return UserEntity.find("activated = true and banned = false").list();
     }
 }

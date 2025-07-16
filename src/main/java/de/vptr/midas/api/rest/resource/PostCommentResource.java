@@ -2,7 +2,7 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.PostComment;
+import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.service.PostCommentService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -26,7 +26,7 @@ public class PostCommentResource {
 
     @GET
     @RolesAllowed({ "comment:edit", "comment:delete" })
-    public List<PostComment> getAllComments() {
+    public List<PostCommentEntity> getAllComments() {
         return this.commentService.getAllComments();
     }
 
@@ -42,30 +42,30 @@ public class PostCommentResource {
     @GET
     @Path("/post/{postId}")
     @Authenticated
-    public List<PostComment> getCommentsByPost(@PathParam("postId") final Long postId) {
+    public List<PostCommentEntity> getCommentsByPost(@PathParam("postId") final Long postId) {
         return this.commentService.findByPostId(postId);
     }
 
     @GET
     @Path("/user/{userId}")
     @Authenticated
-    public List<PostComment> getCommentsByUser(@PathParam("userId") final Long userId) {
+    public List<PostCommentEntity> getCommentsByUser(@PathParam("userId") final Long userId) {
         return this.commentService.findByUserId(userId);
     }
 
     @GET
     @Path("/recent")
     @Authenticated
-    public List<PostComment> getRecentComments(@QueryParam("limit") @DefaultValue("10") final int limit) {
+    public List<PostCommentEntity> getRecentComments(@QueryParam("limit") @DefaultValue("10") final int limit) {
         return this.commentService.findRecentComments(limit);
     }
 
     @POST
     @RolesAllowed({ "comment:add" })
-    public Response createComment(final PostComment comment) {
+    public Response createComment(final PostCommentEntity comment) {
         try {
             final var username = this.securityContext.getUserPrincipal().getName();
-            final PostComment created = this.commentService.createComment(comment, username);
+            final PostCommentEntity created = this.commentService.createComment(comment, username);
             return Response.status(Response.Status.CREATED).entity(created).build();
         } catch (final WebApplicationException e) {
             return Response.status(e.getResponse().getStatus()).entity(e.getMessage()).build();
@@ -75,18 +75,18 @@ public class PostCommentResource {
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "comment:edit" })
-    public Response updateComment(@PathParam("id") final Long id, final PostComment comment) {
+    public Response updateComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
         comment.id = id;
-        final PostComment updated = this.commentService.updateComment(comment);
+        final PostCommentEntity updated = this.commentService.updateComment(comment);
         return Response.ok(updated).build();
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "comment:edit" })
-    public Response patchComment(@PathParam("id") final Long id, final PostComment comment) {
+    public Response patchComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
         comment.id = id;
-        final PostComment updated = this.commentService.patchComment(comment);
+        final PostCommentEntity updated = this.commentService.patchComment(comment);
         return Response.ok(updated).build();
     }
 

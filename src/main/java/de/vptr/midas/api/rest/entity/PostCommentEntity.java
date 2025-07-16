@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "post_comments")
-public class PostComment extends PanacheEntityBase {
+public class PostCommentEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,26 +22,26 @@ public class PostComment extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    public Post post;
+    public PostEntity post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    public User user;
+    public UserEntity user;
 
     public LocalDateTime created;
 
     // Helper method to find comments by post
-    public static List<PostComment> findByPostId(final Long postId) {
+    public static List<PostCommentEntity> findByPostId(final Long postId) {
         return find("post.id", postId).list();
     }
 
     // Helper method to find comments by user
-    public static List<PostComment> findByUserId(final Long userId) {
+    public static List<PostCommentEntity> findByUserId(final Long userId) {
         return find("user.id", userId).list();
     }
 
     // Helper method to find recent comments
-    public static List<PostComment> findRecentComments(final int limit) {
+    public static List<PostCommentEntity> findRecentComments(final int limit) {
         return find("ORDER BY created DESC").page(0, limit).list();
     }
 }

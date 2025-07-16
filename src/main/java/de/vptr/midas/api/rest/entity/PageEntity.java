@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "pages")
-public class Page extends PanacheEntityBase {
+public class PageEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +23,12 @@ public class Page extends PanacheEntityBase {
     public String content;
 
     // Helper method to search pages by title
-    public static List<Page> findByTitleContaining(final String title) {
+    public static List<PageEntity> findByTitleContaining(final String title) {
         return find("title LIKE ?1", "%" + title + "%").list();
     }
 
     // Helper method to search pages by content (using fulltext search)
-    public static List<Page> searchContent(final String searchTerm) {
+    public static List<PageEntity> searchContent(final String searchTerm) {
         return find("MATCH(content) AGAINST(?1)", searchTerm).list();
     }
 }

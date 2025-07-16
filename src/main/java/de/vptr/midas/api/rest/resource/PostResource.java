@@ -2,7 +2,7 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.Post;
+import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.service.PostService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -21,13 +21,13 @@ public class PostResource {
     PostService postService;
 
     @GET
-    public List<Post> getAllPosts() {
+    public List<PostEntity> getAllPosts() {
         return this.postService.getAllPosts();
     }
 
     @GET
     @Path("/published")
-    public List<Post> getPublishedPosts() {
+    public List<PostEntity> getPublishedPosts() {
         return this.postService.findPublishedPosts();
     }
 
@@ -41,38 +41,38 @@ public class PostResource {
 
     @GET
     @Path("/user/{userId}")
-    public List<Post> getPostsByUser(@PathParam("userId") final Long userId) {
+    public List<PostEntity> getPostsByUser(@PathParam("userId") final Long userId) {
         return this.postService.findByUserId(userId);
     }
 
     @GET
     @Path("/category/{categoryId}")
-    public List<Post> getPostsByCategory(@PathParam("categoryId") final Long categoryId) {
+    public List<PostEntity> getPostsByCategory(@PathParam("categoryId") final Long categoryId) {
         return this.postService.findByCategoryId(categoryId);
     }
 
     @POST
     @RolesAllowed({ "post:add" })
-    public Response createPost(final Post post) {
-        final Post created = this.postService.createPost(post);
+    public Response createPost(final PostEntity post) {
+        final PostEntity created = this.postService.createPost(post);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "post:edit" })
-    public Response updatePost(@PathParam("id") final Long id, final Post post) {
+    public Response updatePost(@PathParam("id") final Long id, final PostEntity post) {
         post.id = id;
-        final Post updated = this.postService.updatePost(post);
+        final PostEntity updated = this.postService.updatePost(post);
         return Response.ok(updated).build();
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "post:edit" })
-    public Response patchPost(@PathParam("id") final Long id, final Post post) {
+    public Response patchPost(@PathParam("id") final Long id, final PostEntity post) {
         post.id = id;
-        final Post updated = this.postService.patchPost(post);
+        final PostEntity updated = this.postService.patchPost(post);
         return Response.ok(updated).build();
     }
 

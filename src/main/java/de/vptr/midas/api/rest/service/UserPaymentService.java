@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.UserPayment;
+import de.vptr.midas.api.rest.entity.UserPaymentEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
@@ -15,45 +15,45 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class UserPaymentService {
 
-    public List<UserPayment> getAllPayments() {
-        return UserPayment.listAll();
+    public List<UserPaymentEntity> getAllPayments() {
+        return UserPaymentEntity.listAll();
     }
 
-    public Optional<UserPayment> findById(final Long id) {
-        return UserPayment.findByIdOptional(id);
+    public Optional<UserPaymentEntity> findById(final Long id) {
+        return UserPaymentEntity.findByIdOptional(id);
     }
 
-    public List<UserPayment> findByUserId(final Long userId) {
-        return UserPayment.findByUserId(userId);
+    public List<UserPaymentEntity> findByUserId(final Long userId) {
+        return UserPaymentEntity.findByUserId(userId);
     }
 
-    public List<UserPayment> findBySourceAccountId(final Long sourceId) {
-        return UserPayment.findBySourceAccountId(sourceId);
+    public List<UserPaymentEntity> findBySourceAccountId(final Long sourceId) {
+        return UserPaymentEntity.findBySourceAccountId(sourceId);
     }
 
-    public List<UserPayment> findByTargetAccountId(final Long targetId) {
-        return UserPayment.findByTargetAccountId(targetId);
+    public List<UserPaymentEntity> findByTargetAccountId(final Long targetId) {
+        return UserPaymentEntity.findByTargetAccountId(targetId);
     }
 
-    public List<UserPayment> findByDateRange(final LocalDate startDate, final LocalDate endDate) {
-        return UserPayment.findByDateRange(startDate, endDate);
+    public List<UserPaymentEntity> findByDateRange(final LocalDate startDate, final LocalDate endDate) {
+        return UserPaymentEntity.findByDateRange(startDate, endDate);
     }
 
-    public List<UserPayment> findRecentPayments(final int limit) {
-        return UserPayment.findRecentPayments(limit);
+    public List<UserPaymentEntity> findRecentPayments(final int limit) {
+        return UserPaymentEntity.findRecentPayments(limit);
     }
 
-    public List<UserPayment> findByAmountRange(final BigDecimal minAmount, final BigDecimal maxAmount) {
-        return UserPayment.findByAmountRange(minAmount, maxAmount);
+    public List<UserPaymentEntity> findByAmountRange(final BigDecimal minAmount, final BigDecimal maxAmount) {
+        return UserPaymentEntity.findByAmountRange(minAmount, maxAmount);
     }
 
     public BigDecimal getTotalAmountByUser(final Long userId) {
-        final var total = UserPayment.getTotalAmountByUser(userId);
+        final var total = UserPaymentEntity.getTotalAmountByUser(userId);
         return total != null ? total : BigDecimal.ZERO;
     }
 
     @Transactional
-    public UserPayment createPayment(final UserPayment payment) {
+    public UserPaymentEntity createPayment(final UserPaymentEntity payment) {
         payment.created = LocalDateTime.now();
         payment.lastEdit = payment.created;
 
@@ -62,8 +62,8 @@ public class UserPaymentService {
     }
 
     @Transactional
-    public UserPayment updatePayment(final UserPayment payment) {
-        final UserPayment existingPayment = UserPayment.findById(payment.id);
+    public UserPaymentEntity updatePayment(final UserPaymentEntity payment) {
+        final UserPaymentEntity existingPayment = UserPaymentEntity.findById(payment.id);
         if (existingPayment == null) {
             throw new WebApplicationException("Payment not found", Response.Status.NOT_FOUND);
         }
@@ -82,8 +82,8 @@ public class UserPaymentService {
     }
 
     @Transactional
-    public UserPayment patchPayment(final UserPayment payment) {
-        final UserPayment existingPayment = UserPayment.findById(payment.id);
+    public UserPaymentEntity patchPayment(final UserPaymentEntity payment) {
+        final UserPaymentEntity existingPayment = UserPaymentEntity.findById(payment.id);
         if (existingPayment == null) {
             throw new WebApplicationException("Payment not found", Response.Status.NOT_FOUND);
         }
@@ -115,6 +115,6 @@ public class UserPaymentService {
 
     @Transactional
     public boolean deletePayment(final Long id) {
-        return UserPayment.deleteById(id);
+        return UserPaymentEntity.deleteById(id);
     }
 }

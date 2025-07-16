@@ -5,8 +5,8 @@ import java.util.Set;
 
 import org.eclipse.microprofile.context.ManagedExecutor;
 
-import de.vptr.midas.api.rest.entity.User;
-import de.vptr.midas.api.rest.entity.UserRank;
+import de.vptr.midas.api.rest.entity.UserEntity;
+import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.SecurityIdentityAugmentor;
@@ -35,7 +35,7 @@ public class UserRankIdentityAugmentor implements SecurityIdentityAugmentor {
 
     @Transactional
     SecurityIdentity augmentIdentity(final SecurityIdentity identity, final String username) {
-        final User user = User.find("username", username).firstResult();
+        final UserEntity user = UserEntity.find("username", username).firstResult();
 
         if (user == null || user.rank == null) {
             return identity;
@@ -48,7 +48,7 @@ public class UserRankIdentityAugmentor implements SecurityIdentityAugmentor {
                 .build();
     }
 
-    Set<String> buildRolesFromUserRank(final UserRank rank) {
+    Set<String> buildRolesFromUserRank(final UserRankEntity rank) {
         final Set<String> roles = new HashSet<>();
 
         // Post permissions

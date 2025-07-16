@@ -2,7 +2,7 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.PostCategory;
+import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.service.PostCategoryService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -22,14 +22,14 @@ public class PostCategoryResource {
 
     @GET
     @Authenticated
-    public List<PostCategory> getAllCategories() {
+    public List<PostCategoryEntity> getAllCategories() {
         return this.categoryService.getAllCategories();
     }
 
     @GET
     @Path("/root")
     @Authenticated
-    public List<PostCategory> getRootCategories() {
+    public List<PostCategoryEntity> getRootCategories() {
         return this.categoryService.findRootCategories();
     }
 
@@ -45,32 +45,32 @@ public class PostCategoryResource {
     @GET
     @Path("/parent/{parentId}")
     @Authenticated
-    public List<PostCategory> getCategoriesByParent(@PathParam("parentId") final Long parentId) {
+    public List<PostCategoryEntity> getCategoriesByParent(@PathParam("parentId") final Long parentId) {
         return this.categoryService.findByParentId(parentId);
     }
 
     @POST
     @RolesAllowed({ "category:add" })
-    public Response createCategory(final PostCategory category) {
-        final PostCategory created = this.categoryService.createCategory(category);
+    public Response createCategory(final PostCategoryEntity category) {
+        final PostCategoryEntity created = this.categoryService.createCategory(category);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "category:edit" })
-    public Response updateCategory(@PathParam("id") final Long id, final PostCategory category) {
+    public Response updateCategory(@PathParam("id") final Long id, final PostCategoryEntity category) {
         category.id = id;
-        final PostCategory updated = this.categoryService.updateCategory(category);
+        final PostCategoryEntity updated = this.categoryService.updateCategory(category);
         return Response.ok(updated).build();
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "category:edit" })
-    public Response patchCategory(@PathParam("id") final Long id, final PostCategory category) {
+    public Response patchCategory(@PathParam("id") final Long id, final PostCategoryEntity category) {
         category.id = id;
-        final PostCategory updated = this.categoryService.patchCategory(category);
+        final PostCategoryEntity updated = this.categoryService.patchCategory(category);
         return Response.ok(updated).build();
     }
 

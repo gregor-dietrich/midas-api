@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.Post;
-import de.vptr.midas.api.rest.entity.PostComment;
+import de.vptr.midas.api.rest.entity.PostCommentEntity;
+import de.vptr.midas.api.rest.entity.PostEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -18,30 +18,30 @@ public class PostCommentService {
     @Inject
     UserService userService;
 
-    public List<PostComment> getAllComments() {
-        return PostComment.listAll();
+    public List<PostCommentEntity> getAllComments() {
+        return PostCommentEntity.listAll();
     }
 
-    public Optional<PostComment> findById(final Long id) {
-        return PostComment.findByIdOptional(id);
+    public Optional<PostCommentEntity> findById(final Long id) {
+        return PostCommentEntity.findByIdOptional(id);
     }
 
-    public List<PostComment> findByPostId(final Long postId) {
-        return PostComment.findByPostId(postId);
+    public List<PostCommentEntity> findByPostId(final Long postId) {
+        return PostCommentEntity.findByPostId(postId);
     }
 
-    public List<PostComment> findByUserId(final Long userId) {
-        return PostComment.findByUserId(userId);
+    public List<PostCommentEntity> findByUserId(final Long userId) {
+        return PostCommentEntity.findByUserId(userId);
     }
 
-    public List<PostComment> findRecentComments(final int limit) {
-        return PostComment.findRecentComments(limit);
+    public List<PostCommentEntity> findRecentComments(final int limit) {
+        return PostCommentEntity.findRecentComments(limit);
     }
 
     @Transactional
-    public PostComment createComment(final PostComment comment, final String currentUsername) {
+    public PostCommentEntity createComment(final PostCommentEntity comment, final String currentUsername) {
         // Validate post exists
-        final Post existingPost = Post.findById(comment.post);
+        final PostEntity existingPost = PostEntity.findById(comment.post);
         if (existingPost == null) {
             throw new WebApplicationException("Post with ID " + comment.post + " does not exist.",
                     Response.Status.BAD_REQUEST);
@@ -70,8 +70,8 @@ public class PostCommentService {
     }
 
     @Transactional
-    public PostComment updateComment(final PostComment comment) {
-        final PostComment existingComment = PostComment.findById(comment.id);
+    public PostCommentEntity updateComment(final PostCommentEntity comment) {
+        final PostCommentEntity existingComment = PostCommentEntity.findById(comment.id);
         if (existingComment == null) {
             throw new WebApplicationException("Comment not found", Response.Status.NOT_FOUND);
         }
@@ -86,8 +86,8 @@ public class PostCommentService {
     }
 
     @Transactional
-    public PostComment patchComment(final PostComment comment) {
-        final PostComment existingComment = PostComment.findById(comment.id);
+    public PostCommentEntity patchComment(final PostCommentEntity comment) {
+        final PostCommentEntity existingComment = PostCommentEntity.findById(comment.id);
         if (existingComment == null) {
             throw new WebApplicationException("Comment not found", Response.Status.NOT_FOUND);
         }
@@ -109,6 +109,6 @@ public class PostCommentService {
 
     @Transactional
     public boolean deleteComment(final Long id) {
-        return PostComment.deleteById(id);
+        return PostCommentEntity.deleteById(id);
     }
 }

@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.User;
-import de.vptr.midas.api.rest.entity.UserAccount;
-import de.vptr.midas.api.rest.entity.UserAccountMeta;
-import de.vptr.midas.api.rest.entity.UserPayment;
+import de.vptr.midas.api.rest.entity.UserAccountEntity;
+import de.vptr.midas.api.rest.entity.UserAccountMetaEntity;
+import de.vptr.midas.api.rest.entity.UserEntity;
+import de.vptr.midas.api.rest.entity.UserPaymentEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
@@ -17,36 +17,36 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class UserAccountService {
 
-    public List<UserAccount> getAllAccounts() {
-        return UserAccount.listAll();
+    public List<UserAccountEntity> getAllAccounts() {
+        return UserAccountEntity.listAll();
     }
 
-    public Optional<UserAccount> findById(final Long id) {
-        return UserAccount.findByIdOptional(id);
+    public Optional<UserAccountEntity> findById(final Long id) {
+        return UserAccountEntity.findByIdOptional(id);
     }
 
-    public Optional<UserAccount> findByName(final String name) {
-        return Optional.ofNullable(UserAccount.findByName(name));
+    public Optional<UserAccountEntity> findByName(final String name) {
+        return Optional.ofNullable(UserAccountEntity.findByName(name));
     }
 
-    public List<User> getAssociatedUsers(final Long accountId) {
-        final UserAccount account = UserAccount.findById(accountId);
+    public List<UserEntity> getAssociatedUsers(final Long accountId) {
+        final UserAccountEntity account = UserAccountEntity.findById(accountId);
         if (account == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
         return account.getAssociatedUsers();
     }
 
-    public List<UserAccount> getAccountsForUser(final Long userId) {
-        final List<UserAccountMeta> metas = UserAccountMeta.find("user.id", userId).list();
+    public List<UserAccountEntity> getAccountsForUser(final Long userId) {
+        final List<UserAccountMetaEntity> metas = UserAccountMetaEntity.find("user.id", userId).list();
         return metas.stream()
                 .map(meta -> meta.account)
                 .toList();
     }
 
-    public List<UserPayment> getAccountPayments(final Long accountId) {
-        final var outgoing = UserPayment.findBySourceAccountId(accountId);
-        final var incoming = UserPayment.findByTargetAccountId(accountId);
+    public List<UserPaymentEntity> getAccountPayments(final Long accountId) {
+        final var outgoing = UserPaymentEntity.findBySourceAccountId(accountId);
+        final var incoming = UserPaymentEntity.findByTargetAccountId(accountId);
 
         outgoing.addAll(incoming);
         return outgoing.stream()
@@ -54,12 +54,12 @@ public class UserAccountService {
                 .toList();
     }
 
-    public List<UserPayment> getOutgoingPayments(final Long accountId) {
-        return UserPayment.findBySourceAccountId(accountId);
+    public List<UserPaymentEntity> getOutgoingPayments(final Long accountId) {
+        return UserPaymentEntity.findBySourceAccountId(accountId);
     }
 
-    public List<UserPayment> getIncomingPayments(final Long accountId) {
-        return UserPayment.findByTargetAccountId(accountId);
+    public List<UserPaymentEntity> getIncomingPayments(final Long accountId) {
+        return UserPaymentEntity.findByTargetAccountId(accountId);
     }
 
     public BigDecimal getAccountBalance(final Long accountId) {
@@ -79,14 +79,14 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccount createAccount(final UserAccount account) {
+    public UserAccountEntity createAccount(final UserAccountEntity account) {
         account.persist();
         return account;
     }
 
     @Transactional
-    public UserAccount updateAccount(final UserAccount account) {
-        final UserAccount existingAccount = UserAccount.findById(account.id);
+    public UserAccountEntity updateAccount(final UserAccountEntity account) {
+        final UserAccountEntity existingAccount = UserAccountEntity.findById(account.id);
         if (existingAccount == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
@@ -99,8 +99,8 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccount patchAccount(final UserAccount account) {
-        final UserAccount existingAccount = UserAccount.findById(account.id);
+    public UserAccountEntity patchAccount(final UserAccountEntity account) {
+        final UserAccountEntity existingAccount = UserAccountEntity.findById(account.id);
         if (existingAccount == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
@@ -116,7 +116,7 @@ public class UserAccountService {
 
     @Transactional
     public boolean deleteAccount(final Long id) {
-        final UserAccount account = UserAccount.findById(id);
+        final UserAccountEntity account = UserAccountEntity.findById(id);
         if (account == null) {
             return false;
         }
@@ -127,18 +127,18 @@ public class UserAccountService {
             throw new WebApplicationException("Cannot delete account with existing payments", Response.Status.CONFLICT);
         }
 
-        return UserAccount.deleteById(id);
+        return UserAccountEntity.deleteById(id);
     }
 
     @Transactional
-    public UserAccountMeta associateUserWithAccount(final Long userId, final Long accountId) {
+    public UserAccountMetaEntity associateUserWithAccount(final Long userId, final Long accountId) {
         // Check if association already exists
-        if (UserAccountMeta.existsByUserAndAccount(userId, accountId)) {
+        if (UserAccountMetaEntity.existsByUserAndAccount(userId, accountId)) {
             throw new WebApplicationException("User is already associated with this account", Response.Status.CONFLICT);
         }
 
-        final User user = User.findById(userId);
-        final UserAccount account = UserAccount.findById(accountId);
+        final UserEntity user = UserEntity.findById(userId);
+        final UserAccountEntity account = UserAccountEntity.findById(accountId);
 
         if (user == null) {
             throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);
@@ -147,7 +147,7 @@ public class UserAccountService {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
 
-        final UserAccountMeta meta = new UserAccountMeta();
+        final UserAccountMetaEntity meta = new UserAccountMetaEntity();
         meta.user = user;
         meta.account = account;
         meta.timestamp = LocalDateTime.now();
@@ -158,7 +158,7 @@ public class UserAccountService {
 
     @Transactional
     public boolean removeUserFromAccount(final Long userId, final Long accountId) {
-        final var meta = UserAccountMeta.findByUserAndAccount(userId, accountId);
+        final var meta = UserAccountMetaEntity.findByUserAndAccount(userId, accountId);
         if (meta == null) {
             return false;
         }
@@ -167,10 +167,10 @@ public class UserAccountService {
     }
 
     public boolean isUserAssociatedWithAccount(final Long userId, final Long accountId) {
-        return UserAccountMeta.existsByUserAndAccount(userId, accountId);
+        return UserAccountMetaEntity.existsByUserAndAccount(userId, accountId);
     }
 
-    public List<UserAccount> searchAccounts(final String query) {
+    public List<UserAccountEntity> searchAccounts(final String query) {
         if (query == null || query.trim().isEmpty()) {
             return this.getAllAccounts();
         }
@@ -178,7 +178,7 @@ public class UserAccountService {
         final String searchTerm = "%" + query.trim().toLowerCase() + "%";
 
         // Search by account name or associated username
-        return UserAccount.find(
+        return UserAccountEntity.find(
                 "SELECT DISTINCT ua FROM UserAccount ua " +
                         "LEFT JOIN ua.userAccountMetas uam " +
                         "LEFT JOIN uam.user u " +

@@ -2,9 +2,9 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.User;
-import de.vptr.midas.api.rest.entity.UserGroup;
-import de.vptr.midas.api.rest.entity.UserGroupMeta;
+import de.vptr.midas.api.rest.entity.UserEntity;
+import de.vptr.midas.api.rest.entity.UserGroupEntity;
+import de.vptr.midas.api.rest.entity.UserGroupMetaEntity;
 import de.vptr.midas.api.rest.service.UserGroupService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -24,7 +24,7 @@ public class UserGroupResource {
 
     @GET
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserGroup> getAllGroups() {
+    public List<UserGroupEntity> getAllGroups() {
         return this.groupService.getAllGroups();
     }
 
@@ -46,13 +46,13 @@ public class UserGroupResource {
 
     @GET
     @Path("/{id}/users")
-    public List<User> getUsersInGroup(@PathParam("id") final Long groupId) {
+    public List<UserEntity> getUsersInGroup(@PathParam("id") final Long groupId) {
         return this.groupService.getUsersInGroup(groupId);
     }
 
     @GET
     @Path("/user/{userId}")
-    public List<UserGroup> getGroupsForUser(@PathParam("userId") final Long userId) {
+    public List<UserGroupEntity> getGroupsForUser(@PathParam("userId") final Long userId) {
         return this.groupService.getGroupsForUser(userId);
     }
 
@@ -65,26 +65,26 @@ public class UserGroupResource {
 
     @POST
     @RolesAllowed({ "user-group:add" })
-    public Response createGroup(final UserGroup group) {
-        final UserGroup created = this.groupService.createGroup(group);
+    public Response createGroup(final UserGroupEntity group) {
+        final UserGroupEntity created = this.groupService.createGroup(group);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response updateGroup(@PathParam("id") final Long id, final UserGroup group) {
+    public Response updateGroup(@PathParam("id") final Long id, final UserGroupEntity group) {
         group.id = id;
-        final UserGroup updated = this.groupService.updateGroup(group);
+        final UserGroupEntity updated = this.groupService.updateGroup(group);
         return Response.ok(updated).build();
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response patchGroup(@PathParam("id") final Long id, final UserGroup group) {
+    public Response patchGroup(@PathParam("id") final Long id, final UserGroupEntity group) {
         group.id = id;
-        final UserGroup updated = this.groupService.patchGroup(group);
+        final UserGroupEntity updated = this.groupService.patchGroup(group);
         return Response.ok(updated).build();
     }
 
@@ -103,7 +103,7 @@ public class UserGroupResource {
     @Path("/{groupId}/users/{userId}")
     @RolesAllowed({ "user-group:edit" })
     public Response addUserToGroup(@PathParam("groupId") final Long groupId, @PathParam("userId") final Long userId) {
-        final UserGroupMeta meta = this.groupService.addUserToGroup(userId, groupId);
+        final UserGroupMetaEntity meta = this.groupService.addUserToGroup(userId, groupId);
         return Response.status(Response.Status.CREATED).entity(meta).build();
     }
 

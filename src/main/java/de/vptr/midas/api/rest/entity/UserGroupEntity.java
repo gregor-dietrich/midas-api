@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "user_groups")
-public class UserGroup extends PanacheEntityBase {
+public class UserGroupEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,15 +18,15 @@ public class UserGroup extends PanacheEntityBase {
     public String name;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    public List<UserGroupMeta> userGroupMetas;
+    public List<UserGroupMetaEntity> userGroupMetas;
 
     // Helper method to find group by name
-    public static UserGroup findByName(final String name) {
+    public static UserGroupEntity findByName(final String name) {
         return find("name", name).firstResult();
     }
 
     // Helper method to get users in this group
-    public List<User> getUsers() {
+    public List<UserEntity> getUsers() {
         return this.userGroupMetas.stream()
                 .map(meta -> meta.user)
                 .toList();

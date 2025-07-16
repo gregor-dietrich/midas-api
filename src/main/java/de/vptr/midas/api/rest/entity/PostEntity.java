@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "posts")
-public class Post extends PanacheEntityBase {
+public class PostEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +25,11 @@ public class Post extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    public User user;
+    public UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    public PostCategory category;
+    public PostCategoryEntity category;
 
     @Column(columnDefinition = "TINYINT(1)")
     public Boolean published = false;
@@ -43,5 +43,5 @@ public class Post extends PanacheEntityBase {
     public LocalDateTime lastEdit;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    public List<PostComment> comments;
+    public List<PostCommentEntity> comments;
 }

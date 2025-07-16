@@ -2,7 +2,7 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.UserRank;
+import de.vptr.midas.api.rest.entity.UserRankEntity;
 import de.vptr.midas.api.rest.service.UserRankService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -21,7 +21,7 @@ public class UserRankResource {
     UserRankService rankService;
 
     @GET
-    public List<UserRank> getAllRanks() {
+    public List<UserRankEntity> getAllRanks() {
         return this.rankService.getAllRanks();
     }
 
@@ -43,26 +43,26 @@ public class UserRankResource {
 
     @POST
     @RolesAllowed({ "user_rank:add" })
-    public Response createRank(final UserRank rank) {
-        final UserRank created = this.rankService.createRank(rank);
+    public Response createRank(final UserRankEntity rank) {
+        final UserRankEntity created = this.rankService.createRank(rank);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user_rank:edit" })
-    public Response updateRank(@PathParam("id") final Long id, final UserRank rank) {
+    public Response updateRank(@PathParam("id") final Long id, final UserRankEntity rank) {
         rank.id = id;
-        final UserRank updated = this.rankService.updateRank(rank);
+        final UserRankEntity updated = this.rankService.updateRank(rank);
         return Response.ok(updated).build();
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user_rank:edit" })
-    public Response patchRank(@PathParam("id") final Long id, final UserRank rank) {
+    public Response patchRank(@PathParam("id") final Long id, final UserRankEntity rank) {
         rank.id = id;
-        final UserRank updated = this.rankService.patchRank(rank);
+        final UserRankEntity updated = this.rankService.patchRank(rank);
         return Response.ok(updated).build();
     }
 

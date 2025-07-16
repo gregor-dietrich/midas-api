@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "user_accounts")
-public class UserAccount extends PanacheEntityBase {
+public class UserAccountEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,21 +19,21 @@ public class UserAccount extends PanacheEntityBase {
     public String name;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    public List<UserAccountMeta> userAccountMetas;
+    public List<UserAccountMetaEntity> userAccountMetas;
 
     @OneToMany(mappedBy = "sourceAccount", cascade = CascadeType.ALL)
-    public List<UserPayment> outgoingPayments;
+    public List<UserPaymentEntity> outgoingPayments;
 
     @OneToMany(mappedBy = "targetAccount", cascade = CascadeType.ALL)
-    public List<UserPayment> incomingPayments;
+    public List<UserPaymentEntity> incomingPayments;
 
     // Helper method to find account by name
-    public static UserAccount findByName(final String name) {
+    public static UserAccountEntity findByName(final String name) {
         return find("name", name).firstResult();
     }
 
     // Helper method to get users associated with this account
-    public List<User> getAssociatedUsers() {
+    public List<UserEntity> getAssociatedUsers() {
         if (this.userAccountMetas == null) {
             return Collections.emptyList();
         }

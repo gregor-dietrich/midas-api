@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "post_categories")
-public class PostCategory extends PanacheEntityBase {
+public class PostCategoryEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +19,13 @@ public class PostCategory extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    public PostCategory parent;
+    public PostCategoryEntity parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    public List<PostCategory> children;
+    public List<PostCategoryEntity> children;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    public List<Post> posts;
+    public List<PostEntity> posts;
 
     // Helper method to check if this is a root category
     public boolean isRootCategory() {
@@ -33,7 +33,7 @@ public class PostCategory extends PanacheEntityBase {
     }
 
     // Helper method to get all subcategories recursively
-    public static List<PostCategory> findByParentId(final Long parentId) {
+    public static List<PostCategoryEntity> findByParentId(final Long parentId) {
         if (parentId == null) {
             return find("parent IS NULL").list();
         }
@@ -41,7 +41,7 @@ public class PostCategory extends PanacheEntityBase {
     }
 
     // Helper method to find root categories
-    public static List<PostCategory> findRootCategories() {
+    public static List<PostCategoryEntity> findRootCategories() {
         return find("parent IS NULL").list();
     }
 }

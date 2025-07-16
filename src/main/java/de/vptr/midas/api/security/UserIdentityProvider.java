@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.eclipse.microprofile.context.ManagedExecutor;
 
-import de.vptr.midas.api.rest.entity.User;
+import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.security.AuthenticationFailedException;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.IdentityProvider;
@@ -47,7 +47,7 @@ public class UserIdentityProvider implements IdentityProvider<UsernamePasswordAu
 
     @Transactional
     SecurityIdentity authenticateUser(final String username, final String password) {
-        final User user = User.find("username = ?1", username).firstResult();
+        final UserEntity user = UserEntity.find("username = ?1", username).firstResult();
 
         if (user == null || !this.passwordHashingService.verifyPassword(password, user.password, user.salt)) {
             throw new AuthenticationFailedException("Invalid credentials");
@@ -62,7 +62,7 @@ public class UserIdentityProvider implements IdentityProvider<UsernamePasswordAu
         }
 
         // Update lastLogin without triggering validation
-        this.entityManager.createQuery("UPDATE User u SET u.lastLogin = :now WHERE u.id = :id")
+        this.entityManager.createQuery("UPDATE UserEntity u SET u.lastLogin = :now WHERE u.id = :id")
                 .setParameter("now", LocalDateTime.now())
                 .setParameter("id", user.id)
                 .executeUpdate();

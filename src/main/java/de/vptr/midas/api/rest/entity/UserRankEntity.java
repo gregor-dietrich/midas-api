@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "user_ranks")
-public class UserRank extends PanacheEntityBase {
+public class UserRankEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,5 +81,5 @@ public class UserRank extends PanacheEntityBase {
 
     @OneToMany(mappedBy = "rank", cascade = CascadeType.ALL)
     @JsonIgnore
-    public List<User> users;
+    public List<UserEntity> users;
 }

@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "user_payments")
-public class UserPayment extends PanacheEntityBase {
+public class UserPaymentEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +21,15 @@ public class UserPayment extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_id")
-    public UserAccount targetAccount;
+    public UserAccountEntity targetAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_id")
-    public UserAccount sourceAccount;
+    public UserAccountEntity sourceAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    public User userId;
+    public UserEntity userId;
 
     @NotBlank
     public String comment;
@@ -48,28 +48,28 @@ public class UserPayment extends PanacheEntityBase {
     public LocalDateTime lastEdit;
 
     // Helper methods for queries
-    public static List<UserPayment> findByUserId(final Long userId) {
+    public static List<UserPaymentEntity> findByUserId(final Long userId) {
         return find("user.id", userId).list();
     }
 
-    public static List<UserPayment> findBySourceAccountId(final Long sourceId) {
+    public static List<UserPaymentEntity> findBySourceAccountId(final Long sourceId) {
         return find("sourceAccount.id", sourceId).list();
     }
 
-    public static List<UserPayment> findByTargetAccountId(final Long targetId) {
+    public static List<UserPaymentEntity> findByTargetAccountId(final Long targetId) {
         return find("targetAccount.id", targetId).list();
     }
 
-    public static List<UserPayment> findByDateRange(final LocalDate startDate, final LocalDate endDate) {
+    public static List<UserPaymentEntity> findByDateRange(final LocalDate startDate, final LocalDate endDate) {
         return find("date BETWEEN ?1 AND ?2", startDate, endDate).list();
     }
 
-    public static List<UserPayment> findRecentPayments(final int limit) {
+    public static List<UserPaymentEntity> findRecentPayments(final int limit) {
         return find("ORDER BY created DESC").page(0, limit).list();
     }
 
     // Helper method to get payments by amount range
-    public static List<UserPayment> findByAmountRange(final BigDecimal minAmount, final BigDecimal maxAmount) {
+    public static List<UserPaymentEntity> findByAmountRange(final BigDecimal minAmount, final BigDecimal maxAmount) {
         return find("amount BETWEEN ?1 AND ?2", minAmount, maxAmount).list();
     }
 

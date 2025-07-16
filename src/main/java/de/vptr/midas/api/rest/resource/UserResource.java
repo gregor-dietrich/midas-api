@@ -2,7 +2,7 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.User;
+import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.service.UserService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -27,7 +27,7 @@ public class UserResource {
 
     @GET
     @RolesAllowed({ "user:delete", "user:edit" })
-    public List<User> getAllUsers() {
+    public List<UserEntity> getAllUsers() {
         return this.userService.getAllUsers();
     }
 
@@ -42,8 +42,8 @@ public class UserResource {
 
     @POST
     @RolesAllowed({ "user:add" })
-    public Response createUser(final User user) {
-        final User created = this.userService.createUser(user);
+    public Response createUser(final UserEntity user) {
+        final UserEntity created = this.userService.createUser(user);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
@@ -69,7 +69,7 @@ public class UserResource {
     @Path("/{id}")
     @RolesAllowed({ "user:delete", "user:edit" })
     public Response getUser(@PathParam("id") final Long id) {
-        return User.findByIdOptional(id)
+        return UserEntity.findByIdOptional(id)
                 .map(user -> Response.ok(user).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
@@ -77,18 +77,18 @@ public class UserResource {
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user:edit" })
-    public Response updateUser(@PathParam("id") final Long id, final User user) {
+    public Response updateUser(@PathParam("id") final Long id, final UserEntity user) {
         user.id = id;
-        final User updated = this.userService.updateUser(user);
+        final UserEntity updated = this.userService.updateUser(user);
         return Response.ok(updated).build();
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user:edit" })
-    public Response patchUser(@PathParam("id") final Long id, final User user) {
+    public Response patchUser(@PathParam("id") final Long id, final UserEntity user) {
         user.id = id;
-        final User updated = this.userService.patchUser(user);
+        final UserEntity updated = this.userService.patchUser(user);
         return Response.ok(updated).build();
     }
 

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.Post;
+import de.vptr.midas.api.rest.entity.PostEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
@@ -13,28 +13,28 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class PostService {
 
-    public List<Post> getAllPosts() {
-        return Post.listAll();
+    public List<PostEntity> getAllPosts() {
+        return PostEntity.listAll();
     }
 
-    public Optional<Post> findById(final Long id) {
-        return Post.findByIdOptional(id);
+    public Optional<PostEntity> findById(final Long id) {
+        return PostEntity.findByIdOptional(id);
     }
 
-    public List<Post> findPublishedPosts() {
-        return Post.find("published = true").list();
+    public List<PostEntity> findPublishedPosts() {
+        return PostEntity.find("published = true").list();
     }
 
-    public List<Post> findByUserId(final Long userId) {
-        return Post.find("user.id", userId).list();
+    public List<PostEntity> findByUserId(final Long userId) {
+        return PostEntity.find("user.id", userId).list();
     }
 
-    public List<Post> findByCategoryId(final Long categoryId) {
-        return Post.find("category.id", categoryId).list();
+    public List<PostEntity> findByCategoryId(final Long categoryId) {
+        return PostEntity.find("category.id", categoryId).list();
     }
 
     @Transactional
-    public Post createPost(final Post post) {
+    public PostEntity createPost(final PostEntity post) {
         post.created = LocalDateTime.now();
         post.lastEdit = post.created;
 
@@ -50,8 +50,8 @@ public class PostService {
     }
 
     @Transactional
-    public Post updatePost(final Post post) {
-        final Post existingPost = Post.findById(post.id);
+    public PostEntity updatePost(final PostEntity post) {
+        final PostEntity existingPost = PostEntity.findById(post.id);
         if (existingPost == null) {
             throw new WebApplicationException("Post not found", Response.Status.NOT_FOUND);
         }
@@ -70,8 +70,8 @@ public class PostService {
     }
 
     @Transactional
-    public Post patchPost(final Post post) {
-        final Post existingPost = Post.findById(post.id);
+    public PostEntity patchPost(final PostEntity post) {
+        final PostEntity existingPost = PostEntity.findById(post.id);
         if (existingPost == null) {
             throw new WebApplicationException("Post not found", Response.Status.NOT_FOUND);
         }
@@ -103,6 +103,6 @@ public class PostService {
 
     @Transactional
     public boolean deletePost(final Long id) {
-        return Post.deleteById(id);
+        return PostEntity.deleteById(id);
     }
 }

@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "users")
-public class User extends PanacheEntityBase {
+public class UserEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class User extends PanacheEntityBase {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rank_id", nullable = false)
     @JsonIgnoreProperties({ "users" })
-    public UserRank rank;
+    public UserRankEntity rank;
 
     @Email
     @NotBlank
@@ -58,9 +58,9 @@ public class User extends PanacheEntityBase {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    public List<Post> posts;
+    public List<PostEntity> posts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    public List<PostComment> comments;
+    public List<PostCommentEntity> comments;
 }

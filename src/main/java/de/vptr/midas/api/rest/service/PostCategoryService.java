@@ -3,7 +3,7 @@ package de.vptr.midas.api.rest.service;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.PostCategory;
+import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
@@ -12,31 +12,31 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class PostCategoryService {
 
-    public List<PostCategory> getAllCategories() {
-        return PostCategory.listAll();
+    public List<PostCategoryEntity> getAllCategories() {
+        return PostCategoryEntity.listAll();
     }
 
-    public Optional<PostCategory> findById(final Long id) {
-        return PostCategory.findByIdOptional(id);
+    public Optional<PostCategoryEntity> findById(final Long id) {
+        return PostCategoryEntity.findByIdOptional(id);
     }
 
-    public List<PostCategory> findRootCategories() {
-        return PostCategory.findRootCategories();
+    public List<PostCategoryEntity> findRootCategories() {
+        return PostCategoryEntity.findRootCategories();
     }
 
-    public List<PostCategory> findByParentId(final Long parentId) {
-        return PostCategory.findByParentId(parentId);
+    public List<PostCategoryEntity> findByParentId(final Long parentId) {
+        return PostCategoryEntity.findByParentId(parentId);
     }
 
     @Transactional
-    public PostCategory createCategory(final PostCategory category) {
+    public PostCategoryEntity createCategory(final PostCategoryEntity category) {
         category.persist();
         return category;
     }
 
     @Transactional
-    public PostCategory updateCategory(final PostCategory category) {
-        final PostCategory existingCategory = PostCategory.findById(category.id);
+    public PostCategoryEntity updateCategory(final PostCategoryEntity category) {
+        final PostCategoryEntity existingCategory = PostCategoryEntity.findById(category.id);
         if (existingCategory == null) {
             throw new WebApplicationException("Category not found", Response.Status.NOT_FOUND);
         }
@@ -50,8 +50,8 @@ public class PostCategoryService {
     }
 
     @Transactional
-    public PostCategory patchCategory(final PostCategory category) {
-        final PostCategory existingCategory = PostCategory.findById(category.id);
+    public PostCategoryEntity patchCategory(final PostCategoryEntity category) {
+        final PostCategoryEntity existingCategory = PostCategoryEntity.findById(category.id);
         if (existingCategory == null) {
             throw new WebApplicationException("Category not found", Response.Status.NOT_FOUND);
         }
@@ -70,6 +70,6 @@ public class PostCategoryService {
 
     @Transactional
     public boolean deleteCategory(final Long id) {
-        return PostCategory.deleteById(id);
+        return PostCategoryEntity.deleteById(id);
     }
 }
