@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.service.PostService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -34,9 +35,7 @@ public class PostResource {
     @GET
     @Path("/{id}")
     public Response getPost(@PathParam("id") final Long id) {
-        return this.postService.findById(id)
-                .map(post -> Response.ok(post).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.postService.findById(id));
     }
 
     @GET
@@ -55,7 +54,7 @@ public class PostResource {
     @RolesAllowed({ "post:add" })
     public Response createPost(final PostEntity post) {
         final PostEntity created = this.postService.createPost(post);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return ResponseUtil.created(created);
     }
 
     @PUT
@@ -84,6 +83,6 @@ public class PostResource {
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }

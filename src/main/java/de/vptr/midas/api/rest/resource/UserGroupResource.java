@@ -6,6 +6,7 @@ import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.entity.UserGroupEntity;
 import de.vptr.midas.api.rest.entity.UserGroupMetaEntity;
 import de.vptr.midas.api.rest.service.UserGroupService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -31,17 +32,13 @@ public class UserGroupResource {
     @GET
     @Path("/{id}")
     public Response getGroup(@PathParam("id") final Long id) {
-        return this.groupService.findById(id)
-                .map(group -> Response.ok(group).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.groupService.findById(id));
     }
 
     @GET
     @Path("/name/{name}")
     public Response getGroupByName(@PathParam("name") final String name) {
-        return this.groupService.findByName(name)
-                .map(group -> Response.ok(group).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.groupService.findByName(name));
     }
 
     @GET
@@ -67,7 +64,7 @@ public class UserGroupResource {
     @RolesAllowed({ "user-group:add" })
     public Response createGroup(final UserGroupEntity group) {
         final UserGroupEntity created = this.groupService.createGroup(group);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return ResponseUtil.created(created);
     }
 
     @PUT
@@ -96,7 +93,7 @@ public class UserGroupResource {
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 
     @POST
@@ -104,7 +101,7 @@ public class UserGroupResource {
     @RolesAllowed({ "user-group:edit" })
     public Response addUserToGroup(@PathParam("groupId") final Long groupId, @PathParam("userId") final Long userId) {
         final UserGroupMetaEntity meta = this.groupService.addUserToGroup(userId, groupId);
-        return Response.status(Response.Status.CREATED).entity(meta).build();
+        return ResponseUtil.created(meta);
     }
 
     @DELETE
@@ -116,6 +113,6 @@ public class UserGroupResource {
         if (removed) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }

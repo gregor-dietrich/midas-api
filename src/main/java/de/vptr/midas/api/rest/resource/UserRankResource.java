@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.entity.UserRankEntity;
 import de.vptr.midas.api.rest.service.UserRankService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -28,24 +29,20 @@ public class UserRankResource {
     @GET
     @Path("/{id}")
     public Response getRank(@PathParam("id") final Long id) {
-        return this.rankService.findById(id)
-                .map(rank -> Response.ok(rank).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.rankService.findById(id));
     }
 
     @GET
     @Path("/name/{name}")
     public Response getRankByName(@PathParam("name") final String name) {
-        return this.rankService.findByName(name)
-                .map(rank -> Response.ok(rank).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.rankService.findByName(name));
     }
 
     @POST
     @RolesAllowed({ "user_rank:add" })
     public Response createRank(final UserRankEntity rank) {
         final UserRankEntity created = this.rankService.createRank(rank);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return ResponseUtil.created(created);
     }
 
     @PUT
@@ -74,6 +71,6 @@ public class UserRankResource {
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.service.PostCategoryService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -37,9 +38,7 @@ public class PostCategoryResource {
     @Path("/{id}")
     @Authenticated
     public Response getCategory(@PathParam("id") final Long id) {
-        return this.categoryService.findById(id)
-                .map(category -> Response.ok(category).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.categoryService.findById(id));
     }
 
     @GET
@@ -53,7 +52,7 @@ public class PostCategoryResource {
     @RolesAllowed({ "category:add" })
     public Response createCategory(final PostCategoryEntity category) {
         final PostCategoryEntity created = this.categoryService.createCategory(category);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return ResponseUtil.created(created);
     }
 
     @PUT
@@ -82,6 +81,6 @@ public class PostCategoryResource {
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }

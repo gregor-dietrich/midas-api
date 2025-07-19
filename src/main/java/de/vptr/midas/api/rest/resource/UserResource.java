@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.service.UserService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -35,43 +36,35 @@ public class UserResource {
     @Path("/me")
     public Response getCurrentUser() {
         final String username = this.securityContext.getUserPrincipal().getName();
-        return this.userService.findByUsername(username)
-                .map(user -> Response.ok(user).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.userService.findByUsername(username));
     }
 
     @POST
     @RolesAllowed({ "user:add" })
     public Response createUser(final UserEntity user) {
         final UserEntity created = this.userService.createUser(user);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return ResponseUtil.created(created);
     }
 
     @GET
     @Path("/username/{username}")
     @RolesAllowed({ "user:delete", "user:edit" })
     public Response getUserByUsername(@PathParam("username") final String username) {
-        return this.userService.findByUsername(username)
-                .map(user -> Response.ok(user).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.userService.findByUsername(username));
     }
 
     @GET
     @Path("/email/{email}")
     @RolesAllowed({ "user:delete", "user:edit" })
     public Response getUserByEmail(@PathParam("email") final String email) {
-        return this.userService.findByEmail(email)
-                .map(user -> Response.ok(user).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.userService.findByEmail(email));
     }
 
     @GET
     @Path("/{id}")
     @RolesAllowed({ "user:delete", "user:edit" })
     public Response getUser(@PathParam("id") final Long id) {
-        return UserEntity.findByIdOptional(id)
-                .map(user -> Response.ok(user).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(UserEntity.findByIdOptional(id));
     }
 
     @PUT
@@ -100,6 +93,6 @@ public class UserResource {
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }
