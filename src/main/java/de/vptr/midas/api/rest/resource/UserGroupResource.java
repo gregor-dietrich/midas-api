@@ -57,7 +57,7 @@ public class UserGroupResource {
     @Path("/user/{userId}/group/{groupId}/check")
     public Response checkUserInGroup(@PathParam("userId") final Long userId, @PathParam("groupId") final Long groupId) {
         final boolean isInGroup = this.groupService.isUserInGroup(userId, groupId);
-        return Response.ok(isInGroup).build();
+        return ResponseUtil.ok(isInGroup);
     }
 
     @POST
@@ -73,7 +73,7 @@ public class UserGroupResource {
     public Response updateGroup(@PathParam("id") final Long id, final UserGroupEntity group) {
         group.id = id;
         final UserGroupEntity updated = this.groupService.updateGroup(group);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -82,7 +82,7 @@ public class UserGroupResource {
     public Response patchGroup(@PathParam("id") final Long id, final UserGroupEntity group) {
         group.id = id;
         final UserGroupEntity updated = this.groupService.patchGroup(group);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE

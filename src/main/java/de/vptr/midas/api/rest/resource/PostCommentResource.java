@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.service.PostCommentService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -32,11 +33,8 @@ public class PostCommentResource {
 
     @GET
     @Path("/{id}")
-    @Authenticated
     public Response getComment(@PathParam("id") final Long id) {
-        return this.commentService.findById(id)
-                .map(comment -> Response.ok(comment).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.commentService.findById(id));
     }
 
     @GET
@@ -61,15 +59,10 @@ public class PostCommentResource {
     }
 
     @POST
-    @RolesAllowed({ "comment:add" })
+    @RolesAllowed({ "post_comment:add" })
     public Response createComment(final PostCommentEntity comment) {
-        try {
-            final var username = this.securityContext.getUserPrincipal().getName();
-            final PostCommentEntity created = this.commentService.createComment(comment, username);
-            return Response.status(Response.Status.CREATED).entity(created).build();
-        } catch (final WebApplicationException e) {
-            return Response.status(e.getResponse().getStatus()).entity(e.getMessage()).build();
-        }
+        final PostCommentEntity created = this.commentService.createComment(comment, null);
+        return ResponseUtil.created(created);
     }
 
     @PUT
@@ -78,7 +71,7 @@ public class PostCommentResource {
     public Response updateComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
         comment.id = id;
         final PostCommentEntity updated = this.commentService.updateComment(comment);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -87,17 +80,17 @@ public class PostCommentResource {
     public Response patchComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
         comment.id = id;
         final PostCommentEntity updated = this.commentService.patchComment(comment);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "comment:delete" })
+    @RolesAllowed({ "post_comment:delete" })
     public Response deleteComment(@PathParam("id") final Long id) {
         final boolean deleted = this.commentService.deleteComment(id);
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }

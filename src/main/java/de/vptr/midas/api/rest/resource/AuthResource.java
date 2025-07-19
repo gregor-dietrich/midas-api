@@ -3,6 +3,7 @@ package de.vptr.midas.api.rest.resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.HEAD;
 import jakarta.ws.rs.Path;
@@ -17,6 +18,6 @@ public class AuthResource {
     @Authenticated
     public Response validateAuth() {
         LOG.trace("validateCredentials() method called");
-        return Response.ok().build();
+        return ResponseUtil.ok();
     }
 }

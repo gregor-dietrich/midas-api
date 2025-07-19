@@ -61,7 +61,7 @@ public class PostCategoryResource {
     public Response updateCategory(@PathParam("id") final Long id, final PostCategoryEntity category) {
         category.id = id;
         final PostCategoryEntity updated = this.categoryService.updateCategory(category);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -70,7 +70,7 @@ public class PostCategoryResource {
     public Response patchCategory(@PathParam("id") final Long id, final PostCategoryEntity category) {
         category.id = id;
         final PostCategoryEntity updated = this.categoryService.patchCategory(category);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE

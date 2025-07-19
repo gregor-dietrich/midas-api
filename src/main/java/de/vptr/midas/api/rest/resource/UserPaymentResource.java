@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.entity.UserPaymentEntity;
 import de.vptr.midas.api.rest.service.UserPaymentService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -32,9 +33,7 @@ public class UserPaymentResource {
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getPayment(@PathParam("id") final Long id) {
-        return this.paymentService.findById(id)
-                .map(payment -> Response.ok(payment).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.paymentService.findById(id));
     }
 
     @GET
@@ -94,14 +93,14 @@ public class UserPaymentResource {
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getTotalAmountByUser(@PathParam("userId") final Long userId) {
         final BigDecimal total = this.paymentService.getTotalAmountByUser(userId);
-        return Response.ok(total).build();
+        return ResponseUtil.ok(total);
     }
 
     @POST
     @RolesAllowed({ "user-group:add" })
     public Response createPayment(final UserPaymentEntity payment) {
         final UserPaymentEntity created = this.paymentService.createPayment(payment);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return ResponseUtil.created(created);
     }
 
     @PUT
@@ -110,7 +109,7 @@ public class UserPaymentResource {
     public Response updatePayment(@PathParam("id") final Long id, final UserPaymentEntity payment) {
         payment.id = id;
         final UserPaymentEntity updated = this.paymentService.updatePayment(payment);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -119,7 +118,7 @@ public class UserPaymentResource {
     public Response patchPayment(@PathParam("id") final Long id, final UserPaymentEntity payment) {
         payment.id = id;
         final UserPaymentEntity updated = this.paymentService.patchPayment(payment);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE
@@ -130,6 +129,6 @@ public class UserPaymentResource {
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 }

@@ -63,7 +63,7 @@ public class PostResource {
     public Response updatePost(@PathParam("id") final Long id, final PostEntity post) {
         post.id = id;
         final PostEntity updated = this.postService.updatePost(post);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -72,7 +72,7 @@ public class PostResource {
     public Response patchPost(@PathParam("id") final Long id, final PostEntity post) {
         post.id = id;
         final PostEntity updated = this.postService.patchPost(post);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE

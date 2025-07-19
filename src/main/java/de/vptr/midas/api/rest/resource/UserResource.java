@@ -73,7 +73,7 @@ public class UserResource {
     public Response updateUser(@PathParam("id") final Long id, final UserEntity user) {
         user.id = id;
         final UserEntity updated = this.userService.updateUser(user);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -82,7 +82,7 @@ public class UserResource {
     public Response patchUser(@PathParam("id") final Long id, final UserEntity user) {
         user.id = id;
         final UserEntity updated = this.userService.patchUser(user);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE

@@ -51,7 +51,7 @@ public class UserRankResource {
     public Response updateRank(@PathParam("id") final Long id, final UserRankEntity rank) {
         rank.id = id;
         final UserRankEntity updated = this.rankService.updateRank(rank);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @PATCH
@@ -60,7 +60,7 @@ public class UserRankResource {
     public Response patchRank(@PathParam("id") final Long id, final UserRankEntity rank) {
         rank.id = id;
         final UserRankEntity updated = this.rankService.patchRank(rank);
-        return Response.ok(updated).build();
+        return ResponseUtil.ok(updated);
     }
 
     @DELETE

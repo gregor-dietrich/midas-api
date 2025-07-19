@@ -9,6 +9,7 @@ import de.vptr.midas.api.rest.entity.UserAccountMetaEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.entity.UserPaymentEntity;
 import de.vptr.midas.api.rest.service.UserAccountService;
+import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -33,20 +34,15 @@ public class UserAccountResource {
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getAccount(@PathParam("id") final Long id) {
-        return this.accountService.findById(id)
-                .map(account -> Response.ok(account).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.accountService.findById(id));
     }
 
     @GET
     @Path("/name/{name}")
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getAccountByName(@PathParam("name") final String name) {
-        return this.accountService.findByName(name)
-                .map(account -> Response.ok(account).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+        return ResponseUtil.okOrNotFound(this.accountService.findByName(name));
     }
 
     @GET
@@ -54,13 +50,6 @@ public class UserAccountResource {
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public List<UserEntity> getAssociatedUsers(@PathParam("id") final Long accountId) {
         return this.accountService.getAssociatedUsers(accountId);
-    }
-
-    @GET
-    @Path("/user/{userId}")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserAccountEntity> getAccountsForUser(@PathParam("userId") final Long userId) {
-        return this.accountService.getAccountsForUser(userId);
     }
 
     @GET
@@ -89,7 +78,7 @@ public class UserAccountResource {
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
     public Response getAccountBalance(@PathParam("id") final Long accountId) {
         final BigDecimal balance = this.accountService.getAccountBalance(accountId);
-        return Response.ok().entity("{\"balance\": " + balance + "}").build();
+        return ResponseUtil.ok("{\"balance\": " + balance + "}");
     }
 
     @GET
@@ -98,14 +87,14 @@ public class UserAccountResource {
     public Response checkUserAccountAssociation(@PathParam("userId") final Long userId,
             @PathParam("accountId") final Long accountId) {
         final boolean isAssociated = this.accountService.isUserAssociatedWithAccount(userId, accountId);
-        return Response.ok().entity("{\"associated\": " + isAssociated + "}").build();
+        return ResponseUtil.ok("{\"associated\": " + isAssociated + "}");
     }
 
     @POST
-    @RolesAllowed({ "user-group:add" })
+    @RolesAllowed({ "user_account:add" })
     public Response createAccount(final UserAccountEntity account) {
         final UserAccountEntity created = this.accountService.createAccount(account);
-        return Response.status(Response.Status.CREATED).entity(UserAccountDto.fromEntity(created)).build();
+        return ResponseUtil.created(UserAccountDto.fromEntity(created));
     }
 
     @PUT
@@ -114,7 +103,7 @@ public class UserAccountResource {
     public Response updateAccount(@PathParam("id") final Long id, final UserAccountEntity account) {
         account.id = id;
         final UserAccountEntity updated = this.accountService.updateAccount(account);
-        return Response.ok(UserAccountDto.fromEntity(updated)).build();
+        return ResponseUtil.ok(UserAccountDto.fromEntity(updated));
     }
 
     @PATCH
@@ -123,18 +112,18 @@ public class UserAccountResource {
     public Response patchAccount(@PathParam("id") final Long id, final UserAccountEntity account) {
         account.id = id;
         final UserAccountEntity updated = this.accountService.patchAccount(account);
-        return Response.ok(UserAccountDto.fromEntity(updated)).build();
+        return ResponseUtil.ok(UserAccountDto.fromEntity(updated));
     }
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "user-group:delete" })
+    @RolesAllowed({ "user_account:delete" })
     public Response deleteAccount(@PathParam("id") final Long id) {
         final boolean deleted = this.accountService.deleteAccount(id);
         if (deleted) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 
     @POST

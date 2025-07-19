@@ -8,6 +8,15 @@ public class ResponseUtil {
     private ResponseUtil() {
     }
 
+    public static Response ok() {
+        return Response.status(Response.Status.OK).build();
+    }
+
+    public static <T> Response ok(final T entity) {
+        return entity == null ? Response.status(Response.Status.NO_CONTENT).build()
+                : Response.status(Response.Status.OK).entity(entity).build();
+    }
+
     public static <T> Response okOrNotFound(final Optional<T> entity) {
         return entity.map(Response::ok)
                 .map(Response.ResponseBuilder::build)
