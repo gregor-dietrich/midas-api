@@ -91,7 +91,7 @@ public class UserGroupResource {
     public Response deleteGroup(@PathParam("id") final Long id) {
         final boolean deleted = this.groupService.deleteGroup(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }
@@ -111,7 +111,7 @@ public class UserGroupResource {
             @PathParam("userId") final Long userId) {
         final boolean removed = this.groupService.removeUserFromGroup(userId, groupId);
         if (removed) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }

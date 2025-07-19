@@ -91,7 +91,7 @@ public class UserResource {
     public Response deleteUser(@PathParam("id") final Long id) {
         final boolean deleted = this.userService.deleteUser(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }

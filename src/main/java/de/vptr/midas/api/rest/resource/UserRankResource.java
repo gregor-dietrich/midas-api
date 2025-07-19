@@ -69,7 +69,7 @@ public class UserRankResource {
     public Response deleteRank(@PathParam("id") final Long id) {
         final boolean deleted = this.rankService.deleteRank(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }

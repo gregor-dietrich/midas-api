@@ -121,7 +121,7 @@ public class UserAccountResource {
     public Response deleteAccount(@PathParam("id") final Long id) {
         final boolean deleted = this.accountService.deleteAccount(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }
@@ -132,7 +132,7 @@ public class UserAccountResource {
     public Response associateUserWithAccount(@PathParam("accountId") final Long accountId,
             @PathParam("userId") final Long userId) {
         final UserAccountMetaEntity meta = this.accountService.associateUserWithAccount(userId, accountId);
-        return Response.status(Response.Status.CREATED).entity(meta).build();
+        return ResponseUtil.created(meta);
     }
 
     @DELETE
@@ -142,9 +142,9 @@ public class UserAccountResource {
             @PathParam("userId") final Long userId) {
         final boolean removed = this.accountService.removeUserFromAccount(userId, accountId);
         if (removed) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseUtil.notFound();
     }
 
     @GET

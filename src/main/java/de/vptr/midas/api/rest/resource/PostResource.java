@@ -81,7 +81,7 @@ public class PostResource {
     public Response deletePost(@PathParam("id") final Long id) {
         final boolean deleted = this.postService.deletePost(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }

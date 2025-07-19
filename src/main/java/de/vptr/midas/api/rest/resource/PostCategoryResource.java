@@ -79,7 +79,7 @@ public class PostCategoryResource {
     public Response deleteCategory(@PathParam("id") final Long id) {
         final boolean deleted = this.categoryService.deleteCategory(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }

@@ -81,7 +81,7 @@ public class PageResource {
     public Response deletePage(@PathParam("id") final Long id) {
         final boolean deleted = this.pageService.deletePage(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }

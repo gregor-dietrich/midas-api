@@ -89,7 +89,7 @@ public class PostCommentResource {
     public Response deleteComment(@PathParam("id") final Long id) {
         final boolean deleted = this.commentService.deleteComment(id);
         if (deleted) {
-            return Response.noContent().build();
+            return ResponseUtil.noContent();
         }
         return ResponseUtil.notFound();
     }
