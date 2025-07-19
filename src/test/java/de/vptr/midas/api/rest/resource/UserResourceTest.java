@@ -12,12 +12,12 @@ class UserResourceTest {
 
     @Test
     void testGetAllUsers_unauthorized() {
+        // @formatter:off
         given()
-                .when()
-                .get(ENDPOINT_URL)
-                .then()
-                .statusCode(401);
+        .when()
+            .get(ENDPOINT_URL)
+        .then()
+            .statusCode(401);
+        // @formatter:on
     }
-
-    // Add more tests for authorized access, create, update, delete, etc. as needed
 }

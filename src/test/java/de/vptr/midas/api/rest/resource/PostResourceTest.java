@@ -12,10 +12,12 @@ class PostResourceTest {
 
     @Test
     void testGetAllPosts_unauthorized() {
+        // @formatter:off
         given()
-                .when()
-                .get(ENDPOINT_URL)
-                .then()
-                .statusCode(401);
+        .when()
+            .get(ENDPOINT_URL)
+        .then()
+            .statusCode(401);
+        // @formatter:on
     }
 }
