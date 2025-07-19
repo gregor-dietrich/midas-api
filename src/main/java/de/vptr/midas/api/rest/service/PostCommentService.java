@@ -41,9 +41,10 @@ public class PostCommentService {
     @Transactional
     public PostCommentEntity createComment(final PostCommentEntity comment, final String currentUsername) {
         // Validate post exists
-        final PostEntity existingPost = PostEntity.findById(comment.post);
+        final PostEntity existingPost = PostEntity.findById(comment.post != null ? comment.post.id : null);
         if (existingPost == null) {
-            throw new WebApplicationException("Post with ID " + comment.post + " does not exist.",
+            throw new WebApplicationException(
+                    "Post with ID " + (comment.post != null ? comment.post.id : null) + " does not exist.",
                     Response.Status.BAD_REQUEST);
         }
 

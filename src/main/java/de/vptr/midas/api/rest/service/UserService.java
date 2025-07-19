@@ -59,7 +59,9 @@ public class UserService {
             user.banned = false;
         }
 
-        user.activated = false;
+        if (user.activated == null) {
+            user.activated = false;
+        }
         user.activationKey = java.util.UUID.randomUUID().toString();
 
         user.persist();

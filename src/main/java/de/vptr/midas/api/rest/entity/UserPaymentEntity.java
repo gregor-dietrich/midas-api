@@ -49,7 +49,7 @@ public class UserPaymentEntity extends PanacheEntityBase {
 
     // Helper methods for queries
     public static List<UserPaymentEntity> findByUserId(final Long userId) {
-        return find("user.id", userId).list();
+        return find("userId.id", userId).list();
     }
 
     public static List<UserPaymentEntity> findBySourceAccountId(final Long sourceId) {
