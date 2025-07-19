@@ -13,7 +13,7 @@ CREATE INDEX idx_pages_content_fts ON pages USING gin(to_tsvector('english', con
 -- Table: user_ranks
 CREATE TABLE user_ranks (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     post_add BOOLEAN NOT NULL DEFAULT FALSE,
     post_delete BOOLEAN NOT NULL DEFAULT FALSE,
     post_edit BOOLEAN NOT NULL DEFAULT FALSE,

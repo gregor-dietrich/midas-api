@@ -355,7 +355,8 @@ ALTER TABLE `user_payments`
 -- Indexes for table `user_ranks`
 --
 ALTER TABLE `user_ranks`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_ranks_name` (`name`);
 
 --
 -- AUTO_INCREMENT for exported tables
