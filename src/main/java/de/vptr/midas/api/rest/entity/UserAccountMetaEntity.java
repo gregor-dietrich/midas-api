@@ -20,7 +20,7 @@ public class UserAccountMetaEntity extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
-    public UserAccountEntity account;
+    public AccountEntity account;
 
     public LocalDateTime timestamp;
 

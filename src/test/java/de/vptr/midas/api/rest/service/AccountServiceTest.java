@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.entity.UserAccountEntity;
+import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,9 +16,9 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 @QuarkusTest
-class UserAccountServiceTest {
+class AccountServiceTest {
     @Inject
-    UserAccountService userAccountService;
+    AccountService accountService;
 
     @Inject
     UserService userService;
@@ -41,7 +41,7 @@ class UserAccountServiceTest {
         }
 
         // Create test user with unique username
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int)(Math.random()*10000));
+        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         this.testUser = new UserEntity();
         this.testUser.username = "accountTestUser_" + uniqueSuffix;
         this.testUser.email = "accounttest_" + uniqueSuffix + "@example.com";
@@ -51,22 +51,22 @@ class UserAccountServiceTest {
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.userAccountService);
+        assertNotNull(this.accountService);
     }
 
     @Test
     void testGetAllAccounts() {
-        final List<UserAccountEntity> accounts = this.userAccountService.getAllAccounts();
+        final List<AccountEntity> accounts = this.accountService.getAllAccounts();
         assertNotNull(accounts);
     }
 
     @Test
     @Transactional
     void testCreateAccount() {
-        final UserAccountEntity newAccount = new UserAccountEntity();
+        final AccountEntity newAccount = new AccountEntity();
         newAccount.name = "Test Account";
 
-        final UserAccountEntity createdAccount = this.userAccountService.createAccount(newAccount);
+        final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         assertNotNull(createdAccount);
         assertNotNull(createdAccount.id);
@@ -77,14 +77,14 @@ class UserAccountServiceTest {
     @Transactional
     void testUpdateAccount() {
         // First create an account
-        final UserAccountEntity newAccount = new UserAccountEntity();
+        final AccountEntity newAccount = new AccountEntity();
         newAccount.name = "Original Account";
-        final UserAccountEntity createdAccount = this.userAccountService.createAccount(newAccount);
+        final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         // Update the account
         createdAccount.name = "Updated Account";
 
-        final UserAccountEntity updatedAccount = this.userAccountService.updateAccount(createdAccount);
+        final AccountEntity updatedAccount = this.accountService.updateAccount(createdAccount);
 
         assertNotNull(updatedAccount);
         assertEquals("Updated Account", updatedAccount.name);
@@ -94,22 +94,22 @@ class UserAccountServiceTest {
     @Transactional
     void testDeleteAccount() {
         // First create an account
-        final UserAccountEntity newAccount = new UserAccountEntity();
+        final AccountEntity newAccount = new AccountEntity();
         newAccount.name = "Delete Test Account";
-        final UserAccountEntity createdAccount = this.userAccountService.createAccount(newAccount);
+        final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         final Long accountId = createdAccount.id;
 
-        final boolean deleted = this.userAccountService.deleteAccount(accountId);
+        final boolean deleted = this.accountService.deleteAccount(accountId);
 
         assertTrue(deleted);
-        final Optional<UserAccountEntity> deletedAccount = this.userAccountService.findById(accountId);
+        final Optional<AccountEntity> deletedAccount = this.accountService.findById(accountId);
         assertTrue(deletedAccount.isEmpty());
     }
 
     @Test
     void testDeleteNonExistentAccount() {
-        final boolean deleted = this.userAccountService.deleteAccount(999999L);
+        final boolean deleted = this.accountService.deleteAccount(999999L);
         assertFalse(deleted);
     }
 
@@ -117,11 +117,11 @@ class UserAccountServiceTest {
     @Transactional
     void testFindById() {
         // First create an account
-        final UserAccountEntity newAccount = new UserAccountEntity();
+        final AccountEntity newAccount = new AccountEntity();
         newAccount.name = "Find Test Account";
-        final UserAccountEntity createdAccount = this.userAccountService.createAccount(newAccount);
+        final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
-        final Optional<UserAccountEntity> foundAccount = this.userAccountService.findById(createdAccount.id);
+        final Optional<AccountEntity> foundAccount = this.accountService.findById(createdAccount.id);
 
         assertTrue(foundAccount.isPresent());
         assertEquals(createdAccount.id, foundAccount.get().id);
@@ -130,7 +130,7 @@ class UserAccountServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<UserAccountEntity> foundAccount = this.userAccountService.findById(999999L);
+        final Optional<AccountEntity> foundAccount = this.accountService.findById(999999L);
         assertTrue(foundAccount.isEmpty());
     }
 }

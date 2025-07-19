@@ -3,12 +3,12 @@ package de.vptr.midas.api.rest.resource;
 import java.math.BigDecimal;
 import java.util.List;
 
-import de.vptr.midas.api.rest.dto.UserAccountDto;
-import de.vptr.midas.api.rest.entity.UserAccountEntity;
+import de.vptr.midas.api.rest.dto.AccountDto;
+import de.vptr.midas.api.rest.entity.AccountEntity;
+import de.vptr.midas.api.rest.entity.PaymentEntity;
 import de.vptr.midas.api.rest.entity.UserAccountMetaEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
-import de.vptr.midas.api.rest.entity.UserPaymentEntity;
-import de.vptr.midas.api.rest.service.UserAccountService;
+import de.vptr.midas.api.rest.service.AccountService;
 import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
@@ -17,18 +17,18 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/user-accounts")
+@Path("/accounts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Authenticated
-public class UserAccountResource {
+public class AccountResource {
 
     @Inject
-    UserAccountService accountService;
+    AccountService accountService;
 
     @GET
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserAccountEntity> getAllAccounts() {
+    public List<AccountEntity> getAllAccounts() {
         return this.accountService.getAllAccounts();
     }
 
@@ -55,21 +55,21 @@ public class UserAccountResource {
     @GET
     @Path("/{id}/payments")
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserPaymentEntity> getAccountPayments(@PathParam("id") final Long accountId) {
+    public List<PaymentEntity> getAccountPayments(@PathParam("id") final Long accountId) {
         return this.accountService.getAccountPayments(accountId);
     }
 
     @GET
     @Path("/{id}/payments/outgoing")
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserPaymentEntity> getOutgoingPayments(@PathParam("id") final Long accountId) {
+    public List<PaymentEntity> getOutgoingPayments(@PathParam("id") final Long accountId) {
         return this.accountService.getOutgoingPayments(accountId);
     }
 
     @GET
     @Path("/{id}/payments/incoming")
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserPaymentEntity> getIncomingPayments(@PathParam("id") final Long accountId) {
+    public List<PaymentEntity> getIncomingPayments(@PathParam("id") final Long accountId) {
         return this.accountService.getIncomingPayments(accountId);
     }
 
@@ -92,27 +92,27 @@ public class UserAccountResource {
 
     @POST
     @RolesAllowed({ "user_account:add" })
-    public Response createAccount(final UserAccountEntity account) {
-        final UserAccountEntity created = this.accountService.createAccount(account);
-        return ResponseUtil.created(UserAccountDto.fromEntity(created));
+    public Response createAccount(final AccountEntity account) {
+        final AccountEntity created = this.accountService.createAccount(account);
+        return ResponseUtil.created(AccountDto.fromEntity(created));
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response updateAccount(@PathParam("id") final Long id, final UserAccountEntity account) {
+    public Response updateAccount(@PathParam("id") final Long id, final AccountEntity account) {
         account.id = id;
-        final UserAccountEntity updated = this.accountService.updateAccount(account);
-        return ResponseUtil.ok(UserAccountDto.fromEntity(updated));
+        final AccountEntity updated = this.accountService.updateAccount(account);
+        return ResponseUtil.ok(AccountDto.fromEntity(updated));
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response patchAccount(@PathParam("id") final Long id, final UserAccountEntity account) {
+    public Response patchAccount(@PathParam("id") final Long id, final AccountEntity account) {
         account.id = id;
-        final UserAccountEntity updated = this.accountService.patchAccount(account);
-        return ResponseUtil.ok(UserAccountDto.fromEntity(updated));
+        final AccountEntity updated = this.accountService.patchAccount(account);
+        return ResponseUtil.ok(AccountDto.fromEntity(updated));
     }
 
     @DELETE
@@ -150,7 +150,7 @@ public class UserAccountResource {
     @GET
     @Path("/search")
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserAccountEntity> searchAccounts(@QueryParam("query") final String query) {
+    public List<AccountEntity> searchAccounts(@QueryParam("query") final String query) {
         return this.accountService.searchAccounts(query);
     }
 }

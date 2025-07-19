@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "user_accounts")
-public class UserAccountEntity extends PanacheEntityBase {
+public class AccountEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +22,13 @@ public class UserAccountEntity extends PanacheEntityBase {
     public List<UserAccountMetaEntity> userAccountMetas;
 
     @OneToMany(mappedBy = "sourceAccount", cascade = CascadeType.ALL)
-    public List<UserPaymentEntity> outgoingPayments;
+    public List<PaymentEntity> outgoingPayments;
 
     @OneToMany(mappedBy = "targetAccount", cascade = CascadeType.ALL)
-    public List<UserPaymentEntity> incomingPayments;
+    public List<PaymentEntity> incomingPayments;
 
     // Helper method to find account by name
-    public static UserAccountEntity findByName(final String name) {
+    public static AccountEntity findByName(final String name) {
         return find("name", name).firstResult();
     }
 

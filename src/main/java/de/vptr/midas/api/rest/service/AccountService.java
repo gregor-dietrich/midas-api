@@ -5,48 +5,48 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import de.vptr.midas.api.rest.entity.UserAccountEntity;
+import de.vptr.midas.api.rest.entity.AccountEntity;
+import de.vptr.midas.api.rest.entity.PaymentEntity;
 import de.vptr.midas.api.rest.entity.UserAccountMetaEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
-import de.vptr.midas.api.rest.entity.UserPaymentEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
-public class UserAccountService {
+public class AccountService {
 
-    public List<UserAccountEntity> getAllAccounts() {
-        return UserAccountEntity.listAll();
+    public List<AccountEntity> getAllAccounts() {
+        return AccountEntity.listAll();
     }
 
-    public Optional<UserAccountEntity> findById(final Long id) {
-        return UserAccountEntity.findByIdOptional(id);
+    public Optional<AccountEntity> findById(final Long id) {
+        return AccountEntity.findByIdOptional(id);
     }
 
-    public Optional<UserAccountEntity> findByName(final String name) {
-        return Optional.ofNullable(UserAccountEntity.findByName(name));
+    public Optional<AccountEntity> findByName(final String name) {
+        return Optional.ofNullable(AccountEntity.findByName(name));
     }
 
     public List<UserEntity> getAssociatedUsers(final Long accountId) {
-        final UserAccountEntity account = UserAccountEntity.findById(accountId);
+        final AccountEntity account = AccountEntity.findById(accountId);
         if (account == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
         return account.getAssociatedUsers();
     }
 
-    public List<UserAccountEntity> getAccountsForUser(final Long userId) {
+    public List<AccountEntity> getAccountsForUser(final Long userId) {
         final List<UserAccountMetaEntity> metas = UserAccountMetaEntity.find("user.id", userId).list();
         return metas.stream()
                 .map(meta -> meta.account)
                 .toList();
     }
 
-    public List<UserPaymentEntity> getAccountPayments(final Long accountId) {
-        final var outgoing = UserPaymentEntity.findBySourceAccountId(accountId);
-        final var incoming = UserPaymentEntity.findByTargetAccountId(accountId);
+    public List<PaymentEntity> getAccountPayments(final Long accountId) {
+        final var outgoing = PaymentEntity.findBySourceAccountId(accountId);
+        final var incoming = PaymentEntity.findByTargetAccountId(accountId);
 
         outgoing.addAll(incoming);
         return outgoing.stream()
@@ -54,12 +54,12 @@ public class UserAccountService {
                 .toList();
     }
 
-    public List<UserPaymentEntity> getOutgoingPayments(final Long accountId) {
-        return UserPaymentEntity.findBySourceAccountId(accountId);
+    public List<PaymentEntity> getOutgoingPayments(final Long accountId) {
+        return PaymentEntity.findBySourceAccountId(accountId);
     }
 
-    public List<UserPaymentEntity> getIncomingPayments(final Long accountId) {
-        return UserPaymentEntity.findByTargetAccountId(accountId);
+    public List<PaymentEntity> getIncomingPayments(final Long accountId) {
+        return PaymentEntity.findByTargetAccountId(accountId);
     }
 
     public BigDecimal getAccountBalance(final Long accountId) {
@@ -79,14 +79,14 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccountEntity createAccount(final UserAccountEntity account) {
+    public AccountEntity createAccount(final AccountEntity account) {
         account.persist();
         return account;
     }
 
     @Transactional
-    public UserAccountEntity updateAccount(final UserAccountEntity account) {
-        final UserAccountEntity existingAccount = UserAccountEntity.findById(account.id);
+    public AccountEntity updateAccount(final AccountEntity account) {
+        final AccountEntity existingAccount = AccountEntity.findById(account.id);
         if (existingAccount == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
@@ -99,8 +99,8 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccountEntity patchAccount(final UserAccountEntity account) {
-        final UserAccountEntity existingAccount = UserAccountEntity.findById(account.id);
+    public AccountEntity patchAccount(final AccountEntity account) {
+        final AccountEntity existingAccount = AccountEntity.findById(account.id);
         if (existingAccount == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
         }
@@ -116,7 +116,7 @@ public class UserAccountService {
 
     @Transactional
     public boolean deleteAccount(final Long id) {
-        final UserAccountEntity account = UserAccountEntity.findById(id);
+        final AccountEntity account = AccountEntity.findById(id);
         if (account == null) {
             return false;
         }
@@ -127,7 +127,7 @@ public class UserAccountService {
             throw new WebApplicationException("Cannot delete account with existing payments", Response.Status.CONFLICT);
         }
 
-        return UserAccountEntity.deleteById(id);
+        return AccountEntity.deleteById(id);
     }
 
     @Transactional
@@ -138,7 +138,7 @@ public class UserAccountService {
         }
 
         final UserEntity user = UserEntity.findById(userId);
-        final UserAccountEntity account = UserAccountEntity.findById(accountId);
+        final AccountEntity account = AccountEntity.findById(accountId);
 
         if (user == null) {
             throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);
@@ -170,7 +170,7 @@ public class UserAccountService {
         return UserAccountMetaEntity.existsByUserAndAccount(userId, accountId);
     }
 
-    public List<UserAccountEntity> searchAccounts(final String query) {
+    public List<AccountEntity> searchAccounts(final String query) {
         if (query == null || query.trim().isEmpty()) {
             return this.getAllAccounts();
         }
@@ -178,7 +178,7 @@ public class UserAccountService {
         final String searchTerm = "%" + query.trim().toLowerCase() + "%";
 
         // Search by account name or associated username
-        return UserAccountEntity.find(
+        return AccountEntity.find(
                 "SELECT DISTINCT ua FROM UserAccount ua " +
                         "LEFT JOIN ua.userAccountMetas uam " +
                         "LEFT JOIN uam.user u " +

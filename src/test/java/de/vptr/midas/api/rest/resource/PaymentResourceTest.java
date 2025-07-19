@@ -10,8 +10,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-class UserPaymentResourceTest {
-    private static final String ENDPOINT_URL = "/api/v1/user-payments";
+class PaymentResourceTest {
+    private static final String ENDPOINT_URL = "/api/v1/payments";
 
     @Test
     void testGetAllUserPayments_unauthorized() {
