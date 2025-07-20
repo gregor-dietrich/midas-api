@@ -7,7 +7,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.entity.UserGroupEntity;
+import de.vptr.midas.api.rest.dto.UserGroupDto;
+import de.vptr.midas.api.rest.dto.UserGroupResponseDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -27,17 +28,17 @@ class UserGroupServiceTest {
 
     @Test
     void testGetAllGroups() {
-        final List<UserGroupEntity> groups = this.userGroupService.getAllGroups();
+        final List<UserGroupResponseDto> groups = this.userGroupService.getAllGroups();
         assertNotNull(groups);
     }
 
     @Test
     @Transactional
     void testCreateGroup() {
-        final UserGroupEntity newGroup = new UserGroupEntity();
-        newGroup.name = "Test Group";
+        final UserGroupDto newGroupDto = new UserGroupDto();
+        newGroupDto.name = "Test Group";
 
-        final UserGroupEntity createdGroup = this.userGroupService.createGroup(newGroup);
+        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         assertNotNull(createdGroup);
         assertNotNull(createdGroup.id);
@@ -48,14 +49,15 @@ class UserGroupServiceTest {
     @Transactional
     void testUpdateGroup() {
         // First create a group
-        final UserGroupEntity newGroup = new UserGroupEntity();
-        newGroup.name = "Original Group";
-        final UserGroupEntity createdGroup = this.userGroupService.createGroup(newGroup);
+        final UserGroupDto newGroupDto = new UserGroupDto();
+        newGroupDto.name = "Original Group";
+        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         // Update the group
-        createdGroup.name = "Updated Group";
+        final UserGroupDto updateDto = new UserGroupDto();
+        updateDto.name = "Updated Group";
 
-        final UserGroupEntity updatedGroup = this.userGroupService.updateGroup(createdGroup);
+        final UserGroupResponseDto updatedGroup = this.userGroupService.updateGroup(createdGroup.id, updateDto);
 
         assertNotNull(updatedGroup);
         assertEquals("Updated Group", updatedGroup.name);
@@ -65,16 +67,16 @@ class UserGroupServiceTest {
     @Transactional
     void testDeleteGroup() {
         // First create a group
-        final UserGroupEntity newGroup = new UserGroupEntity();
-        newGroup.name = "Delete Test Group";
-        final UserGroupEntity createdGroup = this.userGroupService.createGroup(newGroup);
+        final UserGroupDto newGroupDto = new UserGroupDto();
+        newGroupDto.name = "Delete Test Group";
+        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         final Long groupId = createdGroup.id;
 
         final boolean deleted = this.userGroupService.deleteGroup(groupId);
 
         assertTrue(deleted);
-        final Optional<UserGroupEntity> deletedGroup = this.userGroupService.findById(groupId);
+        final Optional<UserGroupResponseDto> deletedGroup = this.userGroupService.findById(groupId);
         assertTrue(deletedGroup.isEmpty());
     }
 
@@ -88,11 +90,11 @@ class UserGroupServiceTest {
     @Transactional
     void testFindById() {
         // First create a group
-        final UserGroupEntity newGroup = new UserGroupEntity();
-        newGroup.name = "Find Test Group";
-        final UserGroupEntity createdGroup = this.userGroupService.createGroup(newGroup);
+        final UserGroupDto newGroupDto = new UserGroupDto();
+        newGroupDto.name = "Find Test Group";
+        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
 
-        final Optional<UserGroupEntity> foundGroup = this.userGroupService.findById(createdGroup.id);
+        final Optional<UserGroupResponseDto> foundGroup = this.userGroupService.findById(createdGroup.id);
 
         assertTrue(foundGroup.isPresent());
         assertEquals(createdGroup.id, foundGroup.get().id);
@@ -101,7 +103,7 @@ class UserGroupServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<UserGroupEntity> foundGroup = this.userGroupService.findById(999999L);
+        final Optional<UserGroupResponseDto> foundGroup = this.userGroupService.findById(999999L);
         assertTrue(foundGroup.isEmpty());
     }
 }

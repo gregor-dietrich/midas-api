@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.entity.PageEntity;
+import de.vptr.midas.api.rest.dto.PageResponseDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 
@@ -22,7 +22,7 @@ class PageServiceTest {
 
     @Test
     void testGetAllPages() {
-        final List<PageEntity> pages = this.pageService.getAllPages();
+        final List<PageResponseDto> pages = this.pageService.getAllPages();
         assertNotNull(pages);
     }
 }

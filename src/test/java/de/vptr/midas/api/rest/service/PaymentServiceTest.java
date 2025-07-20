@@ -10,10 +10,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.rest.dto.PaymentDto;
+import de.vptr.midas.api.rest.dto.PaymentResponseDto;
 import de.vptr.midas.api.rest.dto.UserDto;
 import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
-import de.vptr.midas.api.rest.entity.PaymentEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -60,28 +61,28 @@ class PaymentServiceTest {
 
     @Test
     void testGetAllPayments() {
-        final List<PaymentEntity> payments = this.paymentService.getAllPayments();
+        final List<PaymentResponseDto> payments = this.paymentService.getAllPayments();
         assertNotNull(payments);
     }
 
     @Test
     @Transactional
     void testCreatePayment() {
-        final PaymentEntity newPayment = new PaymentEntity();
-        newPayment.targetAccount = this.testTargetAccount;
-        newPayment.sourceAccount = this.testSourceAccount;
-        newPayment.userId = this.testUser;
-        newPayment.comment = "Test payment";
-        newPayment.date = LocalDate.now();
-        newPayment.amount = new BigDecimal("100.50");
+        final PaymentDto newPaymentDto = new PaymentDto();
+        newPaymentDto.targetAccountId = this.testTargetAccount.id;
+        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
+        newPaymentDto.userId = this.testUser.id;
+        newPaymentDto.comment = "Test payment";
+        newPaymentDto.date = LocalDate.now();
+        newPaymentDto.amount = new BigDecimal("100.50");
 
-        final PaymentEntity createdPayment = this.paymentService.createPayment(newPayment);
+        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         assertNotNull(createdPayment);
         assertNotNull(createdPayment.id);
-        assertEquals(this.testTargetAccount.id, createdPayment.targetAccount.id);
-        assertEquals(this.testSourceAccount.id, createdPayment.sourceAccount.id);
-        assertEquals(this.testUser.id, createdPayment.userId.id);
+        assertEquals(this.testTargetAccount.id, createdPayment.targetAccountId);
+        assertEquals(this.testSourceAccount.id, createdPayment.sourceAccountId);
+        assertEquals(this.testUser.id, createdPayment.userId);
         assertEquals("Test payment", createdPayment.comment);
         assertEquals(LocalDate.now(), createdPayment.date);
         assertEquals(new BigDecimal("100.50"), createdPayment.amount);
@@ -92,20 +93,25 @@ class PaymentServiceTest {
     @Transactional
     void testUpdatePayment() {
         // First create a payment
-        final PaymentEntity newPayment = new PaymentEntity();
-        newPayment.targetAccount = this.testTargetAccount;
-        newPayment.sourceAccount = this.testSourceAccount;
-        newPayment.userId = this.testUser;
-        newPayment.comment = "Original comment";
-        newPayment.date = LocalDate.now();
-        newPayment.amount = new BigDecimal("50.00");
-        final PaymentEntity createdPayment = this.paymentService.createPayment(newPayment);
+        final PaymentDto newPaymentDto = new PaymentDto();
+        newPaymentDto.targetAccountId = this.testTargetAccount.id;
+        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
+        newPaymentDto.userId = this.testUser.id;
+        newPaymentDto.comment = "Original comment";
+        newPaymentDto.date = LocalDate.now();
+        newPaymentDto.amount = new BigDecimal("50.00");
+        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         // Update the payment
-        createdPayment.comment = "Updated comment";
-        createdPayment.amount = new BigDecimal("75.00");
+        final PaymentDto updateDto = new PaymentDto();
+        updateDto.targetAccountId = this.testTargetAccount.id;
+        updateDto.sourceAccountId = this.testSourceAccount.id;
+        updateDto.userId = this.testUser.id;
+        updateDto.comment = "Updated comment";
+        updateDto.date = LocalDate.now();
+        updateDto.amount = new BigDecimal("75.00");
 
-        final PaymentEntity updatedPayment = this.paymentService.updatePayment(createdPayment);
+        final PaymentResponseDto updatedPayment = this.paymentService.updatePayment(createdPayment.id, updateDto);
 
         assertNotNull(updatedPayment);
         assertEquals("Updated comment", updatedPayment.comment);
@@ -117,21 +123,21 @@ class PaymentServiceTest {
     @Transactional
     void testDeletePayment() {
         // First create a payment
-        final PaymentEntity newPayment = new PaymentEntity();
-        newPayment.targetAccount = this.testTargetAccount;
-        newPayment.sourceAccount = this.testSourceAccount;
-        newPayment.userId = this.testUser;
-        newPayment.comment = "Delete test payment";
-        newPayment.date = LocalDate.now();
-        newPayment.amount = new BigDecimal("25.00");
-        final PaymentEntity createdPayment = this.paymentService.createPayment(newPayment);
+        final PaymentDto newPaymentDto = new PaymentDto();
+        newPaymentDto.targetAccountId = this.testTargetAccount.id;
+        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
+        newPaymentDto.userId = this.testUser.id;
+        newPaymentDto.comment = "Delete test payment";
+        newPaymentDto.date = LocalDate.now();
+        newPaymentDto.amount = new BigDecimal("25.00");
+        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         final Long paymentId = createdPayment.id;
 
         final boolean deleted = this.paymentService.deletePayment(paymentId);
 
         assertTrue(deleted);
-        final Optional<PaymentEntity> deletedPayment = this.paymentService.findById(paymentId);
+        final Optional<PaymentResponseDto> deletedPayment = this.paymentService.findById(paymentId);
         assertTrue(deletedPayment.isEmpty());
     }
 
@@ -145,16 +151,16 @@ class PaymentServiceTest {
     @Transactional
     void testFindById() {
         // First create a payment
-        final PaymentEntity newPayment = new PaymentEntity();
-        newPayment.targetAccount = this.testTargetAccount;
-        newPayment.sourceAccount = this.testSourceAccount;
-        newPayment.userId = this.testUser;
-        newPayment.comment = "Find test payment";
-        newPayment.date = LocalDate.now();
-        newPayment.amount = new BigDecimal("200.00");
-        final PaymentEntity createdPayment = this.paymentService.createPayment(newPayment);
+        final PaymentDto newPaymentDto = new PaymentDto();
+        newPaymentDto.targetAccountId = this.testTargetAccount.id;
+        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
+        newPaymentDto.userId = this.testUser.id;
+        newPaymentDto.comment = "Find test payment";
+        newPaymentDto.date = LocalDate.now();
+        newPaymentDto.amount = new BigDecimal("200.00");
+        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
 
-        final Optional<PaymentEntity> foundPayment = this.paymentService.findById(createdPayment.id);
+        final Optional<PaymentResponseDto> foundPayment = this.paymentService.findById(createdPayment.id);
 
         assertTrue(foundPayment.isPresent());
         assertEquals(createdPayment.id, foundPayment.get().id);
@@ -164,7 +170,7 @@ class PaymentServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<PaymentEntity> foundPayment = this.paymentService.findById(999999L);
+        final Optional<PaymentResponseDto> foundPayment = this.paymentService.findById(999999L);
         assertTrue(foundPayment.isEmpty());
     }
 
@@ -172,23 +178,23 @@ class PaymentServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create a payment
-        final PaymentEntity newPayment = new PaymentEntity();
-        newPayment.targetAccount = this.testTargetAccount;
-        newPayment.sourceAccount = this.testSourceAccount;
-        newPayment.userId = this.testUser;
-        newPayment.comment = "User payment test";
-        newPayment.date = LocalDate.now();
-        newPayment.amount = new BigDecimal("150.00");
-        this.paymentService.createPayment(newPayment);
+        final PaymentDto newPaymentDto = new PaymentDto();
+        newPaymentDto.targetAccountId = this.testTargetAccount.id;
+        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
+        newPaymentDto.userId = this.testUser.id;
+        newPaymentDto.comment = "User payment test";
+        newPaymentDto.date = LocalDate.now();
+        newPaymentDto.amount = new BigDecimal("150.00");
+        this.paymentService.createPayment(newPaymentDto);
 
-        final List<PaymentEntity> userPayments = this.paymentService.findByUserId(this.testUser.id);
+        final List<PaymentResponseDto> userPayments = this.paymentService.findByUserId(this.testUser.id);
 
         assertNotNull(userPayments);
         assertFalse(userPayments.isEmpty());
 
         // Verify all payments belong to the user
-        for (final PaymentEntity payment : userPayments) {
-            assertEquals(this.testUser.id, payment.userId.id);
+        for (final PaymentResponseDto payment : userPayments) {
+            assertEquals(this.testUser.id, payment.userId);
         }
     }
 
@@ -199,22 +205,22 @@ class PaymentServiceTest {
         final LocalDate endDate = LocalDate.now().plusDays(1);
 
         // First create a payment within the date range
-        final PaymentEntity newPayment = new PaymentEntity();
-        newPayment.targetAccount = this.testTargetAccount;
-        newPayment.sourceAccount = this.testSourceAccount;
-        newPayment.userId = this.testUser;
-        newPayment.comment = "Date range test payment";
-        newPayment.date = LocalDate.now();
-        newPayment.amount = new BigDecimal("100.00");
-        this.paymentService.createPayment(newPayment);
+        final PaymentDto newPaymentDto = new PaymentDto();
+        newPaymentDto.targetAccountId = this.testTargetAccount.id;
+        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
+        newPaymentDto.userId = this.testUser.id;
+        newPaymentDto.comment = "Date range test payment";
+        newPaymentDto.date = LocalDate.now();
+        newPaymentDto.amount = new BigDecimal("100.00");
+        this.paymentService.createPayment(newPaymentDto);
 
-        final List<PaymentEntity> paymentsInRange = this.paymentService.findByDateRange(startDate, endDate);
+        final List<PaymentResponseDto> paymentsInRange = this.paymentService.findByDateRange(startDate, endDate);
 
         assertNotNull(paymentsInRange);
         assertFalse(paymentsInRange.isEmpty());
 
         // Verify all payments are within the date range
-        for (final PaymentEntity payment : paymentsInRange) {
+        for (final PaymentResponseDto payment : paymentsInRange) {
             assertFalse(payment.date.isBefore(startDate));
             assertFalse(payment.date.isAfter(endDate));
         }
