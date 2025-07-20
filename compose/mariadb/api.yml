@@ -11,6 +11,12 @@ services:
       QUARKUS_DATASOURCE_PASSWORD: changeit
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:mariadb://mariadb:3306/midas
       QUARKUS_DATASOURCE_JDBC_DRIVER: org.mariadb.jdbc.Driver
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -I http://midas-api:8080/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     ports:
       - "8080:8080"
 

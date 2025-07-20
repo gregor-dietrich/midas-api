@@ -12,6 +12,12 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
       - ../../src/main/resources/sql/mariadb.init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u midas -pchangeit || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
   phpmyadmin:
     image: phpmyadmin:5-apache
@@ -25,6 +31,12 @@ services:
       PMA_PASSWORD: changeit
     ports:
       - "42069:80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://phpmyadmin/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     depends_on:
       - mariadb
 
