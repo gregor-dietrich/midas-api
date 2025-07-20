@@ -12,7 +12,10 @@ import de.vptr.midas.api.rest.dto.PostDto;
 import de.vptr.midas.api.rest.dto.PostResponseDto;
 import de.vptr.midas.api.rest.dto.UserDto;
 import de.vptr.midas.api.rest.dto.UserResponseDto;
-import de.vptr.midas.api.rest.entity.*;
+import de.vptr.midas.api.rest.entity.PostCategoryEntity;
+import de.vptr.midas.api.rest.entity.PostCommentEntity;
+import de.vptr.midas.api.rest.entity.PostEntity;
+import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -34,22 +37,10 @@ class PostCommentServiceTest {
     private UserEntity testUser;
     private PostEntity testPost;
     private PostCategoryEntity testCategory;
-    private UserRankEntity testRank;
 
     @BeforeEach
     @Transactional
     void setUp() {
-        // Create test rank if it doesn't exist
-        this.testRank = UserRankEntity.find("name", "Test Rank").firstResult();
-        if (this.testRank == null) {
-            this.testRank = new UserRankEntity();
-            this.testRank.name = "Test Rank";
-            this.testRank.userAdd = false;
-            this.testRank.userEdit = false;
-            this.testRank.userDelete = false;
-            this.testRank.persist();
-        }
-
         // Create test category
         this.testCategory = new PostCategoryEntity();
         this.testCategory.name = "Test Category";

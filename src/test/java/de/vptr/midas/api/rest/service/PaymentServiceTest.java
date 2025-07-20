@@ -15,7 +15,6 @@ import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.PaymentEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
-import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -29,24 +28,12 @@ class PaymentServiceTest {
     UserService userService;
 
     private UserEntity testUser;
-    private UserRankEntity testRank;
     private AccountEntity testSourceAccount;
     private AccountEntity testTargetAccount;
 
     @BeforeEach
     @Transactional
     void setUp() {
-        // Create test rank if it doesn't exist
-        this.testRank = UserRankEntity.find("name", "Test Rank").firstResult();
-        if (this.testRank == null) {
-            this.testRank = new UserRankEntity();
-            this.testRank.name = "Test Rank";
-            this.testRank.userAdd = false;
-            this.testRank.userEdit = false;
-            this.testRank.userDelete = false;
-            this.testRank.persist();
-        }
-
         // Create test user with unique username
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         final UserDto testUserDto = new UserDto();
