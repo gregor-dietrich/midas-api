@@ -5,12 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.entity.UserGroupEntity;
-import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -22,32 +19,6 @@ class UserGroupServiceTest {
 
     @Inject
     UserService userService;
-
-    private UserEntity testUser;
-    private UserRankEntity testRank;
-
-    @BeforeEach
-    @Transactional
-    void setUp() {
-        // Create test rank if it doesn't exist
-        this.testRank = UserRankEntity.find("name", "Test Rank").firstResult();
-        if (this.testRank == null) {
-            this.testRank = new UserRankEntity();
-            this.testRank.name = "Test Rank";
-            this.testRank.userAdd = false;
-            this.testRank.userEdit = false;
-            this.testRank.userDelete = false;
-            this.testRank.persist();
-        }
-
-        // Create test user with unique username
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int)(Math.random()*10000));
-        this.testUser = new UserEntity();
-        this.testUser.username = "groupTestUser_" + uniqueSuffix;
-        this.testUser.email = "grouptest_" + uniqueSuffix + "@example.com";
-        this.testUser.password = "password";
-        this.testUser = this.userService.createUser(this.testUser);
-    }
 
     @Test
     void testServiceNotNull() {

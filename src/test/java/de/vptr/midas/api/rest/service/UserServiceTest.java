@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.rest.dto.UserDto;
+import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.UserEntity;
-import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -18,30 +18,8 @@ class UserServiceTest {
     @Inject
     UserService userService;
 
-    private UserRankEntity testRank;
-
-    @BeforeEach
-    @Transactional
-    void setUp() {
-        // Create test rank if it doesn't exist
-        this.testRank = UserRankEntity.find("name", "Test Rank").firstResult();
-        if (this.testRank == null) {
-            this.testRank = new UserRankEntity();
-            this.testRank.name = "Test Rank";
-            this.testRank.userAdd = false;
-            this.testRank.userEdit = false;
-            this.testRank.userDelete = false;
-            this.testRank.persist();
-        }
-        // Create test user with unique username
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserEntity newUser = new UserEntity();
-        newUser.username = "testUser" + uniqueSuffix;
-        newUser.email = "testuser" + uniqueSuffix + "@example.com";
-        newUser.password = "plainPassword";
-
-        this.userService.createUser(newUser);
-    }
+    @Inject
+    UserRankService userRankService;
 
     @Test
     void testServiceNotNull() {
@@ -58,19 +36,17 @@ class UserServiceTest {
     @Transactional
     void testCreateUser() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserEntity newUser = new UserEntity();
+        final UserDto newUser = new UserDto();
         newUser.username = "newTestUser_" + uniqueSuffix;
         newUser.email = "newtest_" + uniqueSuffix + "@example.com";
         newUser.password = "plainPassword";
-        final UserEntity createdUser = this.userService.createUser(newUser);
+        final UserResponseDto createdUser = this.userService.createUser(newUser);
 
         assertNotNull(createdUser);
         assertNotNull(createdUser.id);
         assertEquals("newTestUser_" + uniqueSuffix, createdUser.username);
         assertEquals("newtest_" + uniqueSuffix + "@example.com", createdUser.email);
-        assertNotEquals("plainPassword", createdUser.password); // Should be hashed
-        assertNotNull(createdUser.salt);
-        assertNotNull(createdUser.activationKey);
+        // Password is not returned in response DTO
         assertNotNull(createdUser.created);
         assertNotNull(createdUser.lastLogin);
         assertFalse(createdUser.activated); // Default should be false
@@ -82,14 +58,14 @@ class UserServiceTest {
     void testCreateUserWithExistingUsername() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserEntity firstUser = new UserEntity();
+        final UserDto firstUser = new UserDto();
         firstUser.username = "duplicateUser_" + uniqueSuffix;
         firstUser.email = "first_" + uniqueSuffix + "@example.com";
         firstUser.password = "password1";
         this.userService.createUser(firstUser);
 
         // Try to create another user with the same username
-        final UserEntity secondUser = new UserEntity();
+        final UserDto secondUser = new UserDto();
         secondUser.username = "duplicateUser_" + uniqueSuffix;
         secondUser.email = "second_" + uniqueSuffix + "@example.com";
         secondUser.password = "password2";
@@ -104,17 +80,19 @@ class UserServiceTest {
     void testUpdateUser() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserEntity newUser = new UserEntity();
+        final UserDto newUser = new UserDto();
         newUser.username = "updateTestUser_" + uniqueSuffix;
         newUser.email = "update_" + uniqueSuffix + "@example.com";
         newUser.password = "password";
-        final UserEntity createdUser = this.userService.createUser(newUser);
+        final UserResponseDto createdUser = this.userService.createUser(newUser);
 
         // Update the user
-        createdUser.email = "updated_" + uniqueSuffix + "@example.com";
-        createdUser.activated = true;
+        final UserDto updateDto = new UserDto();
+        updateDto.username = "testUser" + uniqueSuffix; // Username is required for updates
+        updateDto.email = "updated_" + uniqueSuffix + "@example.com";
+        updateDto.activated = true;
 
-        final UserEntity updatedUser = this.userService.updateUser(createdUser);
+        final UserResponseDto updatedUser = this.userService.updateUser(createdUser.id, updateDto);
 
         assertNotNull(updatedUser);
         assertEquals("updated_" + uniqueSuffix + "@example.com", updatedUser.email);
@@ -126,11 +104,11 @@ class UserServiceTest {
     void testDeleteUser() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserEntity newUser = new UserEntity();
+        final UserDto newUser = new UserDto();
         newUser.username = "deleteTestUser_" + uniqueSuffix;
         newUser.email = "delete_" + uniqueSuffix + "@example.com";
         newUser.password = "password";
-        final UserEntity createdUser = this.userService.createUser(newUser);
+        final UserResponseDto createdUser = this.userService.createUser(newUser);
 
         final Long userId = createdUser.id;
 
@@ -153,7 +131,7 @@ class UserServiceTest {
     void testFindByUsername() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserEntity newUser = new UserEntity();
+        final UserDto newUser = new UserDto();
         newUser.username = "findByUsernameUser_" + uniqueSuffix;
         newUser.email = "findbyusername_" + uniqueSuffix + "@example.com";
         newUser.password = "password";
@@ -176,7 +154,7 @@ class UserServiceTest {
     void testFindByEmail() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserEntity newUser = new UserEntity();
+        final UserDto newUser = new UserDto();
         newUser.username = "findByEmailUser_" + uniqueSuffix;
         newUser.email = "findbyemail_" + uniqueSuffix + "@example.com";
         newUser.password = "password";
@@ -199,7 +177,7 @@ class UserServiceTest {
     void testFindActiveUsers() {
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // Create active and inactive users
-        final UserEntity activeUser = new UserEntity();
+        final UserDto activeUser = new UserDto();
         activeUser.username = "activeUser_" + uniqueSuffix;
         activeUser.email = "active_" + uniqueSuffix + "@example.com";
         activeUser.password = "password";
@@ -207,7 +185,7 @@ class UserServiceTest {
         activeUser.banned = false;
         this.userService.createUser(activeUser);
 
-        final UserEntity bannedUser = new UserEntity();
+        final UserDto bannedUser = new UserDto();
         bannedUser.username = "bannedUser_" + uniqueSuffix;
         bannedUser.email = "banned_" + uniqueSuffix + "@example.com";
         bannedUser.password = "password";

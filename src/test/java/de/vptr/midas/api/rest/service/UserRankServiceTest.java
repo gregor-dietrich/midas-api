@@ -8,7 +8,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.entity.UserEntity;
+import de.vptr.midas.api.rest.dto.UserDto;
+import de.vptr.midas.api.rest.dto.UserRankDto;
+import de.vptr.midas.api.rest.dto.UserRankResponseDto;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -22,18 +24,16 @@ class UserRankServiceTest {
     @Inject
     UserService userService;
 
-    UserEntity testUser;
-
     @BeforeEach
     @Transactional
     void setUp() {
         // Create test user with unique username
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        this.testUser = new UserEntity();
-        this.testUser.username = "rankTestUser_" + uniqueSuffix;
-        this.testUser.email = "ranktest_" + uniqueSuffix + "@example.com";
-        this.testUser.password = "password";
-        this.testUser = this.userService.createUser(this.testUser);
+        final UserDto testUserDto = new UserDto();
+        testUserDto.username = "rankTestUser_" + uniqueSuffix;
+        testUserDto.email = "ranktest_" + uniqueSuffix + "@example.com";
+        testUserDto.password = "password";
+        this.userService.createUser(testUserDto);
     }
 
     @Test
@@ -50,7 +50,7 @@ class UserRankServiceTest {
     @Test
     @Transactional
     void testCreateRank() {
-        final UserRankEntity newRank = new UserRankEntity();
+        final UserRankDto newRank = new UserRankDto();
         final String uniqueName = "Test Rank " + System.currentTimeMillis() + Math.random();
         newRank.name = uniqueName;
         newRank.userAdd = true;
@@ -60,7 +60,7 @@ class UserRankServiceTest {
         newRank.postEdit = false;
         newRank.postDelete = false;
 
-        final UserRankEntity createdRank = this.userRankService.createRank(newRank);
+        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
 
         assertNotNull(createdRank);
         assertNotNull(createdRank.id);
@@ -77,7 +77,7 @@ class UserRankServiceTest {
     @Transactional
     void testCreateRankWithExistingName() {
         // First create a rank
-        final UserRankEntity firstRank = new UserRankEntity();
+        final UserRankDto firstRank = new UserRankDto();
         firstRank.name = "Duplicate Rank";
         firstRank.userAdd = false;
         firstRank.userEdit = false;
@@ -85,7 +85,7 @@ class UserRankServiceTest {
         this.userRankService.createRank(firstRank);
 
         // Try to create another rank with the same name
-        final UserRankEntity secondRank = new UserRankEntity();
+        final UserRankDto secondRank = new UserRankDto();
         secondRank.name = "Duplicate Rank";
         secondRank.userAdd = true;
         secondRank.userEdit = true;
@@ -100,7 +100,7 @@ class UserRankServiceTest {
     @Transactional
     void testUpdateRank() {
         // First create a rank
-        final UserRankEntity newRank = new UserRankEntity();
+        final UserRankDto newRank = new UserRankDto();
         newRank.name = "Update Test Rank";
         newRank.userAdd = false;
         newRank.userEdit = false;
@@ -108,15 +108,19 @@ class UserRankServiceTest {
         newRank.postAdd = false;
         newRank.postEdit = false;
         newRank.postDelete = false;
-        final UserRankEntity createdRank = this.userRankService.createRank(newRank);
+        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
 
         // Update the rank
-        createdRank.name = "Updated Rank Name";
-        createdRank.userAdd = true;
-        createdRank.userEdit = true;
-        createdRank.postAdd = true;
+        final UserRankDto updateDto = new UserRankDto();
+        updateDto.name = "Updated Rank Name";
+        updateDto.userAdd = true;
+        updateDto.userEdit = true;
+        updateDto.postAdd = true;
+        updateDto.userDelete = false;
+        updateDto.postEdit = false;
+        updateDto.postDelete = false;
 
-        final UserRankEntity updatedRank = this.userRankService.updateRank(createdRank);
+        final UserRankResponseDto updatedRank = this.userRankService.updateRank(createdRank.id, updateDto);
 
         assertNotNull(updatedRank);
         assertEquals("Updated Rank Name", updatedRank.name);
@@ -132,12 +136,12 @@ class UserRankServiceTest {
     @Transactional
     void testDeleteRank() {
         // First create a rank
-        final UserRankEntity newRank = new UserRankEntity();
+        final UserRankDto newRank = new UserRankDto();
         newRank.name = "Delete Test Rank";
         newRank.userAdd = false;
         newRank.userEdit = false;
         newRank.userDelete = false;
-        final UserRankEntity createdRank = this.userRankService.createRank(newRank);
+        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
 
         final Long rankId = createdRank.id;
 
@@ -158,12 +162,12 @@ class UserRankServiceTest {
     @Transactional
     void testFindById() {
         // First create a rank
-        final UserRankEntity newRank = new UserRankEntity();
+        final UserRankDto newRank = new UserRankDto();
         newRank.name = "Find By ID Rank";
         newRank.userAdd = true;
         newRank.userEdit = false;
         newRank.userDelete = false;
-        final UserRankEntity createdRank = this.userRankService.createRank(newRank);
+        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
 
         final Optional<UserRankEntity> foundRank = this.userRankService.findById(createdRank.id);
 
@@ -182,7 +186,7 @@ class UserRankServiceTest {
     @Transactional
     void testFindByName() {
         // First create a rank
-        final UserRankEntity newRank = new UserRankEntity();
+        final UserRankDto newRank = new UserRankDto();
         newRank.name = "Find By Name Rank";
         newRank.userAdd = false;
         newRank.userEdit = true;
@@ -207,7 +211,7 @@ class UserRankServiceTest {
     @Transactional
     void testGetRanksWithUserPermissions() {
         // Create ranks with different user permissions
-        final UserRankEntity userRank = new UserRankEntity();
+        final UserRankDto userRank = new UserRankDto();
         userRank.name = "User Permission Rank";
         userRank.userAdd = true;
         userRank.userEdit = true;
@@ -217,7 +221,7 @@ class UserRankServiceTest {
         userRank.postDelete = false;
         this.userRankService.createRank(userRank);
 
-        final UserRankEntity noUserRank = new UserRankEntity();
+        final UserRankDto noUserRank = new UserRankDto();
         noUserRank.name = "No User Permission Rank";
         noUserRank.userAdd = false;
         noUserRank.userEdit = false;
@@ -242,7 +246,7 @@ class UserRankServiceTest {
     @Transactional
     void testGetRanksWithPostPermissions() {
         // Create ranks with different post permissions
-        final UserRankEntity postRank = new UserRankEntity();
+        final UserRankDto postRank = new UserRankDto();
         postRank.name = "Post Permission Rank";
         postRank.userAdd = false;
         postRank.userEdit = false;
@@ -252,7 +256,7 @@ class UserRankServiceTest {
         postRank.postDelete = true;
         this.userRankService.createRank(postRank);
 
-        final UserRankEntity noPostRank = new UserRankEntity();
+        final UserRankDto noPostRank = new UserRankDto();
         noPostRank.name = "No Post Permission Rank";
         noPostRank.userAdd = true;
         noPostRank.userEdit = true;

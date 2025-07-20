@@ -9,6 +9,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.rest.dto.PostDto;
+import de.vptr.midas.api.rest.dto.PostResponseDto;
+import de.vptr.midas.api.rest.dto.UserDto;
+import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
@@ -21,6 +25,9 @@ class PostServiceTest {
     @Inject
     PostService postService;
 
+    @Inject
+    UserService userService;
+
     private UserEntity testUser;
     private PostCategoryEntity testCategory;
 
@@ -30,29 +37,14 @@ class PostServiceTest {
         // Clean up existing test data
         PostEntity.deleteAll();
 
-        // Create test user with unique username
+        // Create test user with unique username using UserService
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        this.testUser = new UserEntity();
-        this.testUser.username = "testuser_" + uniqueSuffix;
-        this.testUser.email = "test_" + uniqueSuffix + "@example.com";
-        this.testUser.password = "hashedpassword";
-        this.testUser.salt = "salt";
-        this.testUser.activated = true;
-        this.testUser.banned = false;
-        this.testUser.created = LocalDateTime.now();
-        this.testUser.lastLogin = LocalDateTime.now(); // Set last_login to avoid null constraint violation
-
-        // Create or fetch a test rank
-        de.vptr.midas.api.rest.entity.UserRankEntity testRank = de.vptr.midas.api.rest.entity.UserRankEntity
-                .find("name", "Test Rank").firstResult();
-        if (testRank == null) {
-            testRank = new de.vptr.midas.api.rest.entity.UserRankEntity();
-            testRank.name = "Test Rank";
-            testRank.persist();
-        }
-        this.testUser.rank = testRank;
-
-        this.testUser.persist();
+        final UserDto testUserDto = new UserDto();
+        testUserDto.username = "testuser_" + uniqueSuffix;
+        testUserDto.email = "test_" + uniqueSuffix + "@example.com";
+        testUserDto.password = "plainPassword";
+        final UserResponseDto createdUser = this.userService.createUser(testUserDto);
+        this.testUser = UserEntity.findById(createdUser.id);
 
         // Create test category if it doesn't exist
         this.testCategory = PostCategoryEntity.find("name", "Test Category").firstResult();
@@ -88,13 +80,13 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePost() {
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "Test Post";
         newPost.content = "Test content";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
 
-        final PostEntity createdPost = this.postService.createPost(newPost);
+        final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         assertNotNull(createdPost);
         assertNotNull(createdPost.id);
@@ -110,15 +102,15 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePostWithPublishedFlag() {
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "Published Test Post";
         newPost.content = "Published test content";
         newPost.published = true;
         newPost.commentable = true;
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
 
-        final PostEntity createdPost = this.postService.createPost(newPost);
+        final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         assertNotNull(createdPost);
         assertTrue(createdPost.published);
@@ -129,12 +121,12 @@ class PostServiceTest {
     @Transactional
     void testUpdatePost() {
         // First create a post
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "Original Title";
         newPost.content = "Original content";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
-        final PostEntity createdPost = this.postService.createPost(newPost);
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
+        final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         final LocalDateTime originalCreated = createdPost.created;
         final LocalDateTime originalLastEdit = createdPost.lastEdit;
@@ -147,10 +139,11 @@ class PostServiceTest {
         }
 
         // Update the post
-        createdPost.title = "Updated Title";
-        createdPost.content = "Updated content";
+        final PostDto updateDto = new PostDto();
+        updateDto.title = "Updated Title";
+        updateDto.content = "Updated content";
 
-        final PostEntity updatedPost = this.postService.updatePost(createdPost);
+        final PostResponseDto updatedPost = this.postService.updatePost(createdPost.id, updateDto);
 
         assertNotNull(updatedPost);
         assertEquals("Updated Title", updatedPost.title);
@@ -163,19 +156,18 @@ class PostServiceTest {
     @Transactional
     void testPatchPost() {
         // First create a post
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "Original Title";
         newPost.content = "Original content";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
-        final PostEntity createdPost = this.postService.createPost(newPost);
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
+        final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         // Patch only the title
-        final PostEntity patchPost = new PostEntity();
-        patchPost.id = createdPost.id;
-        patchPost.title = "Patched Title";
+        final PostDto patchDto = new PostDto();
+        patchDto.title = "Patched Title";
 
-        final PostEntity patchedPost = this.postService.patchPost(patchPost);
+        final PostResponseDto patchedPost = this.postService.patchPost(createdPost.id, patchDto);
 
         assertNotNull(patchedPost);
         assertEquals("Patched Title", patchedPost.title);
@@ -186,12 +178,12 @@ class PostServiceTest {
     @Transactional
     void testDeletePost() {
         // First create a post
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "To Be Deleted";
         newPost.content = "This post will be deleted";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
-        final PostEntity createdPost = this.postService.createPost(newPost);
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
+        final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         final Long postId = createdPost.id;
 
@@ -212,12 +204,12 @@ class PostServiceTest {
     @Transactional
     void testFindById() {
         // First create a post
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "Find By ID Test";
         newPost.content = "Test content";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
-        final PostEntity createdPost = this.postService.createPost(newPost);
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
+        final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         final Optional<PostEntity> foundPost = this.postService.findById(createdPost.id);
 
@@ -235,11 +227,11 @@ class PostServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create a post
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "User Post Test";
         newPost.content = "Test content";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
         this.postService.createPost(newPost);
 
         final List<PostEntity> userPosts = this.postService.findByUserId(this.testUser.id);
@@ -253,11 +245,11 @@ class PostServiceTest {
     @Transactional
     void testFindByCategoryId() {
         // First create a post
-        final PostEntity newPost = new PostEntity();
+        final PostDto newPost = new PostDto();
         newPost.title = "Category Post Test";
         newPost.content = "Test content";
-        newPost.user = this.testUser;
-        newPost.category = this.testCategory;
+        newPost.userId = this.testUser.id;
+        newPost.categoryId = this.testCategory.id;
         this.postService.createPost(newPost);
 
         final List<PostEntity> categoryPosts = this.postService.findByCategoryId(this.testCategory.id);

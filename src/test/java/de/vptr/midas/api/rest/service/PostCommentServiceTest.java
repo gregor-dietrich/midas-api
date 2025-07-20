@@ -8,6 +8,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.rest.dto.PostDto;
+import de.vptr.midas.api.rest.dto.PostResponseDto;
+import de.vptr.midas.api.rest.dto.UserDto;
+import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.*;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -53,20 +57,22 @@ class PostCommentServiceTest {
 
         // Create test user with unique username
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        this.testUser = new UserEntity();
-        this.testUser.username = "commentTestUser_" + uniqueSuffix;
-        this.testUser.email = "commenttest_" + uniqueSuffix + "@example.com";
-        this.testUser.password = "password";
-        this.testUser = this.userService.createUser(this.testUser);
+        final UserDto testUserDto = new UserDto();
+        testUserDto.username = "commentTestUser_" + uniqueSuffix;
+        testUserDto.email = "commenttest_" + uniqueSuffix + "@example.com";
+        testUserDto.password = "password";
+        final UserResponseDto createdUser = this.userService.createUser(testUserDto);
+        this.testUser = UserEntity.findById(createdUser.id);
 
         // Create test post
-        this.testPost = new PostEntity();
-        this.testPost.title = "Test Post";
-        this.testPost.content = "Test Content";
-        this.testPost.category = this.testCategory;
-        this.testPost.published = true;
-        this.testPost.commentable = true;
-        this.testPost = this.postService.createPost(this.testPost);
+        final PostDto testPostDto = new PostDto();
+        testPostDto.title = "Test Post";
+        testPostDto.content = "Test Content";
+        testPostDto.categoryId = this.testCategory.id;
+        testPostDto.published = true;
+        testPostDto.commentable = true;
+        final PostResponseDto createdPost = this.postService.createPost(testPostDto);
+        this.testPost = PostEntity.findById(createdPost.id);
     }
 
     @Test

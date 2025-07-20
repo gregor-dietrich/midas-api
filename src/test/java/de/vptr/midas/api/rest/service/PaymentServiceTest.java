@@ -10,6 +10,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.rest.dto.UserDto;
+import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.PaymentEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
@@ -47,11 +49,12 @@ class PaymentServiceTest {
 
         // Create test user with unique username
         final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        this.testUser = new UserEntity();
-        this.testUser.username = "paymentTestUser_" + uniqueSuffix;
-        this.testUser.email = "paymenttest_" + uniqueSuffix + "@example.com";
-        this.testUser.password = "password";
-        this.testUser = this.userService.createUser(this.testUser);
+        final UserDto testUserDto = new UserDto();
+        testUserDto.username = "paymentTestUser_" + uniqueSuffix;
+        testUserDto.email = "paymenttest_" + uniqueSuffix + "@example.com";
+        testUserDto.password = "password";
+        final UserResponseDto createdUser = this.userService.createUser(testUserDto);
+        this.testUser = UserEntity.findById(createdUser.id);
 
         // Create test accounts
         this.testSourceAccount = new AccountEntity();
