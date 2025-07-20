@@ -24,42 +24,42 @@ public class PaymentResource {
     PaymentService paymentService;
 
     @GET
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getAllPayments() {
         return this.paymentService.getAllPayments();
     }
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public Response getPayment(@PathParam("id") final Long id) {
         return ResponseUtil.okOrNotFound(this.paymentService.findById(id));
     }
 
     @GET
     @Path("/user/{userId}")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getPaymentsByUser(@PathParam("userId") final Long userId) {
         return this.paymentService.findByUserId(userId);
     }
 
     @GET
     @Path("/source/{sourceId}")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getPaymentsBySourceAccount(@PathParam("sourceId") final Long sourceId) {
         return this.paymentService.findBySourceAccountId(sourceId);
     }
 
     @GET
     @Path("/target/{targetId}")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getPaymentsByTargetAccount(@PathParam("targetId") final Long targetId) {
         return this.paymentService.findByTargetAccountId(targetId);
     }
 
     @GET
     @Path("/date-range")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getPaymentsByDateRange(
             @QueryParam("startDate") final LocalDate startDate,
             @QueryParam("endDate") final LocalDate endDate) {
@@ -71,14 +71,14 @@ public class PaymentResource {
 
     @GET
     @Path("/recent")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getRecentPayments(@QueryParam("limit") @DefaultValue("10") final int limit) {
         return this.paymentService.findRecentPayments(limit);
     }
 
     @GET
     @Path("/amount-range")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public List<PaymentEntity> getPaymentsByAmountRange(
             @QueryParam("minAmount") final BigDecimal minAmount,
             @QueryParam("maxAmount") final BigDecimal maxAmount) {
@@ -90,14 +90,14 @@ public class PaymentResource {
 
     @GET
     @Path("/user/{userId}/total")
-    @RolesAllowed({ "user-group:edit", "user-group:delete" })
+    @RolesAllowed({ "user-account:edit", "user-account:delete" })
     public Response getTotalAmountByUser(@PathParam("userId") final Long userId) {
         final BigDecimal total = this.paymentService.getTotalAmountByUser(userId);
         return ResponseUtil.ok(total);
     }
 
     @POST
-    @RolesAllowed({ "user-group:add" })
+    @RolesAllowed({ "user-account:add" })
     public Response createPayment(final PaymentEntity payment) {
         final PaymentEntity created = this.paymentService.createPayment(payment);
         return ResponseUtil.created(created);
@@ -105,7 +105,7 @@ public class PaymentResource {
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed({ "user-group:edit" })
+    @RolesAllowed({ "user-account:edit" })
     public Response updatePayment(@PathParam("id") final Long id, final PaymentEntity payment) {
         payment.id = id;
         final PaymentEntity updated = this.paymentService.updatePayment(payment);
@@ -114,7 +114,7 @@ public class PaymentResource {
 
     @PATCH
     @Path("/{id}")
-    @RolesAllowed({ "user-group:edit" })
+    @RolesAllowed({ "user-account:edit" })
     public Response patchPayment(@PathParam("id") final Long id, final PaymentEntity payment) {
         payment.id = id;
         final PaymentEntity updated = this.paymentService.patchPayment(payment);
@@ -123,7 +123,7 @@ public class PaymentResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "user-group:delete" })
+    @RolesAllowed({ "user-account:delete" })
     public Response deletePayment(@PathParam("id") final Long id) {
         final boolean deleted = this.paymentService.deletePayment(id);
         if (deleted) {

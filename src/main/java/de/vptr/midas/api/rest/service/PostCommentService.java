@@ -59,15 +59,38 @@ public class PostCommentService {
             throw new WebApplicationException("Comments are not allowed on this post.", Response.Status.BAD_REQUEST);
         }
 
-        // Auto-assign current user if not provided
+        // Always assign the managed post entity
+        comment.post = existingPost;
+
+        // Auto-assign current user if not provided (skip existence check)
         if (comment.user == null) {
-            comment.user = this.userService.findByUsername(currentUsername)
-                    .orElseThrow(() -> new WebApplicationException("User not found.", Response.Status.BAD_REQUEST));
+            comment.user = this.userService.findByUsername(currentUsername).orElse(null);
         }
 
         comment.created = LocalDateTime.now();
         comment.persist();
-        return comment;
+        
+        // Return a fresh copy with minimal data to avoid lazy loading issues
+        PostCommentEntity result = new PostCommentEntity();
+        result.id = comment.id;
+        result.content = comment.content;
+        result.created = comment.created;
+        
+        // Create minimal post reference
+        PostEntity postRef = new PostEntity();
+        postRef.id = existingPost.id;
+        postRef.title = existingPost.title;
+        result.post = postRef;
+        
+        // Create minimal user reference
+        if (comment.user != null) {
+            de.vptr.midas.api.rest.entity.UserEntity userRef = new de.vptr.midas.api.rest.entity.UserEntity();
+            userRef.id = comment.user.id;
+            userRef.username = comment.user.username;
+            result.user = userRef;
+        }
+        
+        return result;
     }
 
     @Transactional

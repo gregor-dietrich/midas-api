@@ -93,7 +93,7 @@ class AccountResourceTest {
         .when()
             .post(ENDPOINT_URL)
         .then()
-            .statusCode(is(201));
+            .statusCode(201);
         // @formatter:on
     }
 
@@ -112,7 +112,7 @@ class AccountResourceTest {
         .when()
             .post(ENDPOINT_URL)
         .then()
-            .statusCode(is(403));
+            .statusCode(403);
         // @formatter:on
     }
 

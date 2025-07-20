@@ -49,7 +49,7 @@ public class PostCategoryResource {
     }
 
     @POST
-    @RolesAllowed({ "category:add" })
+    @RolesAllowed({ "post-category:add" })
     public Response createCategory(final PostCategoryEntity category) {
         final PostCategoryEntity created = this.categoryService.createCategory(category);
         return ResponseUtil.created(created);
@@ -57,7 +57,7 @@ public class PostCategoryResource {
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed({ "category:edit" })
+    @RolesAllowed({ "post-category:edit" })
     public Response updateCategory(@PathParam("id") final Long id, final PostCategoryEntity category) {
         category.id = id;
         final PostCategoryEntity updated = this.categoryService.updateCategory(category);
@@ -66,7 +66,7 @@ public class PostCategoryResource {
 
     @PATCH
     @Path("/{id}")
-    @RolesAllowed({ "category:edit" })
+    @RolesAllowed({ "post-category:edit" })
     public Response patchCategory(@PathParam("id") final Long id, final PostCategoryEntity category) {
         category.id = id;
         final PostCategoryEntity updated = this.categoryService.patchCategory(category);
@@ -75,7 +75,7 @@ public class PostCategoryResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "category:delete" })
+    @RolesAllowed({ "post-category:delete" })
     public Response deleteCategory(@PathParam("id") final Long id) {
         final boolean deleted = this.categoryService.deleteCategory(id);
         if (deleted) {

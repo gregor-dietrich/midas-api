@@ -2,7 +2,10 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
+import de.vptr.midas.api.rest.dto.PostCommentDto;
+import de.vptr.midas.api.rest.dto.PostCommentResponseDto;
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
+import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.service.PostCommentService;
 import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
@@ -26,7 +29,7 @@ public class PostCommentResource {
     PostCommentService commentService;
 
     @GET
-    @RolesAllowed({ "comment:edit", "comment:delete" })
+    @RolesAllowed({ "post-comment:edit", "post-comment:delete" })
     public List<PostCommentEntity> getAllComments() {
         return this.commentService.getAllComments();
     }
@@ -59,15 +62,28 @@ public class PostCommentResource {
     }
 
     @POST
-    @RolesAllowed({ "post_comment:add" })
-    public Response createComment(final PostCommentEntity comment) {
-        final PostCommentEntity created = this.commentService.createComment(comment, null);
-        return ResponseUtil.created(created);
+    @RolesAllowed({ "post-comment:add" })
+    public Response createComment(final PostCommentDto commentDto) {
+        // Map DTO to entity
+        final PostCommentEntity comment = new PostCommentEntity();
+        comment.content = commentDto.content;
+        if (commentDto.postId != null) {
+            final PostEntity post = new PostEntity();
+            post.id = commentDto.postId;
+            comment.post = post;
+        }
+        // Get current username from security context
+        final String currentUsername = this.securityContext.getUserPrincipal() != null
+                ? this.securityContext.getUserPrincipal().getName()
+                : null;
+        final PostCommentEntity created = this.commentService.createComment(comment, currentUsername);
+        final PostCommentResponseDto responseDto = new PostCommentResponseDto(created);
+        return ResponseUtil.created(responseDto);
     }
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed({ "comment:edit" })
+    @RolesAllowed({ "post-comment:edit" })
     public Response updateComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
         comment.id = id;
         final PostCommentEntity updated = this.commentService.updateComment(comment);
@@ -76,7 +92,7 @@ public class PostCommentResource {
 
     @PATCH
     @Path("/{id}")
-    @RolesAllowed({ "comment:edit" })
+    @RolesAllowed({ "post-comment:edit" })
     public Response patchComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
         comment.id = id;
         final PostCommentEntity updated = this.commentService.patchComment(comment);
@@ -85,7 +101,7 @@ public class PostCommentResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "post_comment:delete" })
+    @RolesAllowed({ "post-comment:delete" })
     public Response deleteComment(@PathParam("id") final Long id) {
         final boolean deleted = this.commentService.deleteComment(id);
         if (deleted) {
