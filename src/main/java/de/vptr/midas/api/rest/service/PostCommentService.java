@@ -100,12 +100,19 @@ public class PostCommentService {
             throw new WebApplicationException("Comment not found", Response.Status.NOT_FOUND);
         }
 
-        // Complete replacement (PUT semantics)
+        // Only update content field for PUT (since we only allow content in DTO)
         existingComment.content = comment.content;
-        existingComment.post = comment.post;
-        existingComment.user = comment.user;
 
         existingComment.persist();
+
+        // Force initialization of lazy fields to avoid LazyInitializationException
+        if (existingComment.post != null) {
+            existingComment.post.title.length(); // Force lazy loading
+        }
+        if (existingComment.user != null) {
+            existingComment.user.username.length(); // Force lazy loading
+        }
+
         return existingComment;
     }
 
@@ -120,14 +127,17 @@ public class PostCommentService {
         if (comment.content != null) {
             existingComment.content = comment.content;
         }
-        if (comment.post != null) {
-            existingComment.post = comment.post;
-        }
-        if (comment.user != null) {
-            existingComment.user = comment.user;
-        }
 
         existingComment.persist();
+
+        // Force initialization of lazy fields to avoid LazyInitializationException
+        if (existingComment.post != null) {
+            existingComment.post.title.length(); // Force lazy loading
+        }
+        if (existingComment.user != null) {
+            existingComment.user.username.length(); // Force lazy loading
+        }
+
         return existingComment;
     }
 

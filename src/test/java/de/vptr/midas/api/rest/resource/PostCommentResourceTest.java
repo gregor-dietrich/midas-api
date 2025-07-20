@@ -182,6 +182,105 @@ class PostCommentResourceTest {
     }
 
     @Test
+    void testUpdateComment_authorized() {
+        // First create a comment to update
+        final Long postId = this.createTestPost();
+        final String createCommentJson = String.format("""
+                {
+                    \"content\": \"Original comment\",
+                    \"postId\": %d
+                }
+                """, postId);
+
+        final Response createResponse = given()
+                .auth().basic("admin", "admin")
+                .contentType(ContentType.JSON)
+                .body(createCommentJson)
+                .when()
+                .post(ENDPOINT_URL);
+
+        final Integer commentId = createResponse.then().statusCode(201).extract().path("id");
+
+        // Now update the comment
+        final String updateCommentJson = """
+                {
+                    "content": "Updated comment content"
+                }
+                """;
+
+        // @formatter:off
+        given()
+            .auth().basic("admin", "admin")
+            .contentType(ContentType.JSON)
+            .body(updateCommentJson)
+        .when()
+            .put(ENDPOINT_URL + "/" + commentId)
+        .then()
+            .statusCode(200)
+            .contentType(ContentType.JSON);
+        // @formatter:on
+    }
+
+    @Test
+    void testPatchComment_unauthorized() {
+        final String commentJson = """
+                {
+                    "content": "Patched comment"
+                }
+                """;
+
+        // @formatter:off
+        given()
+            .contentType(ContentType.JSON)
+            .body(commentJson)
+        .when()
+            .patch(ENDPOINT_URL + "/1")
+        .then()
+            .statusCode(401);
+        // @formatter:on
+    }
+
+    @Test
+    void testPatchComment_authorized() {
+        // First create a comment to patch
+        final Long postId = this.createTestPost();
+        final String createCommentJson = String.format("""
+                {
+                    \"content\": \"Original comment\",
+                    \"postId\": %d
+                }
+                """, postId);
+
+        final Response createResponse = given()
+                .auth().basic("admin", "admin")
+                .contentType(ContentType.JSON)
+                .body(createCommentJson)
+                .when()
+                .post(ENDPOINT_URL);
+
+        final Integer commentId = createResponse.then().statusCode(201).extract().path("id");
+
+        // Now patch the comment
+        final String patchCommentJson = """
+                {
+                    "content": "Patched comment content"
+                }
+                """;
+
+        // @formatter:off
+        given()
+            .auth().basic("admin", "admin")
+            .contentType(ContentType.JSON)
+            .body(patchCommentJson)
+        .when()
+            .patch(ENDPOINT_URL + "/" + commentId)
+        .then()
+            .statusCode(200)
+            .contentType(ContentType.JSON);
+        // @formatter:on
+    }
+
+    @Test
     void testDeleteComment_unauthorized() {
         // @formatter:off
         given()

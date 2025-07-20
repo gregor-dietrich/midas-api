@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.vptr.midas.api.rest.dto.PostCommentDto;
 import de.vptr.midas.api.rest.dto.PostCommentResponseDto;
+import de.vptr.midas.api.rest.dto.PostCommentUpdateDto;
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.service.PostCommentService;
@@ -84,19 +85,29 @@ public class PostCommentResource {
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "post-comment:edit" })
-    public Response updateComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
+    public Response updateComment(@PathParam("id") final Long id, final PostCommentUpdateDto commentDto) {
+        // Map DTO to entity
+        final PostCommentEntity comment = new PostCommentEntity();
         comment.id = id;
+        comment.content = commentDto.content;
+
         final PostCommentEntity updated = this.commentService.updateComment(comment);
-        return ResponseUtil.ok(updated);
+        final PostCommentResponseDto responseDto = new PostCommentResponseDto(updated);
+        return ResponseUtil.ok(responseDto);
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "post-comment:edit" })
-    public Response patchComment(@PathParam("id") final Long id, final PostCommentEntity comment) {
+    public Response patchComment(@PathParam("id") final Long id, final PostCommentUpdateDto commentDto) {
+        // Map DTO to entity
+        final PostCommentEntity comment = new PostCommentEntity();
         comment.id = id;
+        comment.content = commentDto.content;
+
         final PostCommentEntity updated = this.commentService.patchComment(comment);
-        return ResponseUtil.ok(updated);
+        final PostCommentResponseDto responseDto = new PostCommentResponseDto(updated);
+        return ResponseUtil.ok(responseDto);
     }
 
     @DELETE

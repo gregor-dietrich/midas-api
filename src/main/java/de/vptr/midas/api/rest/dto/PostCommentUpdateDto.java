@@ -1,12 +1,8 @@
 package de.vptr.midas.api.rest.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
-public class PostCommentDto {
+public class PostCommentUpdateDto {
     @NotBlank
     public String content;
-
-    @NotNull
-    public Long postId;
 }
