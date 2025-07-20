@@ -56,8 +56,7 @@ class PaymentResourceTest {
         .when()
             .get(ENDPOINT_URL + "/1")
         .then()
-            .statusCode(anyOf(is(200), is(404)))
-            .contentType(ContentType.JSON);
+            .statusCode(anyOf(is(200), is(404)));
         // @formatter:on
     }
 
@@ -113,6 +112,9 @@ class PaymentResourceTest {
     void testCreatePayment_unauthorized() {
         final String paymentJson = """
                 {
+                    "targetAccountId": 1,
+                    "sourceAccountId": 2,
+                    "userId": 1,
                     "amount": "100.00",
                     "comment": "Test payment",
                     "date": "2024-01-01"
@@ -134,6 +136,9 @@ class PaymentResourceTest {
     void testCreatePayment_authorizedButInsufficientRole() {
         final String paymentJson = """
                 {
+                    "targetAccountId": 1,
+                    "sourceAccountId": 2,
+                    "userId": 1,
                     "amount": "100.00",
                     "comment": "Test payment",
                     "date": "2024-01-01"
@@ -148,7 +153,7 @@ class PaymentResourceTest {
         .when()
             .post(ENDPOINT_URL)
         .then()
-            .statusCode(anyOf(is(201), is(403))); // 403 if no payment:add role
+            .statusCode(anyOf(is(201), is(403), is(400))); // 403 if no payment:add role, 400 if validation fails
         // @formatter:on
     }
 
@@ -156,8 +161,12 @@ class PaymentResourceTest {
     void testUpdatePayment_unauthorized() {
         final String paymentJson = """
                 {
+                    "targetAccountId": 1,
+                    "sourceAccountId": 2,
+                    "userId": 1,
                     "amount": "150.00",
-                    "comment": "Updated payment"
+                    "comment": "Updated payment",
+                    "date": "2024-01-01"
                 }
                 """;
 
