@@ -8,6 +8,7 @@ import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -34,6 +35,7 @@ public class PostResource {
 
     @GET
     @Path("/{id}")
+    @Transactional
     public Response getPost(@PathParam("id") final Long id) {
         return ResponseUtil.okOrNotFound(this.postService.findById(id));
     }

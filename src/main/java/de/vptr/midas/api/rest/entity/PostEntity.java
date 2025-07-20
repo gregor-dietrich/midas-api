@@ -3,6 +3,8 @@ package de.vptr.midas.api.rest.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +21,7 @@ public class PostEntity extends PanacheEntityBase {
     public String title;
 
     @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.EAGER)
     @NotBlank
     public String content;
 
@@ -43,5 +45,6 @@ public class PostEntity extends PanacheEntityBase {
     public LocalDateTime lastEdit;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @JsonIgnore
     public List<PostCommentEntity> comments;
 }
