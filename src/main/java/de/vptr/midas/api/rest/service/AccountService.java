@@ -87,6 +87,13 @@ public class AccountService {
         }
 
         account.persist();
+
+        // Force loading of lazy collections before returning (for new accounts they'll
+        // be empty)
+        if (account.userAccountMetas != null) {
+            account.userAccountMetas.size(); // Force initialization
+        }
+
         return account;
     }
 
@@ -107,6 +114,12 @@ public class AccountService {
         existingAccount.name = account.name;
 
         existingAccount.persist();
+
+        // Force loading of lazy collections before returning
+        if (existingAccount.userAccountMetas != null) {
+            existingAccount.userAccountMetas.size(); // Force initialization
+        }
+
         return existingAccount;
     }
 
