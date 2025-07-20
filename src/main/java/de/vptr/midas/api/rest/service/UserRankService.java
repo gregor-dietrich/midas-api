@@ -57,6 +57,12 @@ public class UserRankService {
             rank.userGroupDelete = false;
         if (rank.userGroupEdit == null)
             rank.userGroupEdit = false;
+        if (rank.userAccountAdd == null)
+            rank.userAccountAdd = false;
+        if (rank.userAccountDelete == null)
+            rank.userAccountDelete = false;
+        if (rank.userAccountEdit == null)
+            rank.userAccountEdit = false;
         if (rank.userRankAdd == null)
             rank.userRankAdd = false;
         if (rank.userRankDelete == null)

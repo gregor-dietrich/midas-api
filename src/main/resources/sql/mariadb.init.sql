@@ -251,6 +251,9 @@ CREATE TABLE `user_ranks` (
   `user_group_add` tinyint(1) NOT NULL DEFAULT 0,
   `user_group_delete` tinyint(1) NOT NULL DEFAULT 0,
   `user_group_edit` tinyint(1) NOT NULL DEFAULT 0,
+  `user_account_add` tinyint(1) NOT NULL DEFAULT 0,
+  `user_account_delete` tinyint(1) NOT NULL DEFAULT 0,
+  `user_account_edit` tinyint(1) NOT NULL DEFAULT 0,
   `user_rank_add` tinyint(1) NOT NULL DEFAULT 0,
   `user_rank_delete` tinyint(1) NOT NULL DEFAULT 0,
   `user_rank_edit` tinyint(1) NOT NULL DEFAULT 0
@@ -264,10 +267,10 @@ CREATE TABLE `user_ranks` (
 -- Inserts for table `user_ranks`
 --
 
-INSERT INTO `user_ranks` (`id`, `name`, `post_add`, `post_delete`, `post_edit`, `post_category_add`, `post_category_delete`, `post_category_edit`, `post_comment_add`, `post_comment_delete`, `post_comment_edit`, `user_add`, `user_delete`, `user_edit`, `user_group_add`, `user_group_delete`, `user_group_edit`, `user_rank_add`, `user_rank_delete`, `user_rank_edit`) VALUES
-(1, 'User', 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(2, 'Moderator', 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(3, 'Administrator', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO `user_ranks` (`id`, `name`, `post_add`, `post_delete`, `post_edit`, `post_category_add`, `post_category_delete`, `post_category_edit`, `post_comment_add`, `post_comment_delete`, `post_comment_edit`, `user_add`, `user_delete`, `user_edit`, `user_group_add`, `user_group_delete`, `user_group_edit`, `user_account_add`, `user_account_delete`, `user_account_edit`, `user_rank_add`, `user_rank_delete`, `user_rank_edit`) VALUES
+(1, 'User', 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(2, 'Moderator', 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(3, 'Administrator', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 --
 -- Indexes for exported tables

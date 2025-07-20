@@ -69,6 +69,16 @@ public class UserRankEntity extends PanacheEntityBase {
     @Column(name = "user_group_edit", columnDefinition = "TINYINT(1)")
     public Boolean userGroupEdit = false;
 
+    // User account permissions
+    @Column(name = "user_account_add", columnDefinition = "TINYINT(1)")
+    public Boolean userAccountAdd = false;
+
+    @Column(name = "user_account_delete", columnDefinition = "TINYINT(1)")
+    public Boolean userAccountDelete = false;
+
+    @Column(name = "user_account_edit", columnDefinition = "TINYINT(1)")
+    public Boolean userAccountEdit = false;
+
     // User rank permissions
     @Column(name = "user_rank_add", columnDefinition = "TINYINT(1)")
     public Boolean userRankAdd = false;

@@ -91,6 +91,14 @@ public class UserRankIdentityAugmentor implements SecurityIdentityAugmentor {
         if (Boolean.TRUE.equals(rank.userGroupEdit))
             roles.add("user-group:edit");
 
+        // User account permissions
+        if (Boolean.TRUE.equals(rank.userAccountAdd))
+            roles.add("user-account:add");
+        if (Boolean.TRUE.equals(rank.userAccountDelete))
+            roles.add("user-account:delete");
+        if (Boolean.TRUE.equals(rank.userAccountEdit))
+            roles.add("user-account:edit");
+
         // User rank permissions
         if (Boolean.TRUE.equals(rank.userRankAdd))
             roles.add("user-rank:add");

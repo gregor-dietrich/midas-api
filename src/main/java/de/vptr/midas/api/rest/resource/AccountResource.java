@@ -91,7 +91,7 @@ public class AccountResource {
     }
 
     @POST
-    @RolesAllowed({ "user_account:add" })
+    @RolesAllowed({ "user-account:add" })
     public Response createAccount(final AccountEntity account) {
         final AccountEntity created = this.accountService.createAccount(account);
         return ResponseUtil.created(AccountDto.fromEntity(created));
@@ -117,7 +117,7 @@ public class AccountResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "user_account:delete" })
+    @RolesAllowed({ "user-account:delete" })
     public Response deleteAccount(@PathParam("id") final Long id) {
         final boolean deleted = this.accountService.deleteAccount(id);
         if (deleted) {
