@@ -3,7 +3,6 @@ package de.vptr.midas.api.rest.resource;
 import java.util.List;
 
 import de.vptr.midas.api.rest.dto.PostCommentDto;
-import de.vptr.midas.api.rest.dto.PostCommentPatchDto;
 import de.vptr.midas.api.rest.dto.PostCommentResponseDto;
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
@@ -100,7 +99,7 @@ public class PostCommentResource {
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "post-comment:edit" })
-    public Response patchComment(@PathParam("id") final Long id, @Valid final PostCommentPatchDto commentDto) {
+    public Response patchComment(@PathParam("id") final Long id, @Valid final PostCommentDto commentDto) {
         // Map DTO to entity
         final PostCommentEntity comment = new PostCommentEntity();
         comment.id = id;

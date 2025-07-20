@@ -1,21 +1,21 @@
 package de.vptr.midas.api.rest.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
- * DTO for creating and completely replacing post comments.
- * Used by POST (creation) and PUT (complete replacement) operations.
+ * DTO for post comment operations (POST, PUT, PATCH).
  * 
- * Note: For POST operations, postId is required.
- * For PUT operations, postId is ignored (comes from URL path).
+ * - POST: content required (validated by service), postId required
+ * - PUT: content required (validated by service), postId ignored (from URL)
+ * - PATCH: content optional (allows null), postId ignored (from URL)
  */
 public class PostCommentDto {
 
-    @NotBlank(message = "Content is required")
+    @Size(min = 1, max = 10000, message = "Content must be between 1 and 10000 characters when provided")
     public String content;
 
     // Required for POST operations (creation)
-    // Ignored for PUT operations (postId comes from the URL path)
+    // Ignored for PUT/PATCH operations (postId comes from the URL path)
     public Long postId;
 
 }

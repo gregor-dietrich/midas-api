@@ -40,6 +40,12 @@ public class PostCommentService {
 
     @Transactional
     public PostCommentEntity createComment(final PostCommentEntity comment, final String currentUsername) {
+        // Validate content is provided for creation
+        if (comment.content == null || comment.content.trim().isEmpty()) {
+            throw new WebApplicationException("Content is required for creating a comment",
+                    Response.Status.BAD_REQUEST);
+        }
+
         // Validate post exists
         final PostEntity existingPost = PostEntity.findById(comment.post != null ? comment.post.id : null);
         if (existingPost == null) {
@@ -98,6 +104,12 @@ public class PostCommentService {
         final PostCommentEntity existingComment = PostCommentEntity.findById(comment.id);
         if (existingComment == null) {
             throw new WebApplicationException("Comment not found", Response.Status.NOT_FOUND);
+        }
+
+        // Validate content is provided for complete replacement (PUT)
+        if (comment.content == null || comment.content.trim().isEmpty()) {
+            throw new WebApplicationException("Content is required for updating a comment",
+                    Response.Status.BAD_REQUEST);
         }
 
         // Only update content field for PUT (since we only allow content in DTO)
