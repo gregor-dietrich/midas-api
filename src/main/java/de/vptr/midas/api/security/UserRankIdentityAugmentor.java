@@ -51,6 +51,14 @@ public class UserRankIdentityAugmentor implements SecurityIdentityAugmentor {
     Set<String> buildRolesFromUserRank(final UserRankEntity rank) {
         final Set<String> roles = new HashSet<>();
 
+        // Page permissions
+        if (Boolean.TRUE.equals(rank.pageAdd))
+            roles.add("page:add");
+        if (Boolean.TRUE.equals(rank.pageDelete))
+            roles.add("page:delete");
+        if (Boolean.TRUE.equals(rank.pageEdit))
+            roles.add("page:edit");
+
         // Post permissions
         if (Boolean.TRUE.equals(rank.postAdd))
             roles.add("post:add");

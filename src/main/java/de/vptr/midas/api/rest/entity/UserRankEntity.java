@@ -19,6 +19,16 @@ public class UserRankEntity extends PanacheEntityBase {
     @NotBlank
     public String name;
 
+    // Page permissions
+    @Column(name = "page_add", columnDefinition = "TINYINT(1)")
+    public Boolean pageAdd = false;
+
+    @Column(name = "page_delete", columnDefinition = "TINYINT(1)")
+    public Boolean pageDelete = false;
+
+    @Column(name = "page_edit", columnDefinition = "TINYINT(1)")
+    public Boolean pageEdit = false;
+
     // Post permissions
     @Column(name = "post_add", columnDefinition = "TINYINT(1)")
     public Boolean postAdd = false;

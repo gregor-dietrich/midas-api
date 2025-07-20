@@ -14,6 +14,9 @@ CREATE INDEX idx_pages_content_fts ON pages USING gin(to_tsvector('english', con
 CREATE TABLE user_ranks (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
+    page_add BOOLEAN NOT NULL DEFAULT FALSE,
+    page_delete BOOLEAN NOT NULL DEFAULT FALSE,
+    page_edit BOOLEAN NOT NULL DEFAULT FALSE,
     post_add BOOLEAN NOT NULL DEFAULT FALSE,
     post_delete BOOLEAN NOT NULL DEFAULT FALSE,
     post_edit BOOLEAN NOT NULL DEFAULT FALSE,
@@ -145,10 +148,10 @@ CREATE TABLE user_payments (
 );
 
 -- Insert initial data for user_ranks
-INSERT INTO user_ranks (id, name, post_add, post_delete, post_edit, post_category_add, post_category_delete, post_category_edit, post_comment_add, post_comment_delete, post_comment_edit, user_add, user_delete, user_edit, user_group_add, user_group_delete, user_group_edit, user_account_add, user_account_delete, user_account_edit, user_rank_add, user_rank_delete, user_rank_edit) VALUES
-(1, 'User', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(2, 'Moderator', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(3, 'Administrator', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
+INSERT INTO user_ranks (id, name, page_add, page_delete, page_edit, post_add, post_delete, post_edit, post_category_add, post_category_delete, post_category_edit, post_comment_add, post_comment_delete, post_comment_edit, user_add, user_delete, user_edit, user_group_add, user_group_delete, user_group_edit, user_account_add, user_account_delete, user_account_edit, user_rank_add, user_rank_delete, user_rank_edit) VALUES
+(1, 'User', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+(2, 'Moderator', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+(3, 'Administrator', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
 
 -- Insert initial admin user
 INSERT INTO users (id, username, password, salt, rank_id, activated, banned, activation_key) VALUES
