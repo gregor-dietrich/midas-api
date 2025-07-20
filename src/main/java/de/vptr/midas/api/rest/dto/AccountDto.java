@@ -1,15 +1,17 @@
 package de.vptr.midas.api.rest.dto;
 
-import de.vptr.midas.api.rest.entity.AccountEntity;
+import jakarta.validation.constraints.Size;
 
+/**
+ * DTO for account operations (POST, PUT, PATCH).
+ * 
+ * - POST: name required (validated by service)
+ * - PUT: name required (validated by service)
+ * - PATCH: name optional (allows null)
+ */
 public class AccountDto {
-    public Long id;
+
+    @Size(min = 1, max = 255, message = "Name must be between 1 and 255 characters when provided")
     public String name;
 
-    public static AccountDto fromEntity(final AccountEntity entity) {
-        final var dto = new AccountDto();
-        dto.id = entity.id;
-        dto.name = entity.name;
-        return dto;
-    }
 }
