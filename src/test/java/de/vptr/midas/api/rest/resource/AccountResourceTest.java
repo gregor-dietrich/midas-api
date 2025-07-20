@@ -79,7 +79,7 @@ class AccountResourceTest {
     }
 
     @Test
-    void testCreateUserAccount_authorizedButInsufficientRole() {
+    void testCreateUserAccount_authorized() {
         final String accountJson = """
                 {
                     "name": "Test Account"
@@ -93,7 +93,26 @@ class AccountResourceTest {
         .when()
             .post(ENDPOINT_URL)
         .then()
-            .statusCode(anyOf(is(201), is(403)));
+            .statusCode(is(201));
+        // @formatter:on
+    }
+
+    @Test
+    void testCreateUserAccount_forbidden() {
+        final String accountJson = """
+                {
+                    "name": "Test Account"
+                }
+                """;
+        // @formatter:off
+        given()
+            .auth().basic("user", "user")
+            .contentType(ContentType.JSON)
+            .body(accountJson)
+        .when()
+            .post(ENDPOINT_URL)
+        .then()
+            .statusCode(is(403));
         // @formatter:on
     }
 
