@@ -69,27 +69,27 @@ public class PostCommentService {
 
         comment.created = LocalDateTime.now();
         comment.persist();
-        
+
         // Return a fresh copy with minimal data to avoid lazy loading issues
-        PostCommentEntity result = new PostCommentEntity();
+        final PostCommentEntity result = new PostCommentEntity();
         result.id = comment.id;
         result.content = comment.content;
         result.created = comment.created;
-        
+
         // Create minimal post reference
-        PostEntity postRef = new PostEntity();
+        final PostEntity postRef = new PostEntity();
         postRef.id = existingPost.id;
         postRef.title = existingPost.title;
         result.post = postRef;
-        
+
         // Create minimal user reference
         if (comment.user != null) {
-            de.vptr.midas.api.rest.entity.UserEntity userRef = new de.vptr.midas.api.rest.entity.UserEntity();
+            final de.vptr.midas.api.rest.entity.UserEntity userRef = new de.vptr.midas.api.rest.entity.UserEntity();
             userRef.id = comment.user.id;
             userRef.username = comment.user.username;
             result.user = userRef;
         }
-        
+
         return result;
     }
 

@@ -16,16 +16,16 @@ public class PostCommentResponseDto {
     public PostCommentResponseDto() {
     }
 
-    public PostCommentResponseDto(PostCommentEntity entity) {
+    public PostCommentResponseDto(final PostCommentEntity entity) {
         this.id = entity.id;
         this.content = entity.content;
         this.created = entity.created;
-        
+
         if (entity.post != null) {
             this.postId = entity.post.id;
             this.postTitle = entity.post.title;
         }
-        
+
         if (entity.user != null) {
             this.userId = entity.user.id;
             this.username = entity.user.username;
