@@ -80,6 +80,12 @@ public class AccountService {
 
     @Transactional
     public AccountEntity createAccount(final AccountEntity account) {
+        // Validate name is provided for creation
+        if (account.name == null || account.name.trim().isEmpty()) {
+            throw new WebApplicationException("Name is required for creating an account",
+                    Response.Status.BAD_REQUEST);
+        }
+
         account.persist();
         return account;
     }
@@ -89,6 +95,12 @@ public class AccountService {
         final AccountEntity existingAccount = AccountEntity.findById(account.id);
         if (existingAccount == null) {
             throw new WebApplicationException("Account not found", Response.Status.NOT_FOUND);
+        }
+
+        // Validate name is provided for complete replacement (PUT)
+        if (account.name == null || account.name.trim().isEmpty()) {
+            throw new WebApplicationException("Name is required for updating an account",
+                    Response.Status.BAD_REQUEST);
         }
 
         // Complete replacement (PUT semantics)

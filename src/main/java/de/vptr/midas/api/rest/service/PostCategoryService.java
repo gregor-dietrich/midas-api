@@ -30,6 +30,21 @@ public class PostCategoryService {
 
     @Transactional
     public PostCategoryEntity createCategory(final PostCategoryEntity category) {
+        // Validate name is provided for creation
+        if (category.name == null || category.name.trim().isEmpty()) {
+            throw new WebApplicationException("Name is required for creating a category",
+                    Response.Status.BAD_REQUEST);
+        }
+
+        // Validate parent exists if provided
+        if (category.parent != null && category.parent.id != null) {
+            final PostCategoryEntity existingParent = PostCategoryEntity.findById(category.parent.id);
+            if (existingParent == null) {
+                throw new WebApplicationException("Parent category not found", Response.Status.BAD_REQUEST);
+            }
+            category.parent = existingParent;
+        }
+
         category.persist();
         return category;
     }
@@ -41,9 +56,14 @@ public class PostCategoryService {
             throw new WebApplicationException("Category not found", Response.Status.NOT_FOUND);
         }
 
-        // Complete replacement (PUT semantics)
+        // Validate name is provided for complete replacement (PUT)
+        if (category.name == null || category.name.trim().isEmpty()) {
+            throw new WebApplicationException("Name is required for updating a category",
+                    Response.Status.BAD_REQUEST);
+        }
+
+        // Complete replacement (PUT semantics) - don't change parent in PUT
         existingCategory.name = category.name;
-        existingCategory.parent = category.parent;
 
         existingCategory.persist();
         return existingCategory;
@@ -60,9 +80,7 @@ public class PostCategoryService {
         if (category.name != null) {
             existingCategory.name = category.name;
         }
-        if (category.parent != null) {
-            existingCategory.parent = category.parent;
-        }
+        // Note: Don't allow parent changes via PATCH for safety
 
         existingCategory.persist();
         return existingCategory;

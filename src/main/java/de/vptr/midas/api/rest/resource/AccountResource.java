@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import de.vptr.midas.api.rest.dto.AccountDto;
+import de.vptr.midas.api.rest.dto.AccountResponseDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.PaymentEntity;
 import de.vptr.midas.api.rest.entity.UserAccountMetaEntity;
@@ -13,6 +14,7 @@ import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -92,27 +94,42 @@ public class AccountResource {
 
     @POST
     @RolesAllowed({ "user-account:add" })
-    public Response createAccount(final AccountEntity account) {
+    public Response createAccount(@Valid final AccountDto accountDto) {
+        // Map DTO to entity
+        final AccountEntity account = new AccountEntity();
+        account.name = accountDto.name;
+
         final AccountEntity created = this.accountService.createAccount(account);
-        return ResponseUtil.created(AccountDto.fromEntity(created));
+        final AccountResponseDto responseDto = new AccountResponseDto(created);
+        return ResponseUtil.created(responseDto);
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response updateAccount(@PathParam("id") final Long id, final AccountEntity account) {
+    public Response updateAccount(@PathParam("id") final Long id, @Valid final AccountDto accountDto) {
+        // Map DTO to entity
+        final AccountEntity account = new AccountEntity();
         account.id = id;
+        account.name = accountDto.name;
+
         final AccountEntity updated = this.accountService.updateAccount(account);
-        return ResponseUtil.ok(AccountDto.fromEntity(updated));
+        final AccountResponseDto responseDto = new AccountResponseDto(updated);
+        return ResponseUtil.ok(responseDto);
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response patchAccount(@PathParam("id") final Long id, final AccountEntity account) {
+    public Response patchAccount(@PathParam("id") final Long id, @Valid final AccountDto accountDto) {
+        // Map DTO to entity
+        final AccountEntity account = new AccountEntity();
         account.id = id;
+        account.name = accountDto.name;
+
         final AccountEntity updated = this.accountService.patchAccount(account);
-        return ResponseUtil.ok(AccountDto.fromEntity(updated));
+        final AccountResponseDto responseDto = new AccountResponseDto(updated);
+        return ResponseUtil.ok(responseDto);
     }
 
     @DELETE

@@ -3,6 +3,8 @@ package de.vptr.midas.api.rest.service;
 import java.util.List;
 import java.util.Optional;
 
+import de.vptr.midas.api.rest.dto.UserRankDto;
+import de.vptr.midas.api.rest.dto.UserRankResponseDto;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -25,136 +27,141 @@ public class UserRankService {
     }
 
     @Transactional
-    public UserRankEntity createRank(final UserRankEntity rank) {
-        // Set default permissions if not provided
-        if (rank.postAdd == null)
-            rank.postAdd = false;
-        if (rank.postDelete == null)
-            rank.postDelete = false;
-        if (rank.postEdit == null)
-            rank.postEdit = false;
-        if (rank.postCategoryAdd == null)
-            rank.postCategoryAdd = false;
-        if (rank.postCategoryDelete == null)
-            rank.postCategoryDelete = false;
-        if (rank.postCategoryEdit == null)
-            rank.postCategoryEdit = false;
-        if (rank.postCommentAdd == null)
-            rank.postCommentAdd = false;
-        if (rank.postCommentDelete == null)
-            rank.postCommentDelete = false;
-        if (rank.postCommentEdit == null)
-            rank.postCommentEdit = false;
-        if (rank.userAdd == null)
-            rank.userAdd = false;
-        if (rank.userDelete == null)
-            rank.userDelete = false;
-        if (rank.userEdit == null)
-            rank.userEdit = false;
-        if (rank.userGroupAdd == null)
-            rank.userGroupAdd = false;
-        if (rank.userGroupDelete == null)
-            rank.userGroupDelete = false;
-        if (rank.userGroupEdit == null)
-            rank.userGroupEdit = false;
-        if (rank.userAccountAdd == null)
-            rank.userAccountAdd = false;
-        if (rank.userAccountDelete == null)
-            rank.userAccountDelete = false;
-        if (rank.userAccountEdit == null)
-            rank.userAccountEdit = false;
-        if (rank.userRankAdd == null)
-            rank.userRankAdd = false;
-        if (rank.userRankDelete == null)
-            rank.userRankDelete = false;
-        if (rank.userRankEdit == null)
-            rank.userRankEdit = false;
+    public UserRankResponseDto createRank(final UserRankDto rankDto) {
+        final UserRankEntity rank = new UserRankEntity();
+
+        // Set properties from DTO
+        rank.name = rankDto.name;
+
+        // Set permissions from DTO with defaults
+        rank.pageAdd = rankDto.pageAdd != null ? rankDto.pageAdd : false;
+        rank.pageDelete = rankDto.pageDelete != null ? rankDto.pageDelete : false;
+        rank.pageEdit = rankDto.pageEdit != null ? rankDto.pageEdit : false;
+        rank.postAdd = rankDto.postAdd != null ? rankDto.postAdd : false;
+        rank.postDelete = rankDto.postDelete != null ? rankDto.postDelete : false;
+        rank.postEdit = rankDto.postEdit != null ? rankDto.postEdit : false;
+        rank.postCategoryAdd = rankDto.postCategoryAdd != null ? rankDto.postCategoryAdd : false;
+        rank.postCategoryDelete = rankDto.postCategoryDelete != null ? rankDto.postCategoryDelete : false;
+        rank.postCategoryEdit = rankDto.postCategoryEdit != null ? rankDto.postCategoryEdit : false;
+        rank.postCommentAdd = rankDto.postCommentAdd != null ? rankDto.postCommentAdd : false;
+        rank.postCommentDelete = rankDto.postCommentDelete != null ? rankDto.postCommentDelete : false;
+        rank.postCommentEdit = rankDto.postCommentEdit != null ? rankDto.postCommentEdit : false;
+        rank.userAdd = rankDto.userAdd != null ? rankDto.userAdd : false;
+        rank.userDelete = rankDto.userDelete != null ? rankDto.userDelete : false;
+        rank.userEdit = rankDto.userEdit != null ? rankDto.userEdit : false;
+        rank.userGroupAdd = rankDto.userGroupAdd != null ? rankDto.userGroupAdd : false;
+        rank.userGroupDelete = rankDto.userGroupDelete != null ? rankDto.userGroupDelete : false;
+        rank.userGroupEdit = rankDto.userGroupEdit != null ? rankDto.userGroupEdit : false;
+        rank.userAccountAdd = rankDto.userAccountAdd != null ? rankDto.userAccountAdd : false;
+        rank.userAccountDelete = rankDto.userAccountDelete != null ? rankDto.userAccountDelete : false;
+        rank.userAccountEdit = rankDto.userAccountEdit != null ? rankDto.userAccountEdit : false;
+        rank.userRankAdd = rankDto.userRankAdd != null ? rankDto.userRankAdd : false;
+        rank.userRankDelete = rankDto.userRankDelete != null ? rankDto.userRankDelete : false;
+        rank.userRankEdit = rankDto.userRankEdit != null ? rankDto.userRankEdit : false;
 
         rank.persist();
-        return rank;
+        return new UserRankResponseDto(rank);
     }
 
     @Transactional
-    public UserRankEntity updateRank(final UserRankEntity rank) {
-        final UserRankEntity existingRank = UserRankEntity.findById(rank.id);
+    public UserRankResponseDto updateRank(final Long id, final UserRankDto rankDto) {
+        final UserRankEntity existingRank = UserRankEntity.findById(id);
         if (existingRank == null) {
             throw new WebApplicationException("User rank not found", Response.Status.NOT_FOUND);
         }
 
         // Complete replacement (PUT semantics)
-        existingRank.name = rank.name;
-        existingRank.postAdd = rank.postAdd != null ? rank.postAdd : false;
-        existingRank.postDelete = rank.postDelete != null ? rank.postDelete : false;
-        existingRank.postEdit = rank.postEdit != null ? rank.postEdit : false;
-        existingRank.postCategoryAdd = rank.postCategoryAdd != null ? rank.postCategoryAdd : false;
-        existingRank.postCategoryDelete = rank.postCategoryDelete != null ? rank.postCategoryDelete : false;
-        existingRank.postCategoryEdit = rank.postCategoryEdit != null ? rank.postCategoryEdit : false;
-        existingRank.postCommentAdd = rank.postCommentAdd != null ? rank.postCommentAdd : false;
-        existingRank.postCommentDelete = rank.postCommentDelete != null ? rank.postCommentDelete : false;
-        existingRank.postCommentEdit = rank.postCommentEdit != null ? rank.postCommentEdit : false;
-        existingRank.userAdd = rank.userAdd != null ? rank.userAdd : false;
-        existingRank.userDelete = rank.userDelete != null ? rank.userDelete : false;
-        existingRank.userEdit = rank.userEdit != null ? rank.userEdit : false;
-        existingRank.userGroupAdd = rank.userGroupAdd != null ? rank.userGroupAdd : false;
-        existingRank.userGroupDelete = rank.userGroupDelete != null ? rank.userGroupDelete : false;
-        existingRank.userGroupEdit = rank.userGroupEdit != null ? rank.userGroupEdit : false;
-        existingRank.userRankAdd = rank.userRankAdd != null ? rank.userRankAdd : false;
-        existingRank.userRankDelete = rank.userRankDelete != null ? rank.userRankDelete : false;
-        existingRank.userRankEdit = rank.userRankEdit != null ? rank.userRankEdit : false;
+        existingRank.name = rankDto.name;
+        existingRank.pageAdd = rankDto.pageAdd != null ? rankDto.pageAdd : false;
+        existingRank.pageDelete = rankDto.pageDelete != null ? rankDto.pageDelete : false;
+        existingRank.pageEdit = rankDto.pageEdit != null ? rankDto.pageEdit : false;
+        existingRank.postAdd = rankDto.postAdd != null ? rankDto.postAdd : false;
+        existingRank.postDelete = rankDto.postDelete != null ? rankDto.postDelete : false;
+        existingRank.postEdit = rankDto.postEdit != null ? rankDto.postEdit : false;
+        existingRank.postCategoryAdd = rankDto.postCategoryAdd != null ? rankDto.postCategoryAdd : false;
+        existingRank.postCategoryDelete = rankDto.postCategoryDelete != null ? rankDto.postCategoryDelete : false;
+        existingRank.postCategoryEdit = rankDto.postCategoryEdit != null ? rankDto.postCategoryEdit : false;
+        existingRank.postCommentAdd = rankDto.postCommentAdd != null ? rankDto.postCommentAdd : false;
+        existingRank.postCommentDelete = rankDto.postCommentDelete != null ? rankDto.postCommentDelete : false;
+        existingRank.postCommentEdit = rankDto.postCommentEdit != null ? rankDto.postCommentEdit : false;
+        existingRank.userAdd = rankDto.userAdd != null ? rankDto.userAdd : false;
+        existingRank.userDelete = rankDto.userDelete != null ? rankDto.userDelete : false;
+        existingRank.userEdit = rankDto.userEdit != null ? rankDto.userEdit : false;
+        existingRank.userGroupAdd = rankDto.userGroupAdd != null ? rankDto.userGroupAdd : false;
+        existingRank.userGroupDelete = rankDto.userGroupDelete != null ? rankDto.userGroupDelete : false;
+        existingRank.userGroupEdit = rankDto.userGroupEdit != null ? rankDto.userGroupEdit : false;
+        existingRank.userAccountAdd = rankDto.userAccountAdd != null ? rankDto.userAccountAdd : false;
+        existingRank.userAccountDelete = rankDto.userAccountDelete != null ? rankDto.userAccountDelete : false;
+        existingRank.userAccountEdit = rankDto.userAccountEdit != null ? rankDto.userAccountEdit : false;
+        existingRank.userRankAdd = rankDto.userRankAdd != null ? rankDto.userRankAdd : false;
+        existingRank.userRankDelete = rankDto.userRankDelete != null ? rankDto.userRankDelete : false;
+        existingRank.userRankEdit = rankDto.userRankEdit != null ? rankDto.userRankEdit : false;
 
         existingRank.persist();
-        return existingRank;
+        return new UserRankResponseDto(existingRank);
     }
 
     @Transactional
-    public UserRankEntity patchRank(final UserRankEntity rank) {
-        final UserRankEntity existingRank = UserRankEntity.findById(rank.id);
+    public UserRankResponseDto patchRank(final Long id, final UserRankDto rankDto) {
+        final UserRankEntity existingRank = UserRankEntity.findById(id);
         if (existingRank == null) {
             throw new WebApplicationException("User rank not found", Response.Status.NOT_FOUND);
         }
 
         // Partial update (PATCH semantics) - only update provided fields
-        if (rank.name != null)
-            existingRank.name = rank.name;
-        if (rank.postAdd != null)
-            existingRank.postAdd = rank.postAdd;
-        if (rank.postDelete != null)
-            existingRank.postDelete = rank.postDelete;
-        if (rank.postEdit != null)
-            existingRank.postEdit = rank.postEdit;
-        if (rank.postCategoryAdd != null)
-            existingRank.postCategoryAdd = rank.postCategoryAdd;
-        if (rank.postCategoryDelete != null)
-            existingRank.postCategoryDelete = rank.postCategoryDelete;
-        if (rank.postCategoryEdit != null)
-            existingRank.postCategoryEdit = rank.postCategoryEdit;
-        if (rank.postCommentAdd != null)
-            existingRank.postCommentAdd = rank.postCommentAdd;
-        if (rank.postCommentDelete != null)
-            existingRank.postCommentDelete = rank.postCommentDelete;
-        if (rank.postCommentEdit != null)
-            existingRank.postCommentEdit = rank.postCommentEdit;
-        if (rank.userAdd != null)
-            existingRank.userAdd = rank.userAdd;
-        if (rank.userDelete != null)
-            existingRank.userDelete = rank.userDelete;
-        if (rank.userEdit != null)
-            existingRank.userEdit = rank.userEdit;
-        if (rank.userGroupAdd != null)
-            existingRank.userGroupAdd = rank.userGroupAdd;
-        if (rank.userGroupDelete != null)
-            existingRank.userGroupDelete = rank.userGroupDelete;
-        if (rank.userGroupEdit != null)
-            existingRank.userGroupEdit = rank.userGroupEdit;
-        if (rank.userRankAdd != null)
-            existingRank.userRankAdd = rank.userRankAdd;
-        if (rank.userRankDelete != null)
-            existingRank.userRankDelete = rank.userRankDelete;
-        if (rank.userRankEdit != null)
-            existingRank.userRankEdit = rank.userRankEdit;
+        if (rankDto.name != null)
+            existingRank.name = rankDto.name;
+        if (rankDto.pageAdd != null)
+            existingRank.pageAdd = rankDto.pageAdd;
+        if (rankDto.pageDelete != null)
+            existingRank.pageDelete = rankDto.pageDelete;
+        if (rankDto.pageEdit != null)
+            existingRank.pageEdit = rankDto.pageEdit;
+        if (rankDto.postAdd != null)
+            existingRank.postAdd = rankDto.postAdd;
+        if (rankDto.postDelete != null)
+            existingRank.postDelete = rankDto.postDelete;
+        if (rankDto.postEdit != null)
+            existingRank.postEdit = rankDto.postEdit;
+        if (rankDto.postCategoryAdd != null)
+            existingRank.postCategoryAdd = rankDto.postCategoryAdd;
+        if (rankDto.postCategoryDelete != null)
+            existingRank.postCategoryDelete = rankDto.postCategoryDelete;
+        if (rankDto.postCategoryEdit != null)
+            existingRank.postCategoryEdit = rankDto.postCategoryEdit;
+        if (rankDto.postCommentAdd != null)
+            existingRank.postCommentAdd = rankDto.postCommentAdd;
+        if (rankDto.postCommentDelete != null)
+            existingRank.postCommentDelete = rankDto.postCommentDelete;
+        if (rankDto.postCommentEdit != null)
+            existingRank.postCommentEdit = rankDto.postCommentEdit;
+        if (rankDto.userAdd != null)
+            existingRank.userAdd = rankDto.userAdd;
+        if (rankDto.userDelete != null)
+            existingRank.userDelete = rankDto.userDelete;
+        if (rankDto.userEdit != null)
+            existingRank.userEdit = rankDto.userEdit;
+        if (rankDto.userGroupAdd != null)
+            existingRank.userGroupAdd = rankDto.userGroupAdd;
+        if (rankDto.userGroupDelete != null)
+            existingRank.userGroupDelete = rankDto.userGroupDelete;
+        if (rankDto.userGroupEdit != null)
+            existingRank.userGroupEdit = rankDto.userGroupEdit;
+        if (rankDto.userAccountAdd != null)
+            existingRank.userAccountAdd = rankDto.userAccountAdd;
+        if (rankDto.userAccountDelete != null)
+            existingRank.userAccountDelete = rankDto.userAccountDelete;
+        if (rankDto.userAccountEdit != null)
+            existingRank.userAccountEdit = rankDto.userAccountEdit;
+        if (rankDto.userRankAdd != null)
+            existingRank.userRankAdd = rankDto.userRankAdd;
+        if (rankDto.userRankDelete != null)
+            existingRank.userRankDelete = rankDto.userRankDelete;
+        if (rankDto.userRankEdit != null)
+            existingRank.userRankEdit = rankDto.userRankEdit;
 
         existingRank.persist();
-        return existingRank;
+        return new UserRankResponseDto(existingRank);
     }
 
     @Transactional
