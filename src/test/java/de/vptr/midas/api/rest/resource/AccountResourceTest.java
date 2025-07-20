@@ -64,9 +64,7 @@ class AccountResourceTest {
     void testCreateUserAccount_unauthorized() {
         final String accountJson = """
                 {
-                    "userId": 1,
-                    "accountType": "test",
-                    "accountValue": "value"
+                    "name": "Test Account"
                 }
                 """;
         // @formatter:off
@@ -84,9 +82,7 @@ class AccountResourceTest {
     void testCreateUserAccount_authorizedButInsufficientRole() {
         final String accountJson = """
                 {
-                    "userId": 1,
-                    "accountType": "test",
-                    "accountValue": "value"
+                    "name": "Test Account"
                 }
                 """;
         // @formatter:off
@@ -105,8 +101,7 @@ class AccountResourceTest {
     void testUpdateUserAccount_unauthorized() {
         final String accountJson = """
                 {
-                    "accountType": "updated",
-                    "accountValue": "updatedValue"
+                    "name": "Updated Account Name"
                 }
                 """;
         // @formatter:off
