@@ -4,27 +4,34 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import de.vptr.midas.api.rest.dto.UserGroupDto;
+import de.vptr.midas.api.rest.dto.UserGroupResponseDto;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.entity.UserGroupEntity;
 import de.vptr.midas.api.rest.entity.UserGroupMetaEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class UserGroupService {
 
-    public List<UserGroupEntity> getAllGroups() {
-        return UserGroupEntity.listAll();
+    public List<UserGroupResponseDto> getAllGroups() {
+        return UserGroupEntity.listAll().stream()
+                .map(entity -> new UserGroupResponseDto((UserGroupEntity) entity))
+                .toList();
     }
 
-    public Optional<UserGroupEntity> findById(final Long id) {
-        return UserGroupEntity.findByIdOptional(id);
+    public Optional<UserGroupResponseDto> findById(final Long id) {
+        return UserGroupEntity.findByIdOptional(id)
+                .map(entity -> new UserGroupResponseDto((UserGroupEntity) entity));
     }
 
-    public Optional<UserGroupEntity> findByName(final String name) {
-        return Optional.ofNullable(UserGroupEntity.findByName(name));
+    public Optional<UserGroupResponseDto> findByName(final String name) {
+        return Optional.ofNullable(UserGroupEntity.findByName(name))
+                .map(UserGroupResponseDto::new);
     }
 
     public List<UserEntity> getUsersInGroup(final Long groupId) {
@@ -35,47 +42,58 @@ public class UserGroupService {
         return group.getUsers();
     }
 
-    public List<UserGroupEntity> getGroupsForUser(final Long userId) {
+    public List<UserGroupResponseDto> getGroupsForUser(final Long userId) {
         final var metas = UserGroupMetaEntity.findByUserId(userId);
         return metas.stream()
-                .map(meta -> meta.group)
+                .map(meta -> new UserGroupResponseDto(meta.group))
                 .toList();
     }
 
     @Transactional
-    public UserGroupEntity createGroup(final UserGroupEntity group) {
+    public UserGroupResponseDto createGroup(final UserGroupDto groupDto) {
+        if (groupDto.name == null || groupDto.name.trim().isEmpty()) {
+            throw new ValidationException("Name is required");
+        }
+
+        final UserGroupEntity group = new UserGroupEntity();
+        group.name = groupDto.name;
         group.persist();
-        return group;
+
+        return new UserGroupResponseDto(group);
     }
 
     @Transactional
-    public UserGroupEntity updateGroup(final UserGroupEntity group) {
-        final UserGroupEntity existingGroup = UserGroupEntity.findById(group.id);
+    public UserGroupResponseDto updateGroup(final Long id, final UserGroupDto groupDto) {
+        if (groupDto.name == null || groupDto.name.trim().isEmpty()) {
+            throw new ValidationException("Name is required");
+        }
+
+        final UserGroupEntity existingGroup = UserGroupEntity.findById(id);
         if (existingGroup == null) {
             throw new WebApplicationException("Group not found", Response.Status.NOT_FOUND);
         }
 
         // Complete replacement (PUT semantics)
-        existingGroup.name = group.name;
-
+        existingGroup.name = groupDto.name;
         existingGroup.persist();
-        return existingGroup;
+
+        return new UserGroupResponseDto(existingGroup);
     }
 
     @Transactional
-    public UserGroupEntity patchGroup(final UserGroupEntity group) {
-        final UserGroupEntity existingGroup = UserGroupEntity.findById(group.id);
+    public UserGroupResponseDto patchGroup(final Long id, final UserGroupDto groupDto) {
+        final UserGroupEntity existingGroup = UserGroupEntity.findById(id);
         if (existingGroup == null) {
             throw new WebApplicationException("Group not found", Response.Status.NOT_FOUND);
         }
 
         // Partial update (PATCH semantics) - only update provided fields
-        if (group.name != null) {
-            existingGroup.name = group.name;
+        if (groupDto.name != null && !groupDto.name.trim().isEmpty()) {
+            existingGroup.name = groupDto.name;
         }
 
         existingGroup.persist();
-        return existingGroup;
+        return new UserGroupResponseDto(existingGroup);
     }
 
     @Transactional

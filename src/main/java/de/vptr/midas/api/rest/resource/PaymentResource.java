@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import de.vptr.midas.api.rest.entity.PaymentEntity;
+import de.vptr.midas.api.rest.dto.PaymentDto;
+import de.vptr.midas.api.rest.dto.PaymentResponseDto;
 import de.vptr.midas.api.rest.service.PaymentService;
 import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
@@ -25,7 +26,7 @@ public class PaymentResource {
 
     @GET
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getAllPayments() {
+    public List<PaymentResponseDto> getAllPayments() {
         return this.paymentService.getAllPayments();
     }
 
@@ -39,28 +40,28 @@ public class PaymentResource {
     @GET
     @Path("/user/{userId}")
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getPaymentsByUser(@PathParam("userId") final Long userId) {
+    public List<PaymentResponseDto> getPaymentsByUser(@PathParam("userId") final Long userId) {
         return this.paymentService.findByUserId(userId);
     }
 
     @GET
     @Path("/source/{sourceId}")
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getPaymentsBySourceAccount(@PathParam("sourceId") final Long sourceId) {
+    public List<PaymentResponseDto> getPaymentsBySourceAccount(@PathParam("sourceId") final Long sourceId) {
         return this.paymentService.findBySourceAccountId(sourceId);
     }
 
     @GET
     @Path("/target/{targetId}")
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getPaymentsByTargetAccount(@PathParam("targetId") final Long targetId) {
+    public List<PaymentResponseDto> getPaymentsByTargetAccount(@PathParam("targetId") final Long targetId) {
         return this.paymentService.findByTargetAccountId(targetId);
     }
 
     @GET
     @Path("/date-range")
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getPaymentsByDateRange(
+    public List<PaymentResponseDto> getPaymentsByDateRange(
             @QueryParam("startDate") final LocalDate startDate,
             @QueryParam("endDate") final LocalDate endDate) {
         if (startDate == null || endDate == null) {
@@ -72,14 +73,14 @@ public class PaymentResource {
     @GET
     @Path("/recent")
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getRecentPayments(@QueryParam("limit") @DefaultValue("10") final int limit) {
+    public List<PaymentResponseDto> getRecentPayments(@QueryParam("limit") @DefaultValue("10") final int limit) {
         return this.paymentService.findRecentPayments(limit);
     }
 
     @GET
     @Path("/amount-range")
     @RolesAllowed({ "user-account:edit", "user-account:delete" })
-    public List<PaymentEntity> getPaymentsByAmountRange(
+    public List<PaymentResponseDto> getPaymentsByAmountRange(
             @QueryParam("minAmount") final BigDecimal minAmount,
             @QueryParam("maxAmount") final BigDecimal maxAmount) {
         if (minAmount == null || maxAmount == null) {
@@ -98,26 +99,24 @@ public class PaymentResource {
 
     @POST
     @RolesAllowed({ "user-account:add" })
-    public Response createPayment(final PaymentEntity payment) {
-        final PaymentEntity created = this.paymentService.createPayment(payment);
+    public Response createPayment(final PaymentDto paymentDto) {
+        final PaymentResponseDto created = this.paymentService.createPayment(paymentDto);
         return ResponseUtil.created(created);
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user-account:edit" })
-    public Response updatePayment(@PathParam("id") final Long id, final PaymentEntity payment) {
-        payment.id = id;
-        final PaymentEntity updated = this.paymentService.updatePayment(payment);
+    public Response updatePayment(@PathParam("id") final Long id, final PaymentDto paymentDto) {
+        final PaymentResponseDto updated = this.paymentService.updatePayment(id, paymentDto);
         return ResponseUtil.ok(updated);
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user-account:edit" })
-    public Response patchPayment(@PathParam("id") final Long id, final PaymentEntity payment) {
-        payment.id = id;
-        final PaymentEntity updated = this.paymentService.patchPayment(payment);
+    public Response patchPayment(@PathParam("id") final Long id, final PaymentDto paymentDto) {
+        final PaymentResponseDto updated = this.paymentService.patchPayment(id, paymentDto);
         return ResponseUtil.ok(updated);
     }
 

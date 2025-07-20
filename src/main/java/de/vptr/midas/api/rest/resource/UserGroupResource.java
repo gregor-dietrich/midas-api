@@ -2,8 +2,9 @@ package de.vptr.midas.api.rest.resource;
 
 import java.util.List;
 
+import de.vptr.midas.api.rest.dto.UserGroupDto;
+import de.vptr.midas.api.rest.dto.UserGroupResponseDto;
 import de.vptr.midas.api.rest.entity.UserEntity;
-import de.vptr.midas.api.rest.entity.UserGroupEntity;
 import de.vptr.midas.api.rest.entity.UserGroupMetaEntity;
 import de.vptr.midas.api.rest.service.UserGroupService;
 import de.vptr.midas.api.rest.util.ResponseUtil;
@@ -25,7 +26,7 @@ public class UserGroupResource {
 
     @GET
     @RolesAllowed({ "user-group:edit", "user-group:delete" })
-    public List<UserGroupEntity> getAllGroups() {
+    public List<UserGroupResponseDto> getAllGroups() {
         return this.groupService.getAllGroups();
     }
 
@@ -49,7 +50,7 @@ public class UserGroupResource {
 
     @GET
     @Path("/user/{userId}")
-    public List<UserGroupEntity> getGroupsForUser(@PathParam("userId") final Long userId) {
+    public List<UserGroupResponseDto> getGroupsForUser(@PathParam("userId") final Long userId) {
         return this.groupService.getGroupsForUser(userId);
     }
 
@@ -62,26 +63,24 @@ public class UserGroupResource {
 
     @POST
     @RolesAllowed({ "user-group:add" })
-    public Response createGroup(final UserGroupEntity group) {
-        final UserGroupEntity created = this.groupService.createGroup(group);
+    public Response createGroup(final UserGroupDto groupDto) {
+        final UserGroupResponseDto created = this.groupService.createGroup(groupDto);
         return ResponseUtil.created(created);
     }
 
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response updateGroup(@PathParam("id") final Long id, final UserGroupEntity group) {
-        group.id = id;
-        final UserGroupEntity updated = this.groupService.updateGroup(group);
+    public Response updateGroup(@PathParam("id") final Long id, final UserGroupDto groupDto) {
+        final UserGroupResponseDto updated = this.groupService.updateGroup(id, groupDto);
         return ResponseUtil.ok(updated);
     }
 
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "user-group:edit" })
-    public Response patchGroup(@PathParam("id") final Long id, final UserGroupEntity group) {
-        group.id = id;
-        final UserGroupEntity updated = this.groupService.patchGroup(group);
+    public Response patchGroup(@PathParam("id") final Long id, final UserGroupDto groupDto) {
+        final UserGroupResponseDto updated = this.groupService.patchGroup(id, groupDto);
         return ResponseUtil.ok(updated);
     }
 
