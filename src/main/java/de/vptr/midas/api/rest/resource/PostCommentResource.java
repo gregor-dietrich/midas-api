@@ -3,8 +3,8 @@ package de.vptr.midas.api.rest.resource;
 import java.util.List;
 
 import de.vptr.midas.api.rest.dto.PostCommentDto;
+import de.vptr.midas.api.rest.dto.PostCommentPatchDto;
 import de.vptr.midas.api.rest.dto.PostCommentResponseDto;
-import de.vptr.midas.api.rest.dto.PostCommentUpdateDto;
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.service.PostCommentService;
@@ -12,6 +12,7 @@ import de.vptr.midas.api.rest.util.ResponseUtil;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -64,7 +65,7 @@ public class PostCommentResource {
 
     @POST
     @RolesAllowed({ "post-comment:add" })
-    public Response createComment(final PostCommentDto commentDto) {
+    public Response createComment(@Valid final PostCommentDto commentDto) {
         // Map DTO to entity
         final PostCommentEntity comment = new PostCommentEntity();
         comment.content = commentDto.content;
@@ -85,7 +86,7 @@ public class PostCommentResource {
     @PUT
     @Path("/{id}")
     @RolesAllowed({ "post-comment:edit" })
-    public Response updateComment(@PathParam("id") final Long id, final PostCommentUpdateDto commentDto) {
+    public Response updateComment(@PathParam("id") final Long id, @Valid final PostCommentDto commentDto) {
         // Map DTO to entity
         final PostCommentEntity comment = new PostCommentEntity();
         comment.id = id;
@@ -99,7 +100,7 @@ public class PostCommentResource {
     @PATCH
     @Path("/{id}")
     @RolesAllowed({ "post-comment:edit" })
-    public Response patchComment(@PathParam("id") final Long id, final PostCommentUpdateDto commentDto) {
+    public Response patchComment(@PathParam("id") final Long id, @Valid final PostCommentPatchDto commentDto) {
         // Map DTO to entity
         final PostCommentEntity comment = new PostCommentEntity();
         comment.id = id;
