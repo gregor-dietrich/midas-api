@@ -10,48 +10,6 @@ public class MockUtil {
     }
 
     /**
-     * Creates a mock user ID for testing
-     */
-    public static Long createMockUserId() {
-        return 1L;
-    }
-
-    /**
-     * Creates a mock account ID for testing
-     */
-    public static Long createMockAccountId() {
-        return 1L;
-    }
-
-    /**
-     * Creates a mock post ID for testing
-     */
-    public static Long createMockPostId() {
-        return 1L;
-    }
-
-    /**
-     * Creates a mock payment ID for testing
-     */
-    public static Long createMockPaymentId() {
-        return 1L;
-    }
-
-    /**
-     * Creates a mock category ID for testing
-     */
-    public static Long createMockCategoryId() {
-        return 1L;
-    }
-
-    /**
-     * Creates a mock username for testing
-     */
-    public static String createMockUsername() {
-        return "admin";
-    }
-
-    /**
      * Returns common test IDs and parameters
      */
     public static class TestIds {
@@ -60,10 +18,37 @@ public class MockUtil {
         public static final Long POST_ID = 1L;
         public static final Long PAYMENT_ID = 1L;
         public static final Long CATEGORY_ID = 1L;
+        public static final Long COMMENT_ID = 1L;
+        public static final Long RANK_ID = 1L;
+        public static final Long GROUP_ID = 1L;
+        public static final Long PAGE_ID = 1L;
         public static final String USERNAME = "admin";
+        public static final String PASSWORD = "admin";
+        public static final String TEST_EMAIL = "test@example.com";
 
         private TestIds() {
             // Constants class
         }
+    }
+
+    /**
+     * Creates a mock ID for any entity type
+     */
+    public static Long createMockId() {
+        return TestIds.USER_ID;
+    }
+
+    /**
+     * Creates a mock username for testing
+     */
+    public static String createMockUsername() {
+        return TestIds.USERNAME;
+    }
+
+    /**
+     * Creates a mock email for testing
+     */
+    public static String createMockEmail() {
+        return TestIds.TEST_EMAIL;
     }
 }

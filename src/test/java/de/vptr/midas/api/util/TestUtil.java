@@ -58,37 +58,37 @@ public class TestUtil {
      * Tests unauthorized POST access to an endpoint
      */
     public static ValidatableResponse testUnauthorizedPost(final String endpoint, final String jsonBody) {
-        return given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when()
-                .post(endpoint)
-                .then()
-                .statusCode(401);
+        return testUnauthorizedAccessWithBody(endpoint, "POST", jsonBody);
     }
 
     /**
      * Tests unauthorized PUT access to an endpoint
      */
     public static ValidatableResponse testUnauthorizedPut(final String endpoint, final String jsonBody) {
-        return given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when()
-                .put(endpoint)
-                .then()
-                .statusCode(401);
+        return testUnauthorizedAccessWithBody(endpoint, "PUT", jsonBody);
     }
 
     /**
      * Tests unauthorized DELETE access to an endpoint
      */
     public static ValidatableResponse testUnauthorizedDelete(final String endpoint) {
-        return given()
-                .when()
-                .delete(endpoint)
-                .then()
-                .statusCode(401);
+        return testUnauthorizedAccess(endpoint, "DELETE");
+    }
+
+    /**
+     * Tests unauthorized access with request body for various HTTP methods
+     */
+    private static ValidatableResponse testUnauthorizedAccessWithBody(final String endpoint, final String httpMethod,
+            final String jsonBody) {
+        return switch (httpMethod.toUpperCase()) {
+            case "POST" ->
+                given().contentType(ContentType.JSON).body(jsonBody).when().post(endpoint).then().statusCode(401);
+            case "PUT" ->
+                given().contentType(ContentType.JSON).body(jsonBody).when().put(endpoint).then().statusCode(401);
+            case "PATCH" ->
+                given().contentType(ContentType.JSON).body(jsonBody).when().patch(endpoint).then().statusCode(401);
+            default -> throw new IllegalArgumentException("Unsupported HTTP method for body requests: " + httpMethod);
+        };
     }
 
     /**
@@ -158,13 +158,7 @@ public class TestUtil {
      * Tests unauthorized PATCH access to an endpoint
      */
     public static ValidatableResponse testUnauthorizedPatch(final String endpoint, final String jsonBody) {
-        return given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when()
-                .patch(endpoint)
-                .then()
-                .statusCode(401);
+        return testUnauthorizedAccessWithBody(endpoint, "PATCH", jsonBody);
     }
 
     /**
