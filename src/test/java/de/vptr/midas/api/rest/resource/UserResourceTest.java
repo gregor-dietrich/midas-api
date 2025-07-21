@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
@@ -81,14 +82,17 @@ class UserResourceTest {
     }
 
     @Test
+    @TestTransaction
     void testCreateUser_authorizedButInsufficientRole() {
-        final String userJson = """
+        // Generate unique username to avoid conflicts
+        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
+        final String userJson = String.format("""
                 {
-                    "username": "testuser",
-                    "email": "test@example.com",
+                    "username": "testuser_%s",
+                    "email": "test_%s@example.com",
                     "password": "password123"
                 }
-                """;
+                """, uniqueSuffix, uniqueSuffix);
 
         // @formatter:off
         given()

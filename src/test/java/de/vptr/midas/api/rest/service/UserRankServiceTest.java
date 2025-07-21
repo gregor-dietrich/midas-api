@@ -12,6 +12,7 @@ import de.vptr.midas.api.rest.dto.UserDto;
 import de.vptr.midas.api.rest.dto.UserRankDto;
 import de.vptr.midas.api.rest.dto.UserRankResponseDto;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -97,7 +98,7 @@ class UserRankServiceTest {
     }
 
     @Test
-    @Transactional
+    @TestTransaction
     void testUpdateRank() {
         // First create a rank
         final UserRankDto newRank = new UserRankDto();
@@ -159,7 +160,7 @@ class UserRankServiceTest {
     }
 
     @Test
-    @Transactional
+    @TestTransaction
     void testFindById() {
         // First create a rank
         final UserRankDto newRank = new UserRankDto();
@@ -183,7 +184,7 @@ class UserRankServiceTest {
     }
 
     @Test
-    @Transactional
+    @TestTransaction
     void testFindByName() {
         // First create a rank
         final UserRankDto newRank = new UserRankDto();
@@ -208,7 +209,7 @@ class UserRankServiceTest {
     }
 
     @Test
-    @Transactional
+    @TestTransaction
     void testGetRanksWithUserPermissions() {
         // Create ranks with different user permissions
         final UserRankDto userRank = new UserRankDto();
@@ -243,7 +244,7 @@ class UserRankServiceTest {
     }
 
     @Test
-    @Transactional
+    @TestTransaction
     void testGetRanksWithPostPermissions() {
         // Create ranks with different post permissions
         final UserRankDto postRank = new UserRankDto();
