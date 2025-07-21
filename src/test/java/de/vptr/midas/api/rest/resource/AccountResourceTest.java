@@ -1,8 +1,8 @@
 package de.vptr.midas.api.rest.resource;
 
+import static de.vptr.midas.api.util.TestDataBuilder.createDefaultAccountJson;
+import static de.vptr.midas.api.util.TestUtil.*;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,81 +15,34 @@ class AccountResourceTest {
 
     @Test
     void testGetAllUserAccounts_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL);
     }
 
     @Test
     void testGetAllUserAccounts_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        testAuthorizedGetWithJson(ENDPOINT_URL);
     }
 
     @Test
     void testGetUserAccountById_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetUserAccountById_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testCreateUserAccount_unauthorized() {
-        final String accountJson = """
-                {
-                    "name": "Test Account"
-                }
-                """;
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(accountJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedPost(ENDPOINT_URL, createDefaultAccountJson());
     }
 
     @Test
     void testCreateUserAccount_authorized() {
-        final String accountJson = """
-                {
-                    "name": "Test Account"
-                }
-                """;
         // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(accountJson)
+        authenticatedJsonRequest()
+            .body(createDefaultAccountJson())
         .when()
             .post(ENDPOINT_URL)
         .then()
@@ -99,16 +52,11 @@ class AccountResourceTest {
 
     @Test
     void testCreateUserAccount_forbidden() {
-        final String accountJson = """
-                {
-                    "name": "Test Account"
-                }
-                """;
         // @formatter:off
         given()
             .auth().basic("user", "user")
             .contentType(ContentType.JSON)
-            .body(accountJson)
+            .body(createDefaultAccountJson())
         .when()
             .post(ENDPOINT_URL)
         .then()
@@ -118,30 +66,11 @@ class AccountResourceTest {
 
     @Test
     void testUpdateUserAccount_unauthorized() {
-        final String accountJson = """
-                {
-                    "name": "Updated Account Name"
-                }
-                """;
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(accountJson)
-        .when()
-            .put(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedPut(ENDPOINT_URL + "/1", createDefaultAccountJson());
     }
 
     @Test
     void testDeleteUserAccount_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .delete(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedDelete(ENDPOINT_URL + "/1");
     }
 }

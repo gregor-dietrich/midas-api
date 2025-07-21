@@ -1,11 +1,12 @@
 package de.vptr.midas.api.rest.resource;
 
-import static io.restassured.RestAssured.given;
+import static de.vptr.midas.api.util.TestUtil.*;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.util.TestDataBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
@@ -15,180 +16,75 @@ class PaymentResourceTest {
 
     @Test
     void testGetAllUserPayments_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL);
     }
 
     @Test
     void testGetAllUserPayments_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        testAuthorizedGetWithJson(ENDPOINT_URL);
     }
 
     @Test
     void testGetPaymentById_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetPaymentById_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetPaymentsByUser_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/user/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/user/1");
     }
 
     @Test
     void testGetPaymentsByUser_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/user/1")
-        .then()
-            .statusCode(anyOf(is(200), is(500))) // 500 if database issues
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        authenticatedRequest()
+                .when()
+                .get(ENDPOINT_URL + "/user/1")
+                .then()
+                .statusCode(anyOf(is(200), is(500))) // 500 if database issues
+                .contentType(ContentType.JSON);
     }
 
     @Test
     void testGetRecentPayments_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/recent?limit=10")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/recent?limit=10");
     }
 
     @Test
     void testGetRecentPayments_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/recent?limit=10")
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        testAuthorizedGetWithJson(ENDPOINT_URL + "/recent?limit=10");
     }
 
     @Test
     void testCreatePayment_unauthorized() {
-        final String paymentJson = """
-                {
-                    "targetAccountId": 1,
-                    "sourceAccountId": 2,
-                    "userId": 1,
-                    "amount": "100.00",
-                    "comment": "Test payment",
-                    "date": "2024-01-01"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(paymentJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        final String paymentJson = TestDataBuilder.createDefaultPaymentJson();
+        testUnauthorizedPost(ENDPOINT_URL, paymentJson);
     }
 
     @Test
     void testCreatePayment_authorizedButInsufficientRole() {
-        final String paymentJson = """
-                {
-                    "targetAccountId": 1,
-                    "sourceAccountId": 2,
-                    "userId": 1,
-                    "amount": "100.00",
-                    "comment": "Test payment",
-                    "date": "2024-01-01"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(paymentJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(anyOf(is(201), is(403), is(400))); // 403 if no payment:add role, 400 if validation fails
-        // @formatter:on
+        final String paymentJson = TestDataBuilder.createDefaultPaymentJson();
+        authenticatedRequest()
+                .contentType(ContentType.JSON)
+                .body(paymentJson)
+                .when()
+                .post(ENDPOINT_URL)
+                .then()
+                .statusCode(anyOf(is(201), is(403), is(400))); // 403 if no payment:add role, 400 if validation fails
     }
 
     @Test
     void testUpdatePayment_unauthorized() {
-        final String paymentJson = """
-                {
-                    "targetAccountId": 1,
-                    "sourceAccountId": 2,
-                    "userId": 1,
-                    "amount": "150.00",
-                    "comment": "Updated payment",
-                    "date": "2024-01-01"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(paymentJson)
-        .when()
-            .put(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        final String paymentJson = TestDataBuilder.createUpdatedPaymentJson();
+        testUnauthorizedPut(ENDPOINT_URL + "/1", paymentJson);
     }
 
     @Test
     void testDeletePayment_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .delete(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/1", "DELETE");
     }
 }

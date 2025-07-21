@@ -1,15 +1,14 @@
 package de.vptr.midas.api.rest.resource;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.util.TestDataBuilder;
+import de.vptr.midas.api.util.TestUtil;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 
 @QuarkusTest
 class PostCommentResourceTest {
@@ -17,282 +16,89 @@ class PostCommentResourceTest {
 
     @Test
     void testGetAllPostComments_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL);
     }
 
     @Test
     void testGetAllPostComments_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(200);
-        // @formatter:on
+        TestUtil.testAuthorizedGetWithJson(ENDPOINT_URL);
     }
 
     @Test
     void testGetCommentById_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL + "/1");
     }
 
     @Test
     @TestTransaction
     void testGetCommentById_authorized() {
         // Since we can't guarantee a comment with ID 1 exists, test for 200 or 404
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(anyOf(is(200), is(404))); // Comment might not exist in isolated test
-        // @formatter:on
+        TestUtil.authenticatedRequest()
+                .when()
+                .get(ENDPOINT_URL + "/1")
+                .then()
+                .statusCode(anyOf(is(200), is(404))); // Comment might not exist in isolated test
     }
 
     @Test
     void testGetCommentsByPost_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/post/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL + "/post/1");
     }
 
     @Test
     void testGetCommentsByPost_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/post/1")
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        TestUtil.testAuthorizedGetWithJson(ENDPOINT_URL + "/post/1");
     }
 
     @Test
     void testCreateComment_unauthorized() {
-        final String commentJson = """
-                {
-                    "content": "Test comment",
-                    "postId": 1
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(commentJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
-    }
-
-    private Long createTestCategory() {
-        final String categoryJson = """
-                {
-                    \"name\": \"Test Category\",
-                    \"description\": \"Test description\"
-                }
-                """;
-        final Response response = given()
-                .auth().basic("admin", "admin")
-                .contentType(ContentType.JSON)
-                .body(categoryJson)
-                .when()
-                .post("/api/v1/categories");
-        final Integer id = response.then().statusCode(201).extract().path("id");
-        return id != null ? id.longValue() : null;
-    }
-
-    private Long createTestPost() {
-        final Long categoryId = this.createTestCategory();
-        final String postJson = String.format("""
-                {
-                    \"title\": \"Test Post\",
-                    \"content\": \"Test content\",
-                    \"published\": true,
-                    \"commentable\": true,
-                    \"userId\": 1,
-                    \"categoryId\": %d
-                }
-                """, categoryId);
-        final Response response = given()
-                .auth().basic("admin", "admin")
-                .contentType(ContentType.JSON)
-                .body(postJson)
-                .when()
-                .post("/api/v1/posts");
-        final Integer id = response.then().statusCode(201).extract().path("id");
-        return id != null ? id.longValue() : null;
+        final String commentJson = TestDataBuilder.createDefaultPostCommentJson(1L);
+        TestUtil.testUnauthorizedPost(ENDPOINT_URL, commentJson);
     }
 
     @Test
     void testCreateComment_authorized() {
-        final Long postId = this.createTestPost();
-        final String commentJson = String.format("""
-                {
-                    \"content\": \"Test comment\",
-                    \"postId\": %d
-                }
-                """, postId);
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(commentJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(201);
-        // @formatter:on
+        final Long postId = TestUtil.createTestPost();
+        final String commentJson = TestDataBuilder.createDefaultPostCommentJson(postId);
+        TestUtil.testAuthorizedPostWithCreation(ENDPOINT_URL, commentJson);
     }
 
     @Test
     void testUpdateComment_unauthorized() {
-        final String commentJson = """
-                {
-                    "content": "Updated comment"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(commentJson)
-        .when()
-            .put(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        final String commentJson = TestDataBuilder.createUpdatedPostCommentJson();
+        TestUtil.testUnauthorizedPut(ENDPOINT_URL + "/1", commentJson);
     }
 
     @Test
     void testUpdateComment_authorized() {
         // First create a comment to update
-        final Long postId = this.createTestPost();
-        final String createCommentJson = String.format("""
-                {
-                    \"content\": \"Original comment\",
-                    \"postId\": %d
-                }
-                """, postId);
-
-        final Response createResponse = given()
-                .auth().basic("admin", "admin")
-                .contentType(ContentType.JSON)
-                .body(createCommentJson)
-                .when()
-                .post(ENDPOINT_URL);
-
-        final Integer commentId = createResponse.then().statusCode(201).extract().path("id");
+        final Long postId = TestUtil.createTestPost();
+        final Long commentId = TestUtil.createTestComment(postId);
 
         // Now update the comment
-        final String updateCommentJson = """
-                {
-                    "content": "Updated comment content"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(updateCommentJson)
-        .when()
-            .put(ENDPOINT_URL + "/" + commentId)
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        final String updateCommentJson = TestDataBuilder.createUpdatedPostCommentJson();
+        TestUtil.testAuthorizedPutWithJson(ENDPOINT_URL + "/" + commentId, updateCommentJson);
     }
 
     @Test
     void testPatchComment_unauthorized() {
-        final String commentJson = """
-                {
-                    "content": "Patched comment"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(commentJson)
-        .when()
-            .patch(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        final String commentJson = TestDataBuilder.createPatchedPostCommentJson();
+        TestUtil.testUnauthorizedPatch(ENDPOINT_URL + "/1", commentJson);
     }
 
     @Test
     void testPatchComment_authorized() {
         // First create a comment to patch
-        final Long postId = this.createTestPost();
-        final String createCommentJson = String.format("""
-                {
-                    \"content\": \"Original comment\",
-                    \"postId\": %d
-                }
-                """, postId);
-
-        final Response createResponse = given()
-                .auth().basic("admin", "admin")
-                .contentType(ContentType.JSON)
-                .body(createCommentJson)
-                .when()
-                .post(ENDPOINT_URL);
-
-        final Integer commentId = createResponse.then().statusCode(201).extract().path("id");
+        final Long postId = TestUtil.createTestPost();
+        final Long commentId = TestUtil.createTestComment(postId);
 
         // Now patch the comment
-        final String patchCommentJson = """
-                {
-                    "content": "Patched comment content"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(patchCommentJson)
-        .when()
-            .patch(ENDPOINT_URL + "/" + commentId)
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        final String patchCommentJson = TestDataBuilder.createPatchedPostCommentJson();
+        TestUtil.testAuthorizedPatchWithJson(ENDPOINT_URL + "/" + commentId, patchCommentJson);
     }
 
     @Test
     void testDeleteComment_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .delete(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL + "/1", "DELETE");
     }
 }

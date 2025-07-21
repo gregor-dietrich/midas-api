@@ -1,5 +1,8 @@
 package de.vptr.midas.api.rest.resource;
 
+import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserUpdateJson;
+import static de.vptr.midas.api.util.TestDataBuilder.createUniqueUserJson;
+import static de.vptr.midas.api.util.TestUtil.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -8,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 
 @QuarkusTest
 class UserResourceTest {
@@ -16,13 +18,7 @@ class UserResourceTest {
 
     @Test
     void testGetAllUsers_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL);
     }
 
     @Test
@@ -39,147 +35,52 @@ class UserResourceTest {
 
     @Test
     void testGetCurrentUser_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/me")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/me");
     }
 
     @Test
     void testGetCurrentUser_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/me")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/me");
     }
 
     @Test
     void testCreateUser_unauthorized() {
-        final String userJson = """
-                {
-                    "username": "testuser",
-                    "email": "test@example.com",
-                    "password": "password123"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(userJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedPost(ENDPOINT_URL, createUniqueUserJson());
     }
 
     @Test
     @TestTransaction
     void testCreateUser_authorizedButInsufficientRole() {
-        // Generate unique username to avoid conflicts
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final String userJson = String.format("""
-                {
-                    "username": "testuser_%s",
-                    "email": "test_%s@example.com",
-                    "password": "password123"
-                }
-                """, uniqueSuffix, uniqueSuffix);
-
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(userJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(anyOf(is(201), is(403))); // 403 if no user:add role
-        // @formatter:on
+        testAuthorizedPostWithRoleCheck(ENDPOINT_URL, createUniqueUserJson());
     }
 
     @Test
     void testGetUserByUsername_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/username/admin")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/username/admin");
     }
 
     @Test
     void testGetUserByUsername_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/username/admin")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/username/admin");
     }
 
     @Test
     void testGetUserById_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetUserById_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testUpdateUser_unauthorized() {
-        final String userJson = """
-                {
-                    "username": "updateduser",
-                    "email": "updated@example.com"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(userJson)
-        .when()
-            .put(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedPut(ENDPOINT_URL + "/1", createDefaultUserUpdateJson());
     }
 
     @Test
     void testDeleteUser_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .delete(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedDelete(ENDPOINT_URL + "/1");
     }
 }

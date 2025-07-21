@@ -1,8 +1,9 @@
 package de.vptr.midas.api.rest.resource;
 
+import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserGroupJson;
+import static de.vptr.midas.api.util.TestDataBuilder.createUpdatedUserGroupJson;
+import static de.vptr.midas.api.util.TestUtil.*;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,145 +16,52 @@ class UserGroupResourceTest {
 
     @Test
     void testGetAllUserGroups_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL);
     }
 
     @Test
     void testGetAllUserGroups_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        testAuthorizedGetWithJson(ENDPOINT_URL);
     }
 
     @Test
     void testGetGroupById_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetGroupById_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(anyOf(is(200), is(404)))
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        testAuthorizedGetWithOptionalResourceAndJson(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetUsersInGroup_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1/users")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedAccess(ENDPOINT_URL + "/1/users");
     }
 
     @Test
     void testGetUsersInGroup_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1/users")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1/users");
     }
 
     @Test
     void testCreateGroup_unauthorized() {
-        final String groupJson = """
-                {
-                    "name": "Test Group",
-                    "description": "Test description"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(groupJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedPost(ENDPOINT_URL, createDefaultUserGroupJson());
     }
 
     @Test
     void testCreateGroup_authorizedButInsufficientRole() {
-        final String groupJson = """
-                {
-                    "name": "Test Group",
-                    "description": "Test description"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(groupJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(anyOf(is(201), is(403), is(500))); // 403 if no group:add role, 500 if validation fails
-        // @formatter:on
+        testAuthorizedPostWithRoleCheckAndValidation(ENDPOINT_URL, createDefaultUserGroupJson());
     }
 
     @Test
     void testUpdateGroup_unauthorized() {
-        final String groupJson = """
-                {
-                    "name": "Updated Group",
-                    "description": "Updated description"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(groupJson)
-        .when()
-            .put(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedPut(ENDPOINT_URL + "/1", createUpdatedUserGroupJson());
     }
 
     @Test
     void testDeleteGroup_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .delete(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        testUnauthorizedDelete(ENDPOINT_URL + "/1");
     }
 
     @Test

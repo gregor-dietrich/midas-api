@@ -1,13 +1,13 @@
 package de.vptr.midas.api.rest.resource;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.util.TestDataBuilder;
+import de.vptr.midas.api.util.TestUtil;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 
 @QuarkusTest
 class PageResourceTest {
@@ -15,122 +15,48 @@ class PageResourceTest {
 
     @Test
     void testGetAllPages_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL);
     }
 
     @Test
     void testGetAllPages_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(200)
-            .contentType(ContentType.JSON);
-        // @formatter:on
+        TestUtil.testAuthorizedGetWithJson(ENDPOINT_URL);
     }
 
     @Test
     void testGetPageById_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL + "/1");
     }
 
     @Test
     void testGetPageById_authorized() {
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(anyOf(is(200), is(404)));
-        // @formatter:on
+        TestUtil.authenticatedRequest()
+                .when()
+                .get(ENDPOINT_URL + "/1")
+                .then()
+                .statusCode(anyOf(is(200), is(404)));
     }
 
     @Test
     void testCreatePage_unauthorized() {
-        final String pageJson = """
-                {
-                    "title": "Test Page",
-                    "content": "Test content",
-                    "published": false
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(pageJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        final String pageJson = TestDataBuilder.createDefaultPageJson();
+        TestUtil.testUnauthorizedPost(ENDPOINT_URL, pageJson);
     }
 
     @Test
     void testCreatePage_authorizedButInsufficientRole() {
-        final String pageJson = """
-                {
-                    "title": "Test Page",
-                    "content": "Test content",
-                    "published": false
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .auth().basic("admin", "admin")
-            .contentType(ContentType.JSON)
-            .body(pageJson)
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(anyOf(is(201), is(403))); // 403 if no page:add role
-        // @formatter:on
+        final String pageJson = TestDataBuilder.createDefaultPageJson();
+        TestUtil.testAuthorizedPostWithRoleCheck(ENDPOINT_URL, pageJson); // 201 or 403
     }
 
     @Test
     void testUpdatePage_unauthorized() {
-        final String pageJson = """
-                {
-                    "title": "Updated Page",
-                    "content": "Updated content"
-                }
-                """;
-
-        // @formatter:off
-        given()
-            .contentType(ContentType.JSON)
-            .body(pageJson)
-        .when()
-            .put(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        final String pageJson = TestDataBuilder.createUpdatedPageJson();
+        TestUtil.testUnauthorizedPut(ENDPOINT_URL + "/1", pageJson);
     }
 
     @Test
     void testDeletePage_unauthorized() {
-        // @formatter:off
-        given()
-        .when()
-            .delete(ENDPOINT_URL + "/1")
-        .then()
-            .statusCode(401);
-        // @formatter:on
+        TestUtil.testUnauthorizedAccess(ENDPOINT_URL + "/1", "DELETE");
     }
 }

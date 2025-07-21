@@ -1,9 +1,8 @@
 package de.vptr.midas.api.rest.resource;
 
-import static io.restassured.RestAssured.given;
-
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.util.TestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -12,48 +11,39 @@ class AuthResourceTest {
 
   @Test
   void testAuthCheckEndpoint_validAuth() {
-    // @formatter:off
-    given()
-      .auth().basic("admin", "admin")
-    .when()
-      .head(ENDPOINT_URL)
-    .then()
-      .statusCode(200);
-    // @formatter:on
+    TestUtil.authenticatedRequest()
+        .when()
+        .head(ENDPOINT_URL)
+        .then()
+        .statusCode(200);
   }
 
   @Test
   void testAuthCheckEndpoint_noAuth() {
-    // @formatter:off
-    given()
-    .when()
-      .head(ENDPOINT_URL)
-    .then()
-      .statusCode(401);
-    // @formatter:on
+    TestUtil.given()
+        .when()
+        .head(ENDPOINT_URL)
+        .then()
+        .statusCode(401);
   }
 
   @Test
   void testAuthCheckEndpoint_invalidUser() {
-    // @formatter:off
-    given()
-      .auth().basic("root", "admin")
-    .when()
-      .head(ENDPOINT_URL)
-    .then()
-      .statusCode(401);
-    // @formatter:on
+    TestUtil.given()
+        .auth().basic("root", "admin")
+        .when()
+        .head(ENDPOINT_URL)
+        .then()
+        .statusCode(401);
   }
 
   @Test
   void testAuthCheckEndpoint_invalidPassword() {
-    // @formatter:off
-    given()
-      .auth().basic("admin", "root")
-    .when()
-      .head(ENDPOINT_URL)
-    .then()
-      .statusCode(401);
-    // @formatter:on
+    TestUtil.given()
+        .auth().basic("admin", "root")
+        .when()
+        .head(ENDPOINT_URL)
+        .then()
+        .statusCode(401);
   }
 }

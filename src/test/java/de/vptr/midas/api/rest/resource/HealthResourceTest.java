@@ -1,9 +1,8 @@
 package de.vptr.midas.api.rest.resource;
 
-import static io.restassured.RestAssured.given;
-
 import org.junit.jupiter.api.Test;
 
+import de.vptr.midas.api.util.TestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -12,12 +11,10 @@ class HealthResourceTest {
 
   @Test
   void testHealthCheckEndpoint() {
-    // @formatter:off
-    given()
-    .when()
-      .head(ENDPOINT_URL)
-    .then()
-      .statusCode(200);
-    // @formatter:on
+    TestUtil.given()
+        .when()
+        .head(ENDPOINT_URL)
+        .then()
+        .statusCode(200);
   }
 }
