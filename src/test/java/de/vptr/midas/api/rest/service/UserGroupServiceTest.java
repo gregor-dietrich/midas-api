@@ -1,5 +1,7 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
+import static de.vptr.midas.api.util.ServiceTestUtil.createUniqueTestName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -23,7 +25,7 @@ class UserGroupServiceTest {
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.userGroupService);
+        assertServiceNotNull(this.userGroupService);
     }
 
     @Test
@@ -36,13 +38,13 @@ class UserGroupServiceTest {
     @Transactional
     void testCreateGroup() {
         final UserGroupDto newGroupDto = new UserGroupDto();
-        newGroupDto.name = "Test Group";
+        newGroupDto.name = createUniqueTestName("Test Group");
 
         final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         assertNotNull(createdGroup);
         assertNotNull(createdGroup.id);
-        assertEquals("Test Group", createdGroup.name);
+        assertEquals(newGroupDto.name, createdGroup.name);
     }
 
     @Test

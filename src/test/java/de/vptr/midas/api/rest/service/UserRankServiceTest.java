@@ -1,5 +1,8 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniqueUserRankDto;
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
+import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -8,7 +11,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.UserDto;
 import de.vptr.midas.api.rest.dto.UserRankDto;
 import de.vptr.midas.api.rest.dto.UserRankResponseDto;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
@@ -28,18 +30,13 @@ class UserRankServiceTest {
     @BeforeEach
     @Transactional
     void setUp() {
-        // Create test user with unique username
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserDto testUserDto = new UserDto();
-        testUserDto.username = "rankTestUser_" + uniqueSuffix;
-        testUserDto.email = "ranktest_" + uniqueSuffix + "@example.com";
-        testUserDto.password = "password";
-        this.userService.createUser(testUserDto);
+        // Create test user using utility
+        setupTestUser(this.userService);
     }
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.userRankService);
+        assertServiceNotNull(this.userRankService);
     }
 
     @Test
@@ -51,13 +48,9 @@ class UserRankServiceTest {
     @Test
     @Transactional
     void testCreateRank() {
-        final UserRankDto newRank = new UserRankDto();
-        final String uniqueName = "Test Rank " + System.currentTimeMillis() + Math.random();
-        newRank.name = uniqueName;
-        newRank.userAdd = true;
-        newRank.userEdit = true;
+        final UserRankDto newRank = createUniqueUserRankDto();
+        // Override some permissions for testing
         newRank.userDelete = false;
-        newRank.postAdd = true;
         newRank.postEdit = false;
         newRank.postDelete = false;
 
@@ -65,7 +58,7 @@ class UserRankServiceTest {
 
         assertNotNull(createdRank);
         assertNotNull(createdRank.id);
-        assertEquals(uniqueName, createdRank.name);
+        assertEquals(newRank.name, createdRank.name);
         assertTrue(createdRank.userAdd);
         assertTrue(createdRank.userEdit);
         assertFalse(createdRank.userDelete);
@@ -78,16 +71,15 @@ class UserRankServiceTest {
     @Transactional
     void testCreateRankWithExistingName() {
         // First create a rank
-        final UserRankDto firstRank = new UserRankDto();
-        firstRank.name = "Duplicate Rank";
+        final UserRankDto firstRank = createUniqueUserRankDto();
         firstRank.userAdd = false;
         firstRank.userEdit = false;
         firstRank.userDelete = false;
-        this.userRankService.createRank(firstRank);
+        final UserRankResponseDto createdRank = this.userRankService.createRank(firstRank);
 
         // Try to create another rank with the same name
         final UserRankDto secondRank = new UserRankDto();
-        secondRank.name = "Duplicate Rank";
+        secondRank.name = createdRank.name; // Use the same name as the first rank
         secondRank.userAdd = true;
         secondRank.userEdit = true;
         secondRank.userDelete = true;

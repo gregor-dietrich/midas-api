@@ -1,5 +1,9 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostCategoryEntity;
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostDto;
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
+import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -10,8 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.PostDto;
 import de.vptr.midas.api.rest.dto.PostResponseDto;
-import de.vptr.midas.api.rest.dto.UserDto;
-import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
@@ -41,25 +43,15 @@ class PostCommentServiceTest {
     @BeforeEach
     @Transactional
     void setUp() {
-        // Create test category
-        this.testCategory = new PostCategoryEntity();
-        this.testCategory.name = "Test Category";
+        // Create test category using utility
+        this.testCategory = createUniquePostCategoryEntity();
         this.testCategory = this.postCategoryService.createCategory(this.testCategory);
 
-        // Create test user with unique username
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserDto testUserDto = new UserDto();
-        testUserDto.username = "commentTestUser_" + uniqueSuffix;
-        testUserDto.email = "commenttest_" + uniqueSuffix + "@example.com";
-        testUserDto.password = "password";
-        final UserResponseDto createdUser = this.userService.createUser(testUserDto);
-        this.testUser = UserEntity.findById(createdUser.id);
+        // Create test user using utility
+        this.testUser = setupTestUser(this.userService);
 
-        // Create test post
-        final PostDto testPostDto = new PostDto();
-        testPostDto.title = "Test Post";
-        testPostDto.content = "Test Content";
-        testPostDto.categoryId = this.testCategory.id;
+        // Create test post using utility
+        final PostDto testPostDto = createUniquePostDto(this.testUser.id, this.testCategory.id);
         testPostDto.published = true;
         testPostDto.commentable = true;
         final PostResponseDto createdPost = this.postService.createPost(testPostDto);
@@ -68,7 +60,7 @@ class PostCommentServiceTest {
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.postCommentService);
+        assertServiceNotNull(this.postCommentService);
     }
 
     @Test

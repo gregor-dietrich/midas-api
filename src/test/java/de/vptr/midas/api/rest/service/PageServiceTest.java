@@ -1,5 +1,6 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
@@ -17,7 +18,7 @@ class PageServiceTest {
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.pageService);
+        assertServiceNotNull(this.pageService);
     }
 
     @Test

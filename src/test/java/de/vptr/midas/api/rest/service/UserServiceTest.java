@@ -1,5 +1,8 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniqueUserDto;
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUserUpdateDto;
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -23,7 +26,7 @@ class UserServiceTest {
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.userService);
+        assertServiceNotNull(this.userService);
     }
 
     @Test
@@ -35,17 +38,13 @@ class UserServiceTest {
     @Test
     @Transactional
     void testCreateUser() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserDto newUser = new UserDto();
-        newUser.username = "newTestUser_" + uniqueSuffix;
-        newUser.email = "newtest_" + uniqueSuffix + "@example.com";
-        newUser.password = "plainPassword";
+        final UserDto newUser = createUniqueUserDto("newTestUser", "newtest");
         final UserResponseDto createdUser = this.userService.createUser(newUser);
 
         assertNotNull(createdUser);
         assertNotNull(createdUser.id);
-        assertEquals("newTestUser_" + uniqueSuffix, createdUser.username);
-        assertEquals("newtest_" + uniqueSuffix + "@example.com", createdUser.email);
+        assertEquals(newUser.username, createdUser.username);
+        assertEquals(newUser.email, createdUser.email);
         // Password is not returned in response DTO
         assertNotNull(createdUser.created);
         assertNotNull(createdUser.lastLogin);
@@ -56,19 +55,14 @@ class UserServiceTest {
     @Test
     @Transactional
     void testCreateUserWithExistingUsername() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserDto firstUser = new UserDto();
-        firstUser.username = "duplicateUser_" + uniqueSuffix;
-        firstUser.email = "first_" + uniqueSuffix + "@example.com";
-        firstUser.password = "password1";
+        final UserDto firstUser = createUniqueUserDto("duplicateUser", "first");
         this.userService.createUser(firstUser);
 
         // Try to create another user with the same username
-        final UserDto secondUser = new UserDto();
-        secondUser.username = "duplicateUser_" + uniqueSuffix;
-        secondUser.email = "second_" + uniqueSuffix + "@example.com";
-        secondUser.password = "password2";
+        final UserDto secondUser = createUniqueUserDto();
+        secondUser.username = firstUser.username; // Use same username
+        secondUser.email = createUniqueUserDto("second", "second").email; // Different email
 
         assertThrows(Exception.class, () -> {
             this.userService.createUser(secondUser);
@@ -78,36 +72,25 @@ class UserServiceTest {
     @Test
     @Transactional
     void testUpdateUser() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserDto newUser = new UserDto();
-        newUser.username = "updateTestUser_" + uniqueSuffix;
-        newUser.email = "update_" + uniqueSuffix + "@example.com";
-        newUser.password = "password";
+        final UserDto newUser = createUniqueUserDto("updateTestUser", "update");
         final UserResponseDto createdUser = this.userService.createUser(newUser);
 
         // Update the user
-        final UserDto updateDto = new UserDto();
-        updateDto.username = "testUser" + uniqueSuffix; // Username is required for updates
-        updateDto.email = "updated_" + uniqueSuffix + "@example.com";
-        updateDto.activated = true;
+        final UserDto updateDto = createUserUpdateDto("testUser", "updated");
 
         final UserResponseDto updatedUser = this.userService.updateUser(createdUser.id, updateDto);
 
         assertNotNull(updatedUser);
-        assertEquals("updated_" + uniqueSuffix + "@example.com", updatedUser.email);
+        assertEquals(updateDto.email, updatedUser.email);
         assertTrue(updatedUser.activated);
     }
 
     @Test
     @Transactional
     void testDeleteUser() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserDto newUser = new UserDto();
-        newUser.username = "deleteTestUser_" + uniqueSuffix;
-        newUser.email = "delete_" + uniqueSuffix + "@example.com";
-        newUser.password = "password";
+        final UserDto newUser = createUniqueUserDto("deleteTestUser", "delete");
         final UserResponseDto createdUser = this.userService.createUser(newUser);
 
         final Long userId = createdUser.id;
@@ -129,18 +112,14 @@ class UserServiceTest {
     @Test
     @Transactional
     void testFindByUsername() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserDto newUser = new UserDto();
-        newUser.username = "findByUsernameUser_" + uniqueSuffix;
-        newUser.email = "findbyusername_" + uniqueSuffix + "@example.com";
-        newUser.password = "password";
+        final UserDto newUser = createUniqueUserDto("findByUsernameUser", "findbyusername");
         this.userService.createUser(newUser);
 
-        final var foundUser = this.userService.findByUsername("findByUsernameUser_" + uniqueSuffix);
+        final var foundUser = this.userService.findByUsername(newUser.username);
 
         assertTrue(foundUser.isPresent());
-        assertEquals("findByUsernameUser_" + uniqueSuffix, foundUser.get().username);
+        assertEquals(newUser.username, foundUser.get().username);
     }
 
     @Test
@@ -152,18 +131,14 @@ class UserServiceTest {
     @Test
     @Transactional
     void testFindByEmail() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // First create a user
-        final UserDto newUser = new UserDto();
-        newUser.username = "findByEmailUser_" + uniqueSuffix;
-        newUser.email = "findbyemail_" + uniqueSuffix + "@example.com";
-        newUser.password = "password";
+        final UserDto newUser = createUniqueUserDto("findByEmailUser", "findbyemail");
         this.userService.createUser(newUser);
 
-        final var foundUser = this.userService.findByEmail("findbyemail_" + uniqueSuffix + "@example.com");
+        final var foundUser = this.userService.findByEmail(newUser.email);
 
         assertTrue(foundUser.isPresent());
-        assertEquals("findbyemail_" + uniqueSuffix + "@example.com", foundUser.get().email);
+        assertEquals(newUser.email, foundUser.get().email);
     }
 
     @Test
@@ -175,20 +150,13 @@ class UserServiceTest {
     @Test
     @Transactional
     void testFindActiveUsers() {
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
         // Create active and inactive users
-        final UserDto activeUser = new UserDto();
-        activeUser.username = "activeUser_" + uniqueSuffix;
-        activeUser.email = "active_" + uniqueSuffix + "@example.com";
-        activeUser.password = "password";
+        final UserDto activeUser = createUniqueUserDto("activeUser", "active");
         activeUser.activated = true;
         activeUser.banned = false;
         this.userService.createUser(activeUser);
 
-        final UserDto bannedUser = new UserDto();
-        bannedUser.username = "bannedUser_" + uniqueSuffix;
-        bannedUser.email = "banned_" + uniqueSuffix + "@example.com";
-        bannedUser.password = "password";
+        final UserDto bannedUser = createUniqueUserDto("bannedUser", "banned");
         bannedUser.activated = true;
         bannedUser.banned = true;
         this.userService.createUser(bannedUser);
@@ -198,7 +166,7 @@ class UserServiceTest {
 
         final List<UserEntity> activeUsers = this.userService.findActiveUsers();
         assertNotNull(activeUsers);
-        assertTrue(activeUsers.stream().anyMatch(u -> ("activeUser_" + uniqueSuffix).equals(u.username)));
-        assertFalse(activeUsers.stream().anyMatch(u -> ("bannedUser_" + uniqueSuffix).equals(u.username)));
+        assertTrue(activeUsers.stream().anyMatch(u -> activeUser.username.equals(u.username)));
+        assertFalse(activeUsers.stream().anyMatch(u -> bannedUser.username.equals(u.username)));
     }
 }

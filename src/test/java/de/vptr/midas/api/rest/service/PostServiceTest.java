@@ -1,5 +1,7 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostDto;
+import static de.vptr.midas.api.util.ServiceTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
@@ -11,8 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.PostDto;
 import de.vptr.midas.api.rest.dto.PostResponseDto;
-import de.vptr.midas.api.rest.dto.UserDto;
-import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
@@ -35,29 +35,18 @@ class PostServiceTest {
     @Transactional
     void setUp() {
         // Clean up existing test data
-        PostEntity.deleteAll();
+        cleanupTestData(PostEntity.class);
 
-        // Create test user with unique username using UserService
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserDto testUserDto = new UserDto();
-        testUserDto.username = "testuser_" + uniqueSuffix;
-        testUserDto.email = "test_" + uniqueSuffix + "@example.com";
-        testUserDto.password = "plainPassword";
-        final UserResponseDto createdUser = this.userService.createUser(testUserDto);
-        this.testUser = UserEntity.findById(createdUser.id);
+        // Create test user using utility
+        this.testUser = setupTestUser(this.userService);
 
-        // Create test category if it doesn't exist
-        this.testCategory = PostCategoryEntity.find("name", "Test Category").firstResult();
-        if (this.testCategory == null) {
-            this.testCategory = new PostCategoryEntity();
-            this.testCategory.name = "Test Category";
-            this.testCategory.persist();
-        }
+        // Create test category using utility
+        this.testCategory = setupTestCategory();
     }
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.postService);
+        assertServiceNotNull(this.postService);
     }
 
     @Test
@@ -80,18 +69,14 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePost() {
-        final PostDto newPost = new PostDto();
-        newPost.title = "Test Post";
-        newPost.content = "Test content";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final PostDto newPost = createUniquePostDto(this.testUser.id, this.testCategory.id);
 
         final PostResponseDto createdPost = this.postService.createPost(newPost);
 
         assertNotNull(createdPost);
         assertNotNull(createdPost.id);
-        assertEquals("Test Post", createdPost.title);
-        assertEquals("Test content", createdPost.content);
+        assertEquals(newPost.title, createdPost.title);
+        assertEquals(newPost.content, createdPost.content);
         assertNotNull(createdPost.created);
         assertNotNull(createdPost.lastEdit);
         assertEquals(createdPost.created, createdPost.lastEdit);

@@ -1,5 +1,8 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniqueAccountEntity;
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
+import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
@@ -12,8 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.PaymentDto;
 import de.vptr.midas.api.rest.dto.PaymentResponseDto;
-import de.vptr.midas.api.rest.dto.UserDto;
-import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -35,28 +36,22 @@ class PaymentServiceTest {
     @BeforeEach
     @Transactional
     void setUp() {
-        // Create test user with unique username
-        final String uniqueSuffix = String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
-        final UserDto testUserDto = new UserDto();
-        testUserDto.username = "paymentTestUser_" + uniqueSuffix;
-        testUserDto.email = "paymenttest_" + uniqueSuffix + "@example.com";
-        testUserDto.password = "password";
-        final UserResponseDto createdUser = this.userService.createUser(testUserDto);
-        this.testUser = UserEntity.findById(createdUser.id);
+        // Create test user using utility
+        this.testUser = setupTestUser(this.userService);
 
-        // Create test accounts
-        this.testSourceAccount = new AccountEntity();
+        // Create test accounts using utility
+        this.testSourceAccount = createUniqueAccountEntity();
         this.testSourceAccount.name = "Source Account";
         this.testSourceAccount.persist();
 
-        this.testTargetAccount = new AccountEntity();
+        this.testTargetAccount = createUniqueAccountEntity();
         this.testTargetAccount.name = "Target Account";
         this.testTargetAccount.persist();
     }
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.paymentService);
+        assertServiceNotNull(this.paymentService);
     }
 
     @Test

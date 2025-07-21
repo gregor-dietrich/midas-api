@@ -1,5 +1,7 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniqueAccountEntity;
+import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -22,7 +24,7 @@ class AccountServiceTest {
 
     @Test
     void testServiceNotNull() {
-        assertNotNull(this.accountService);
+        assertServiceNotNull(this.accountService);
     }
 
     @Test
@@ -34,22 +36,20 @@ class AccountServiceTest {
     @Test
     @Transactional
     void testCreateAccount() {
-        final AccountEntity newAccount = new AccountEntity();
-        newAccount.name = "Test Account";
+        final AccountEntity newAccount = createUniqueAccountEntity();
 
         final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         assertNotNull(createdAccount);
         assertNotNull(createdAccount.id);
-        assertEquals("Test Account", createdAccount.name);
+        assertEquals(newAccount.name, createdAccount.name);
     }
 
     @Test
     @Transactional
     void testUpdateAccount() {
         // First create an account
-        final AccountEntity newAccount = new AccountEntity();
-        newAccount.name = "Original Account";
+        final AccountEntity newAccount = createUniqueAccountEntity();
         final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         // Update the account
@@ -65,8 +65,7 @@ class AccountServiceTest {
     @Transactional
     void testDeleteAccount() {
         // First create an account
-        final AccountEntity newAccount = new AccountEntity();
-        newAccount.name = "Delete Test Account";
+        final AccountEntity newAccount = createUniqueAccountEntity();
         final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         final Long accountId = createdAccount.id;
@@ -88,15 +87,14 @@ class AccountServiceTest {
     @Transactional
     void testFindById() {
         // First create an account
-        final AccountEntity newAccount = new AccountEntity();
-        newAccount.name = "Find Test Account";
+        final AccountEntity newAccount = createUniqueAccountEntity();
         final AccountEntity createdAccount = this.accountService.createAccount(newAccount);
 
         final Optional<AccountEntity> foundAccount = this.accountService.findById(createdAccount.id);
 
         assertTrue(foundAccount.isPresent());
         assertEquals(createdAccount.id, foundAccount.get().id);
-        assertEquals("Find Test Account", foundAccount.get().name);
+        assertEquals(newAccount.name, foundAccount.get().name);
     }
 
     @Test
