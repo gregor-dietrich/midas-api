@@ -38,7 +38,8 @@ services:
       retries: 3
       start_period: 10s
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
 
 volumes:
   mariadb_data:
