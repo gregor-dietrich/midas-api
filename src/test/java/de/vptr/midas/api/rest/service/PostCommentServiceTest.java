@@ -1,9 +1,7 @@
 package de.vptr.midas.api.rest.service;
 
-import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostCategoryEntity;
 import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostDto;
-import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
-import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
+import static de.vptr.midas.api.util.ServiceTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -39,8 +37,7 @@ class PostCommentServiceTest {
     @Transactional
     void setUp() {
         // Create test category using utility
-        this.testCategory = createUniquePostCategoryEntity();
-        this.testCategory = this.postCategoryService.createCategory(this.testCategory);
+        this.testCategory = setupTestCategory();
 
         // Create test user using utility
         this.testUser = setupTestUser(this.userService);

@@ -1,12 +1,11 @@
 package de.vptr.midas.api.rest.service;
 
+import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniqueUserGroupDto;
 import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
-import static de.vptr.midas.api.util.ServiceTestUtil.createUniqueTestName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.UserGroupDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -33,8 +32,7 @@ class UserGroupServiceTest {
     @Test
     @Transactional
     void testCreateGroup() {
-        final var newGroupDto = new UserGroupDto();
-        newGroupDto.name = createUniqueTestName("Test Group");
+        final var newGroupDto = createUniqueUserGroupDto();
 
         final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
@@ -47,26 +45,23 @@ class UserGroupServiceTest {
     @Transactional
     void testUpdateGroup() {
         // First create a group
-        final var newGroupDto = new UserGroupDto();
-        newGroupDto.name = "Original Group";
+        final var newGroupDto = createUniqueUserGroupDto();
         final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         // Update the group
-        final var updateDto = new UserGroupDto();
-        updateDto.name = "Updated Group";
+        final var updateDto = createUniqueUserGroupDto();
 
         final var updatedGroup = this.userGroupService.updateGroup(createdGroup.id, updateDto);
 
         assertNotNull(updatedGroup);
-        assertEquals("Updated Group", updatedGroup.name);
+        assertEquals(updateDto.name, updatedGroup.name);
     }
 
     @Test
     @Transactional
     void testDeleteGroup() {
         // First create a group
-        final var newGroupDto = new UserGroupDto();
-        newGroupDto.name = "Delete Test Group";
+        final var newGroupDto = createUniqueUserGroupDto();
         final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         final Long groupId = createdGroup.id;
@@ -88,15 +83,14 @@ class UserGroupServiceTest {
     @Transactional
     void testFindById() {
         // First create a group
-        final var newGroupDto = new UserGroupDto();
-        newGroupDto.name = "Find Test Group";
+        final var newGroupDto = createUniqueUserGroupDto();
         final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         final var foundGroup = this.userGroupService.findById(createdGroup.id);
 
         assertTrue(foundGroup.isPresent());
         assertEquals(createdGroup.id, foundGroup.get().id);
-        assertEquals("Find Test Group", foundGroup.get().name);
+        assertEquals(createdGroup.name, foundGroup.get().name);
     }
 
     @Test

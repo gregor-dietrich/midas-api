@@ -49,12 +49,12 @@ class AccountServiceTest {
         final var createdAccount = this.accountService.createAccount(newAccount);
 
         // Update the account
-        createdAccount.name = "Updated Account";
+        createdAccount.name = createUniqueAccountEntity().name;
 
         final var updatedAccount = this.accountService.updateAccount(createdAccount);
 
         assertNotNull(updatedAccount);
-        assertEquals("Updated Account", updatedAccount.name);
+        assertEquals(createdAccount.name, updatedAccount.name);
     }
 
     @Test
