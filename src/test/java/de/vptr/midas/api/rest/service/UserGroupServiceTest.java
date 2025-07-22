@@ -37,10 +37,10 @@ class UserGroupServiceTest {
     @Test
     @Transactional
     void testCreateGroup() {
-        final UserGroupDto newGroupDto = new UserGroupDto();
+        final var newGroupDto = new UserGroupDto();
         newGroupDto.name = createUniqueTestName("Test Group");
 
-        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
+        final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         assertNotNull(createdGroup);
         assertNotNull(createdGroup.id);
@@ -51,15 +51,15 @@ class UserGroupServiceTest {
     @Transactional
     void testUpdateGroup() {
         // First create a group
-        final UserGroupDto newGroupDto = new UserGroupDto();
+        final var newGroupDto = new UserGroupDto();
         newGroupDto.name = "Original Group";
-        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
+        final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         // Update the group
-        final UserGroupDto updateDto = new UserGroupDto();
+        final var updateDto = new UserGroupDto();
         updateDto.name = "Updated Group";
 
-        final UserGroupResponseDto updatedGroup = this.userGroupService.updateGroup(createdGroup.id, updateDto);
+        final var updatedGroup = this.userGroupService.updateGroup(createdGroup.id, updateDto);
 
         assertNotNull(updatedGroup);
         assertEquals("Updated Group", updatedGroup.name);
@@ -69,13 +69,13 @@ class UserGroupServiceTest {
     @Transactional
     void testDeleteGroup() {
         // First create a group
-        final UserGroupDto newGroupDto = new UserGroupDto();
+        final var newGroupDto = new UserGroupDto();
         newGroupDto.name = "Delete Test Group";
-        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
+        final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         final Long groupId = createdGroup.id;
 
-        final boolean deleted = this.userGroupService.deleteGroup(groupId);
+        final var deleted = this.userGroupService.deleteGroup(groupId);
 
         assertTrue(deleted);
         final Optional<UserGroupResponseDto> deletedGroup = this.userGroupService.findById(groupId);
@@ -84,7 +84,7 @@ class UserGroupServiceTest {
 
     @Test
     void testDeleteNonExistentGroup() {
-        final boolean deleted = this.userGroupService.deleteGroup(999999L);
+        final var deleted = this.userGroupService.deleteGroup(999999L);
         assertFalse(deleted);
     }
 
@@ -92,9 +92,9 @@ class UserGroupServiceTest {
     @Transactional
     void testFindById() {
         // First create a group
-        final UserGroupDto newGroupDto = new UserGroupDto();
+        final var newGroupDto = new UserGroupDto();
         newGroupDto.name = "Find Test Group";
-        final UserGroupResponseDto createdGroup = this.userGroupService.createGroup(newGroupDto);
+        final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
         final Optional<UserGroupResponseDto> foundGroup = this.userGroupService.findById(createdGroup.id);
 

@@ -2,8 +2,6 @@ package de.vptr.midas.api.util;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import de.vptr.midas.api.rest.dto.UserDto;
-import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import de.vptr.midas.api.rest.service.UserService;
@@ -56,8 +54,8 @@ public class ServiceTestUtil {
      * Sets up a test user and returns the entity
      */
     public static UserEntity setupTestUser(final UserService userService) {
-        final UserDto testUserDto = ServiceTestDataBuilder.createUniqueUserDto();
-        final UserResponseDto createdUser = userService.createUser(testUserDto);
+        final var testUserDto = ServiceTestDataBuilder.createUniqueUserDto();
+        final var createdUser = userService.createUser(testUserDto);
         return UserEntity.findById(createdUser.id);
     }
 

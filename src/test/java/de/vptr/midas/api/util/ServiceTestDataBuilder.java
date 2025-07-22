@@ -2,6 +2,8 @@ package de.vptr.midas.api.util;
 
 import de.vptr.midas.api.rest.dto.PostDto;
 import de.vptr.midas.api.rest.dto.UserDto;
+import de.vptr.midas.api.rest.dto.UserGroupDto;
+import de.vptr.midas.api.rest.dto.UserRankDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.PageEntity;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
@@ -19,8 +21,8 @@ public class ServiceTestDataBuilder {
      * Creates a unique UserDto for testing
      */
     public static UserDto createUniqueUserDto() {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final UserDto user = new UserDto();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var user = new UserDto();
         user.username = "testuser_" + suffix;
         user.email = "test_" + suffix + "@example.com";
         user.password = "password123";
@@ -31,8 +33,8 @@ public class ServiceTestDataBuilder {
      * Creates a unique UserDto with custom prefix
      */
     public static UserDto createUniqueUserDto(final String usernamePrefix, final String emailPrefix) {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final UserDto user = new UserDto();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var user = new UserDto();
         user.username = usernamePrefix + "_" + suffix;
         user.email = emailPrefix + "_" + suffix + "@example.com";
         user.password = "password123";
@@ -43,8 +45,8 @@ public class ServiceTestDataBuilder {
      * Creates a unique PostDto for testing
      */
     public static PostDto createUniquePostDto(final Long userId, final Long categoryId) {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final PostDto post = new PostDto();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var post = new PostDto();
         post.title = "Test Post " + suffix;
         post.content = "Test content " + suffix;
         post.userId = userId;
@@ -58,7 +60,7 @@ public class ServiceTestDataBuilder {
      * Creates a unique AccountEntity for testing
      */
     public static AccountEntity createUniqueAccountEntity() {
-        final AccountEntity account = new AccountEntity();
+        final var account = new AccountEntity();
         account.name = ServiceTestUtil.createUniqueTestName("Test Account");
         return account;
     }
@@ -67,7 +69,7 @@ public class ServiceTestDataBuilder {
      * Creates a unique PostCategoryEntity for testing
      */
     public static PostCategoryEntity createUniquePostCategoryEntity() {
-        final PostCategoryEntity category = new PostCategoryEntity();
+        final var category = new PostCategoryEntity();
         category.name = ServiceTestUtil.createUniqueTestName("Test Category");
         return category;
     }
@@ -76,8 +78,8 @@ public class ServiceTestDataBuilder {
      * Creates a unique PageEntity for testing
      */
     public static PageEntity createUniquePageEntity() {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final PageEntity page = new PageEntity();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var page = new PageEntity();
         page.title = "Test Page " + suffix;
         page.content = "Test content " + suffix;
         return page;
@@ -87,8 +89,8 @@ public class ServiceTestDataBuilder {
      * Creates a UserDto for update operations (without password)
      */
     public static UserDto createUserUpdateDto(final String usernamePrefix, final String emailPrefix) {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final UserDto user = new UserDto();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var user = new UserDto();
         user.username = usernamePrefix + "_" + suffix;
         user.email = emailPrefix + "_" + suffix + "@example.com";
         user.activated = true;
@@ -99,8 +101,8 @@ public class ServiceTestDataBuilder {
      * Creates a unique UserRankDto for testing with all permissions enabled
      */
     public static de.vptr.midas.api.rest.dto.UserRankDto createUniqueUserRankDto() {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final de.vptr.midas.api.rest.dto.UserRankDto rank = new de.vptr.midas.api.rest.dto.UserRankDto();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var rank = new UserRankDto();
         rank.name = "Test Rank " + suffix;
 
         // Set all permissions to true for testing
@@ -136,8 +138,8 @@ public class ServiceTestDataBuilder {
      * Creates a unique UserGroupDto for testing
      */
     public static de.vptr.midas.api.rest.dto.UserGroupDto createUniqueUserGroupDto() {
-        final String suffix = ServiceTestUtil.generateUniqueTestSuffix();
-        final de.vptr.midas.api.rest.dto.UserGroupDto group = new de.vptr.midas.api.rest.dto.UserGroupDto();
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var group = new UserGroupDto();
         group.name = "Test Group " + suffix;
         return group;
     }

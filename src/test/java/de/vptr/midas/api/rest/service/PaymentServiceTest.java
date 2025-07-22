@@ -63,7 +63,7 @@ class PaymentServiceTest {
     @Test
     @Transactional
     void testCreatePayment() {
-        final PaymentDto newPaymentDto = new PaymentDto();
+        final var newPaymentDto = new PaymentDto();
         newPaymentDto.targetAccountId = this.testTargetAccount.id;
         newPaymentDto.sourceAccountId = this.testSourceAccount.id;
         newPaymentDto.userId = this.testUser.id;
@@ -71,7 +71,7 @@ class PaymentServiceTest {
         newPaymentDto.date = LocalDate.now();
         newPaymentDto.amount = new BigDecimal("100.50");
 
-        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
+        final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         assertNotNull(createdPayment);
         assertNotNull(createdPayment.id);
@@ -88,17 +88,17 @@ class PaymentServiceTest {
     @Transactional
     void testUpdatePayment() {
         // First create a payment
-        final PaymentDto newPaymentDto = new PaymentDto();
+        final var newPaymentDto = new PaymentDto();
         newPaymentDto.targetAccountId = this.testTargetAccount.id;
         newPaymentDto.sourceAccountId = this.testSourceAccount.id;
         newPaymentDto.userId = this.testUser.id;
         newPaymentDto.comment = "Original comment";
         newPaymentDto.date = LocalDate.now();
         newPaymentDto.amount = new BigDecimal("50.00");
-        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
+        final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         // Update the payment
-        final PaymentDto updateDto = new PaymentDto();
+        final var updateDto = new PaymentDto();
         updateDto.targetAccountId = this.testTargetAccount.id;
         updateDto.sourceAccountId = this.testSourceAccount.id;
         updateDto.userId = this.testUser.id;
@@ -106,7 +106,7 @@ class PaymentServiceTest {
         updateDto.date = LocalDate.now();
         updateDto.amount = new BigDecimal("75.00");
 
-        final PaymentResponseDto updatedPayment = this.paymentService.updatePayment(createdPayment.id, updateDto);
+        final var updatedPayment = this.paymentService.updatePayment(createdPayment.id, updateDto);
 
         assertNotNull(updatedPayment);
         assertEquals("Updated comment", updatedPayment.comment);
@@ -118,18 +118,18 @@ class PaymentServiceTest {
     @Transactional
     void testDeletePayment() {
         // First create a payment
-        final PaymentDto newPaymentDto = new PaymentDto();
+        final var newPaymentDto = new PaymentDto();
         newPaymentDto.targetAccountId = this.testTargetAccount.id;
         newPaymentDto.sourceAccountId = this.testSourceAccount.id;
         newPaymentDto.userId = this.testUser.id;
         newPaymentDto.comment = "Delete test payment";
         newPaymentDto.date = LocalDate.now();
         newPaymentDto.amount = new BigDecimal("25.00");
-        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
+        final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         final Long paymentId = createdPayment.id;
 
-        final boolean deleted = this.paymentService.deletePayment(paymentId);
+        final var deleted = this.paymentService.deletePayment(paymentId);
 
         assertTrue(deleted);
         final Optional<PaymentResponseDto> deletedPayment = this.paymentService.findById(paymentId);
@@ -138,7 +138,7 @@ class PaymentServiceTest {
 
     @Test
     void testDeleteNonExistentPayment() {
-        final boolean deleted = this.paymentService.deletePayment(999999L);
+        final var deleted = this.paymentService.deletePayment(999999L);
         assertFalse(deleted);
     }
 
@@ -146,14 +146,14 @@ class PaymentServiceTest {
     @Transactional
     void testFindById() {
         // First create a payment
-        final PaymentDto newPaymentDto = new PaymentDto();
+        final var newPaymentDto = new PaymentDto();
         newPaymentDto.targetAccountId = this.testTargetAccount.id;
         newPaymentDto.sourceAccountId = this.testSourceAccount.id;
         newPaymentDto.userId = this.testUser.id;
         newPaymentDto.comment = "Find test payment";
         newPaymentDto.date = LocalDate.now();
         newPaymentDto.amount = new BigDecimal("200.00");
-        final PaymentResponseDto createdPayment = this.paymentService.createPayment(newPaymentDto);
+        final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         final Optional<PaymentResponseDto> foundPayment = this.paymentService.findById(createdPayment.id);
 
@@ -173,7 +173,7 @@ class PaymentServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create a payment
-        final PaymentDto newPaymentDto = new PaymentDto();
+        final var newPaymentDto = new PaymentDto();
         newPaymentDto.targetAccountId = this.testTargetAccount.id;
         newPaymentDto.sourceAccountId = this.testSourceAccount.id;
         newPaymentDto.userId = this.testUser.id;
@@ -188,7 +188,7 @@ class PaymentServiceTest {
         assertFalse(userPayments.isEmpty());
 
         // Verify all payments belong to the user
-        for (final PaymentResponseDto payment : userPayments) {
+        for (final var payment : userPayments) {
             assertEquals(this.testUser.id, payment.userId);
         }
     }
@@ -200,7 +200,7 @@ class PaymentServiceTest {
         final LocalDate endDate = LocalDate.now().plusDays(1);
 
         // First create a payment within the date range
-        final PaymentDto newPaymentDto = new PaymentDto();
+        final var newPaymentDto = new PaymentDto();
         newPaymentDto.targetAccountId = this.testTargetAccount.id;
         newPaymentDto.sourceAccountId = this.testSourceAccount.id;
         newPaymentDto.userId = this.testUser.id;
@@ -215,7 +215,7 @@ class PaymentServiceTest {
         assertFalse(paymentsInRange.isEmpty());
 
         // Verify all payments are within the date range
-        for (final PaymentResponseDto payment : paymentsInRange) {
+        for (final var payment : paymentsInRange) {
             assertFalse(payment.date.isBefore(startDate));
             assertFalse(payment.date.isAfter(endDate));
         }

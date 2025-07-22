@@ -4,7 +4,6 @@ import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostDto;
 import static de.vptr.midas.api.util.ServiceTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.PostDto;
-import de.vptr.midas.api.rest.dto.PostResponseDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
@@ -86,9 +84,9 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePost() {
-        final PostDto newPost = createUniquePostDto(this.testUser.id, this.testCategory.id);
+        final var newPost = createUniquePostDto(this.testUser.id, this.testCategory.id);
 
-        final PostResponseDto createdPost = this.postService.createPost(newPost);
+        final var createdPost = this.postService.createPost(newPost);
 
         assertNotNull(createdPost);
         assertNotNull(createdPost.id);
@@ -104,7 +102,7 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePostWithPublishedFlag() {
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "Published Test Post";
         newPost.content = "Published test content";
         newPost.published = true;
@@ -112,7 +110,7 @@ class PostServiceTest {
         newPost.userId = this.testUser.id;
         newPost.categoryId = this.testCategory.id;
 
-        final PostResponseDto createdPost = this.postService.createPost(newPost);
+        final var createdPost = this.postService.createPost(newPost);
 
         assertNotNull(createdPost);
         assertTrue(createdPost.published);
@@ -123,15 +121,15 @@ class PostServiceTest {
     @Transactional
     void testUpdatePost() {
         // First create a post
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "Original Title";
         newPost.content = "Original content";
         newPost.userId = this.testUser.id;
         newPost.categoryId = this.testCategory.id;
-        final PostResponseDto createdPost = this.postService.createPost(newPost);
+        final var createdPost = this.postService.createPost(newPost);
 
-        final LocalDateTime originalCreated = createdPost.created;
-        final LocalDateTime originalLastEdit = createdPost.lastEdit;
+        final var originalCreated = createdPost.created;
+        final var originalLastEdit = createdPost.lastEdit;
 
         // Wait a bit to ensure timestamp difference
         try {
@@ -141,11 +139,11 @@ class PostServiceTest {
         }
 
         // Update the post
-        final PostDto updateDto = new PostDto();
+        final var updateDto = new PostDto();
         updateDto.title = "Updated Title";
         updateDto.content = "Updated content";
 
-        final PostResponseDto updatedPost = this.postService.updatePost(createdPost.id, updateDto);
+        final var updatedPost = this.postService.updatePost(createdPost.id, updateDto);
 
         assertNotNull(updatedPost);
         assertEquals("Updated Title", updatedPost.title);
@@ -158,18 +156,18 @@ class PostServiceTest {
     @Transactional
     void testPatchPost() {
         // First create a post
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "Original Title";
         newPost.content = "Original content";
         newPost.userId = this.testUser.id;
         newPost.categoryId = this.testCategory.id;
-        final PostResponseDto createdPost = this.postService.createPost(newPost);
+        final var createdPost = this.postService.createPost(newPost);
 
         // Patch only the title
-        final PostDto patchDto = new PostDto();
+        final var patchDto = new PostDto();
         patchDto.title = "Patched Title";
 
-        final PostResponseDto patchedPost = this.postService.patchPost(createdPost.id, patchDto);
+        final var patchedPost = this.postService.patchPost(createdPost.id, patchDto);
 
         assertNotNull(patchedPost);
         assertEquals("Patched Title", patchedPost.title);
@@ -180,16 +178,16 @@ class PostServiceTest {
     @Transactional
     void testDeletePost() {
         // First create a post
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "To Be Deleted";
         newPost.content = "This post will be deleted";
         newPost.userId = this.testUser.id;
         newPost.categoryId = this.testCategory.id;
-        final PostResponseDto createdPost = this.postService.createPost(newPost);
+        final var createdPost = this.postService.createPost(newPost);
 
-        final Long postId = createdPost.id;
+        final var postId = createdPost.id;
 
-        final boolean deleted = this.postService.deletePost(postId);
+        final var deleted = this.postService.deletePost(postId);
 
         assertTrue(deleted);
         final Optional<PostEntity> deletedPost = this.postService.findById(postId);
@@ -198,7 +196,7 @@ class PostServiceTest {
 
     @Test
     void testDeleteNonExistentPost() {
-        final boolean deleted = this.postService.deletePost(999999L);
+        final var deleted = this.postService.deletePost(999999L);
         assertFalse(deleted);
     }
 
@@ -206,12 +204,12 @@ class PostServiceTest {
     @Transactional
     void testFindById() {
         // First create a post
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "Find By ID Test";
         newPost.content = "Test content";
         newPost.userId = this.testUser.id;
         newPost.categoryId = this.testCategory.id;
-        final PostResponseDto createdPost = this.postService.createPost(newPost);
+        final var createdPost = this.postService.createPost(newPost);
 
         final Optional<PostEntity> foundPost = this.postService.findById(createdPost.id);
 
@@ -229,7 +227,7 @@ class PostServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create a post
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "User Post Test";
         newPost.content = "Test content";
         newPost.userId = this.testUser.id;
@@ -247,7 +245,7 @@ class PostServiceTest {
     @Transactional
     void testFindByCategoryId() {
         // First create a post
-        final PostDto newPost = new PostDto();
+        final var newPost = new PostDto();
         newPost.title = "Category Post Test";
         newPost.content = "Test content";
         newPost.userId = this.testUser.id;

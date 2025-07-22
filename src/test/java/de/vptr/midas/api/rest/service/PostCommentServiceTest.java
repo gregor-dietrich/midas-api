@@ -12,8 +12,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.PostDto;
-import de.vptr.midas.api.rest.dto.PostResponseDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.PostCommentEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
@@ -51,10 +49,10 @@ class PostCommentServiceTest {
         this.testUser = setupTestUser(this.userService);
 
         // Create test post using utility
-        final PostDto testPostDto = createUniquePostDto(this.testUser.id, this.testCategory.id);
+        final var testPostDto = createUniquePostDto(this.testUser.id, this.testCategory.id);
         testPostDto.published = true;
         testPostDto.commentable = true;
-        final PostResponseDto createdPost = this.postService.createPost(testPostDto);
+        final var createdPost = this.postService.createPost(testPostDto);
         this.testPost = PostEntity.findById(createdPost.id);
     }
 
@@ -121,7 +119,7 @@ class PostCommentServiceTest {
 
         final Long commentId = createdComment.id;
 
-        final boolean deleted = this.postCommentService.deleteComment(commentId);
+        final var deleted = this.postCommentService.deleteComment(commentId);
 
         assertTrue(deleted);
         final Optional<PostCommentEntity> deletedComment = this.postCommentService.findById(commentId);
@@ -130,7 +128,7 @@ class PostCommentServiceTest {
 
     @Test
     void testDeleteNonExistentComment() {
-        final boolean deleted = this.postCommentService.deleteComment(999999L);
+        final var deleted = this.postCommentService.deleteComment(999999L);
         assertFalse(deleted);
     }
 

@@ -5,12 +5,8 @@ import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUserUpdateDto;
 import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.UserDto;
-import de.vptr.midas.api.rest.dto.UserResponseDto;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -31,15 +27,15 @@ class UserServiceTest {
 
     @Test
     void testGetAllUsers() {
-        final List<UserEntity> users = this.userService.getAllUsers();
+        final var users = this.userService.getAllUsers();
         assertNotNull(users);
     }
 
     @Test
     @Transactional
     void testCreateUser() {
-        final UserDto newUser = createUniqueUserDto("newTestUser", "newtest");
-        final UserResponseDto createdUser = this.userService.createUser(newUser);
+        final var newUser = createUniqueUserDto("newTestUser", "newtest");
+        final var createdUser = this.userService.createUser(newUser);
 
         assertNotNull(createdUser);
         assertNotNull(createdUser.id);
@@ -56,11 +52,11 @@ class UserServiceTest {
     @Transactional
     void testCreateUserWithExistingUsername() {
         // First create a user
-        final UserDto firstUser = createUniqueUserDto("duplicateUser", "first");
+        final var firstUser = createUniqueUserDto("duplicateUser", "first");
         this.userService.createUser(firstUser);
 
         // Try to create another user with the same username
-        final UserDto secondUser = createUniqueUserDto();
+        final var secondUser = createUniqueUserDto();
         secondUser.username = firstUser.username; // Use same username
         secondUser.email = createUniqueUserDto("second", "second").email; // Different email
 
@@ -73,13 +69,13 @@ class UserServiceTest {
     @Transactional
     void testUpdateUser() {
         // First create a user
-        final UserDto newUser = createUniqueUserDto("updateTestUser", "update");
-        final UserResponseDto createdUser = this.userService.createUser(newUser);
+        final var newUser = createUniqueUserDto("updateTestUser", "update");
+        final var createdUser = this.userService.createUser(newUser);
 
         // Update the user
-        final UserDto updateDto = createUserUpdateDto("testUser", "updated");
+        final var updateDto = createUserUpdateDto("testUser", "updated");
 
-        final UserResponseDto updatedUser = this.userService.updateUser(createdUser.id, updateDto);
+        final var updatedUser = this.userService.updateUser(createdUser.id, updateDto);
 
         assertNotNull(updatedUser);
         assertEquals(updateDto.email, updatedUser.email);
@@ -90,22 +86,22 @@ class UserServiceTest {
     @Transactional
     void testDeleteUser() {
         // First create a user
-        final UserDto newUser = createUniqueUserDto("deleteTestUser", "delete");
-        final UserResponseDto createdUser = this.userService.createUser(newUser);
+        final var newUser = createUniqueUserDto("deleteTestUser", "delete");
+        final var createdUser = this.userService.createUser(newUser);
 
         final Long userId = createdUser.id;
 
-        final boolean deleted = this.userService.deleteUser(userId);
+        final var deleted = this.userService.deleteUser(userId);
 
         assertTrue(deleted);
         // UserEntity.findById returns null if not found
-        final UserEntity deletedUser = UserEntity.findById(userId);
+        final var deletedUser = UserEntity.findById(userId);
         assertNull(deletedUser);
     }
 
     @Test
     void testDeleteNonExistentUser() {
-        final boolean deleted = this.userService.deleteUser(999999L);
+        final var deleted = this.userService.deleteUser(999999L);
         assertFalse(deleted);
     }
 
@@ -113,7 +109,7 @@ class UserServiceTest {
     @Transactional
     void testFindByUsername() {
         // First create a user
-        final UserDto newUser = createUniqueUserDto("findByUsernameUser", "findbyusername");
+        final var newUser = createUniqueUserDto("findByUsernameUser", "findbyusername");
         this.userService.createUser(newUser);
 
         final var foundUser = this.userService.findByUsername(newUser.username);
@@ -132,7 +128,7 @@ class UserServiceTest {
     @Transactional
     void testFindByEmail() {
         // First create a user
-        final UserDto newUser = createUniqueUserDto("findByEmailUser", "findbyemail");
+        final var newUser = createUniqueUserDto("findByEmailUser", "findbyemail");
         this.userService.createUser(newUser);
 
         final var foundUser = this.userService.findByEmail(newUser.email);
@@ -151,12 +147,12 @@ class UserServiceTest {
     @Transactional
     void testFindActiveUsers() {
         // Create active and inactive users
-        final UserDto activeUser = createUniqueUserDto("activeUser", "active");
+        final var activeUser = createUniqueUserDto("activeUser", "active");
         activeUser.activated = true;
         activeUser.banned = false;
         this.userService.createUser(activeUser);
 
-        final UserDto bannedUser = createUniqueUserDto("bannedUser", "banned");
+        final var bannedUser = createUniqueUserDto("bannedUser", "banned");
         bannedUser.activated = true;
         bannedUser.banned = true;
         this.userService.createUser(bannedUser);
@@ -164,7 +160,7 @@ class UserServiceTest {
         // Flush using Panache to ensure users are persisted and visible to queries
         de.vptr.midas.api.rest.entity.UserEntity.getEntityManager().flush();
 
-        final List<UserEntity> activeUsers = this.userService.findActiveUsers();
+        final var activeUsers = this.userService.findActiveUsers();
         assertNotNull(activeUsers);
         assertTrue(activeUsers.stream().anyMatch(u -> activeUser.username.equals(u.username)));
         assertFalse(activeUsers.stream().anyMatch(u -> bannedUser.username.equals(u.username)));

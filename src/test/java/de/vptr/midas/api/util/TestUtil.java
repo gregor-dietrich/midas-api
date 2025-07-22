@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
@@ -201,8 +200,8 @@ public class TestUtil {
      * Creates a test category and returns its ID
      */
     public static Long createTestCategory() {
-        final String categoryJson = TestDataBuilder.createDefaultPostCategoryJson();
-        final Response response = authenticatedRequest()
+        final var categoryJson = TestDataBuilder.createDefaultPostCategoryJson();
+        final var response = authenticatedRequest()
                 .contentType(ContentType.JSON)
                 .body(categoryJson)
                 .when()
@@ -215,9 +214,9 @@ public class TestUtil {
      * Creates a test post and returns its ID
      */
     public static Long createTestPost() {
-        final Long categoryId = createTestCategory();
-        final String postJson = TestDataBuilder.createPostJson("Test Post", "Test content", true, true, 1L, categoryId);
-        final Response response = authenticatedRequest()
+        final var categoryId = createTestCategory();
+        final var postJson = TestDataBuilder.createPostJson("Test Post", "Test content", true, true, 1L, categoryId);
+        final var response = authenticatedRequest()
                 .contentType(ContentType.JSON)
                 .body(postJson)
                 .when()
@@ -230,8 +229,8 @@ public class TestUtil {
      * Creates a test comment and returns its ID
      */
     public static Long createTestComment(final Long postId) {
-        final String commentJson = TestDataBuilder.createDefaultPostCommentJson(postId);
-        final Response response = authenticatedRequest()
+        final var commentJson = TestDataBuilder.createDefaultPostCommentJson(postId);
+        final var response = authenticatedRequest()
                 .contentType(ContentType.JSON)
                 .body(commentJson)
                 .when()

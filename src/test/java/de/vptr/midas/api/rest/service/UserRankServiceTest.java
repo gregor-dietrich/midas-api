@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.UserRankDto;
-import de.vptr.midas.api.rest.dto.UserRankResponseDto;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -48,13 +47,13 @@ class UserRankServiceTest {
     @Test
     @Transactional
     void testCreateRank() {
-        final UserRankDto newRank = createUniqueUserRankDto();
+        final var newRank = createUniqueUserRankDto();
         // Override some permissions for testing
         newRank.userDelete = false;
         newRank.postEdit = false;
         newRank.postDelete = false;
 
-        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
+        final var createdRank = this.userRankService.createRank(newRank);
 
         assertNotNull(createdRank);
         assertNotNull(createdRank.id);
@@ -71,14 +70,14 @@ class UserRankServiceTest {
     @Transactional
     void testCreateRankWithExistingName() {
         // First create a rank
-        final UserRankDto firstRank = createUniqueUserRankDto();
+        final var firstRank = createUniqueUserRankDto();
         firstRank.userAdd = false;
         firstRank.userEdit = false;
         firstRank.userDelete = false;
-        final UserRankResponseDto createdRank = this.userRankService.createRank(firstRank);
+        final var createdRank = this.userRankService.createRank(firstRank);
 
         // Try to create another rank with the same name
-        final UserRankDto secondRank = new UserRankDto();
+        final var secondRank = new UserRankDto();
         secondRank.name = createdRank.name; // Use the same name as the first rank
         secondRank.userAdd = true;
         secondRank.userEdit = true;
@@ -93,7 +92,7 @@ class UserRankServiceTest {
     @TestTransaction
     void testUpdateRank() {
         // First create a rank
-        final UserRankDto newRank = new UserRankDto();
+        final var newRank = new UserRankDto();
         newRank.name = "Update Test Rank";
         newRank.userAdd = false;
         newRank.userEdit = false;
@@ -101,10 +100,10 @@ class UserRankServiceTest {
         newRank.postAdd = false;
         newRank.postEdit = false;
         newRank.postDelete = false;
-        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
+        final var createdRank = this.userRankService.createRank(newRank);
 
         // Update the rank
-        final UserRankDto updateDto = new UserRankDto();
+        final var updateDto = new UserRankDto();
         updateDto.name = "Updated Rank Name";
         updateDto.userAdd = true;
         updateDto.userEdit = true;
@@ -113,7 +112,7 @@ class UserRankServiceTest {
         updateDto.postEdit = false;
         updateDto.postDelete = false;
 
-        final UserRankResponseDto updatedRank = this.userRankService.updateRank(createdRank.id, updateDto);
+        final var updatedRank = this.userRankService.updateRank(createdRank.id, updateDto);
 
         assertNotNull(updatedRank);
         assertEquals("Updated Rank Name", updatedRank.name);
@@ -129,16 +128,16 @@ class UserRankServiceTest {
     @Transactional
     void testDeleteRank() {
         // First create a rank
-        final UserRankDto newRank = new UserRankDto();
+        final var newRank = new UserRankDto();
         newRank.name = "Delete Test Rank";
         newRank.userAdd = false;
         newRank.userEdit = false;
         newRank.userDelete = false;
-        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
+        final var createdRank = this.userRankService.createRank(newRank);
 
         final Long rankId = createdRank.id;
 
-        final boolean deleted = this.userRankService.deleteRank(rankId);
+        final var deleted = this.userRankService.deleteRank(rankId);
 
         assertTrue(deleted);
         final Optional<UserRankEntity> deletedRank = this.userRankService.findById(rankId);
@@ -147,7 +146,7 @@ class UserRankServiceTest {
 
     @Test
     void testDeleteNonExistentRank() {
-        final boolean deleted = this.userRankService.deleteRank(999999L);
+        final var deleted = this.userRankService.deleteRank(999999L);
         assertFalse(deleted);
     }
 
@@ -155,12 +154,12 @@ class UserRankServiceTest {
     @TestTransaction
     void testFindById() {
         // First create a rank
-        final UserRankDto newRank = new UserRankDto();
+        final var newRank = new UserRankDto();
         newRank.name = "Find By ID Rank";
         newRank.userAdd = true;
         newRank.userEdit = false;
         newRank.userDelete = false;
-        final UserRankResponseDto createdRank = this.userRankService.createRank(newRank);
+        final var createdRank = this.userRankService.createRank(newRank);
 
         final Optional<UserRankEntity> foundRank = this.userRankService.findById(createdRank.id);
 
@@ -179,7 +178,7 @@ class UserRankServiceTest {
     @TestTransaction
     void testFindByName() {
         // First create a rank
-        final UserRankDto newRank = new UserRankDto();
+        final var newRank = new UserRankDto();
         newRank.name = "Find By Name Rank";
         newRank.userAdd = false;
         newRank.userEdit = true;
@@ -204,7 +203,7 @@ class UserRankServiceTest {
     @TestTransaction
     void testGetRanksWithUserPermissions() {
         // Create ranks with different user permissions
-        final UserRankDto userRank = new UserRankDto();
+        final var userRank = new UserRankDto();
         userRank.name = "User Permission Rank";
         userRank.userAdd = true;
         userRank.userEdit = true;
@@ -214,7 +213,7 @@ class UserRankServiceTest {
         userRank.postDelete = false;
         this.userRankService.createRank(userRank);
 
-        final UserRankDto noUserRank = new UserRankDto();
+        final var noUserRank = new UserRankDto();
         noUserRank.name = "No User Permission Rank";
         noUserRank.userAdd = false;
         noUserRank.userEdit = false;
@@ -239,7 +238,7 @@ class UserRankServiceTest {
     @TestTransaction
     void testGetRanksWithPostPermissions() {
         // Create ranks with different post permissions
-        final UserRankDto postRank = new UserRankDto();
+        final var postRank = new UserRankDto();
         postRank.name = "Post Permission Rank";
         postRank.userAdd = false;
         postRank.userEdit = false;
@@ -249,7 +248,7 @@ class UserRankServiceTest {
         postRank.postDelete = true;
         this.userRankService.createRank(postRank);
 
-        final UserRankDto noPostRank = new UserRankDto();
+        final var noPostRank = new UserRankDto();
         noPostRank.name = "No Post Permission Rank";
         noPostRank.userAdd = true;
         noPostRank.userEdit = true;
