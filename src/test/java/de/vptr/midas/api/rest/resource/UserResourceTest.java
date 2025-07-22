@@ -32,7 +32,7 @@ class UserResourceTest {
 
     @Test
     void testGetAllUsers_authorizedWithInsufficientRole() {
-        // TODO: expect 200 - admin user has sufficient permissions to list users
+        // TODO: expect 403 - insufficient permissions to see users
     }
 
     @Test

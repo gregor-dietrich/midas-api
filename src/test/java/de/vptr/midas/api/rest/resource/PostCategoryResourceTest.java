@@ -39,7 +39,7 @@ class PostCategoryResourceTest {
 
     @Test
     void testGetCategoryById_authorizedWithExistingCategory() {
-        // TODO: expect 404 - category with ID 1 doesn't exist in test database
+        // TODO: expect 200 - should return existing category
     }
 
     @Test
