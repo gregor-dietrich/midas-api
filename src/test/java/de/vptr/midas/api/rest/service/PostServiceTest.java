@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,11 +38,27 @@ class PostServiceTest {
         // Clean up existing test data
         cleanupTestData(PostEntity.class);
 
+        // Clean up users that might have been left from previous test runs
+        this.cleanupTestUsers();
+
         // Create test user using utility
         this.testUser = setupTestUser(this.userService);
 
         // Create test category using utility
         this.testCategory = setupTestCategory();
+    }
+
+    private void cleanupTestUsers() {
+        // Clean up any test users that start with "testuser_" prefix
+        UserEntity.delete("username like ?1", "testuser_%");
+    }
+
+    @AfterEach
+    @Transactional
+    void tearDown() {
+        // Clean up test data after each test
+        cleanupTestData(PostEntity.class);
+        this.cleanupTestUsers();
     }
 
     @Test

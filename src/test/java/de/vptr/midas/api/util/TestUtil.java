@@ -165,7 +165,7 @@ public class TestUtil {
      * Generates a unique suffix based on current time and random number
      */
     public static String generateUniqueSuffix() {
-        return String.valueOf(System.currentTimeMillis() + (int) (Math.random() * 10000));
+        return String.valueOf(System.currentTimeMillis()) + "_" + String.valueOf((int) (Math.random() * 100000));
     }
 
     /**
