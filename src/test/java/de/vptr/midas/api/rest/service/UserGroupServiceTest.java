@@ -4,13 +4,9 @@ import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static de.vptr.midas.api.util.ServiceTestUtil.createUniqueTestName;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.UserGroupDto;
-import de.vptr.midas.api.rest.dto.UserGroupResponseDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -30,7 +26,7 @@ class UserGroupServiceTest {
 
     @Test
     void testGetAllGroups() {
-        final List<UserGroupResponseDto> groups = this.userGroupService.getAllGroups();
+        final var groups = this.userGroupService.getAllGroups();
         assertNotNull(groups);
     }
 
@@ -78,7 +74,7 @@ class UserGroupServiceTest {
         final var deleted = this.userGroupService.deleteGroup(groupId);
 
         assertTrue(deleted);
-        final Optional<UserGroupResponseDto> deletedGroup = this.userGroupService.findById(groupId);
+        final var deletedGroup = this.userGroupService.findById(groupId);
         assertTrue(deletedGroup.isEmpty());
     }
 
@@ -96,7 +92,7 @@ class UserGroupServiceTest {
         newGroupDto.name = "Find Test Group";
         final var createdGroup = this.userGroupService.createGroup(newGroupDto);
 
-        final Optional<UserGroupResponseDto> foundGroup = this.userGroupService.findById(createdGroup.id);
+        final var foundGroup = this.userGroupService.findById(createdGroup.id);
 
         assertTrue(foundGroup.isPresent());
         assertEquals(createdGroup.id, foundGroup.get().id);
@@ -105,7 +101,7 @@ class UserGroupServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<UserGroupResponseDto> foundGroup = this.userGroupService.findById(999999L);
+        final var foundGroup = this.userGroupService.findById(999999L);
         assertTrue(foundGroup.isEmpty());
     }
 }

@@ -4,9 +4,6 @@ import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostDto;
 import static de.vptr.midas.api.util.ServiceTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,13 +63,13 @@ class PostServiceTest {
 
     @Test
     void testGetAllPosts() {
-        final List<PostEntity> posts = this.postService.getAllPosts();
+        final var posts = this.postService.getAllPosts();
         assertNotNull(posts);
     }
 
     @Test
     void testFindPublishedPosts() {
-        final List<PostEntity> publishedPosts = this.postService.findPublishedPosts();
+        final var publishedPosts = this.postService.findPublishedPosts();
         assertNotNull(publishedPosts);
 
         // All returned posts should be published
@@ -190,7 +187,7 @@ class PostServiceTest {
         final var deleted = this.postService.deletePost(postId);
 
         assertTrue(deleted);
-        final Optional<PostEntity> deletedPost = this.postService.findById(postId);
+        final var deletedPost = this.postService.findById(postId);
         assertTrue(deletedPost.isEmpty());
     }
 
@@ -211,7 +208,7 @@ class PostServiceTest {
         newPost.categoryId = this.testCategory.id;
         final var createdPost = this.postService.createPost(newPost);
 
-        final Optional<PostEntity> foundPost = this.postService.findById(createdPost.id);
+        final var foundPost = this.postService.findById(createdPost.id);
 
         assertTrue(foundPost.isPresent());
         assertEquals("Find By ID Test", foundPost.get().title);
@@ -219,7 +216,7 @@ class PostServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<PostEntity> foundPost = this.postService.findById(999999L);
+        final var foundPost = this.postService.findById(999999L);
         assertTrue(foundPost.isEmpty());
     }
 
@@ -234,7 +231,7 @@ class PostServiceTest {
         newPost.categoryId = this.testCategory.id;
         this.postService.createPost(newPost);
 
-        final List<PostEntity> userPosts = this.postService.findByUserId(this.testUser.id);
+        final var userPosts = this.postService.findByUserId(this.testUser.id);
 
         assertNotNull(userPosts);
         assertFalse(userPosts.isEmpty());
@@ -252,7 +249,7 @@ class PostServiceTest {
         newPost.categoryId = this.testCategory.id;
         this.postService.createPost(newPost);
 
-        final List<PostEntity> categoryPosts = this.postService.findByCategoryId(this.testCategory.id);
+        final var categoryPosts = this.postService.findByCategoryId(this.testCategory.id);
 
         assertNotNull(categoryPosts);
         assertFalse(categoryPosts.isEmpty());

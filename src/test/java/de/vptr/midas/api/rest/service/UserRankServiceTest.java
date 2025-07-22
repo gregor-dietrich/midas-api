@@ -5,9 +5,6 @@ import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +37,7 @@ class UserRankServiceTest {
 
     @Test
     void testGetAllRanks() {
-        final List<UserRankEntity> ranks = this.userRankService.getAllRanks();
+        final var ranks = this.userRankService.getAllRanks();
         assertNotNull(ranks);
     }
 
@@ -140,7 +137,7 @@ class UserRankServiceTest {
         final var deleted = this.userRankService.deleteRank(rankId);
 
         assertTrue(deleted);
-        final Optional<UserRankEntity> deletedRank = this.userRankService.findById(rankId);
+        final var deletedRank = this.userRankService.findById(rankId);
         assertTrue(deletedRank.isEmpty());
     }
 
@@ -161,7 +158,7 @@ class UserRankServiceTest {
         newRank.userDelete = false;
         final var createdRank = this.userRankService.createRank(newRank);
 
-        final Optional<UserRankEntity> foundRank = this.userRankService.findById(createdRank.id);
+        final var foundRank = this.userRankService.findById(createdRank.id);
 
         assertTrue(foundRank.isPresent());
         assertEquals("Find By ID Rank", foundRank.get().name);
@@ -170,7 +167,7 @@ class UserRankServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<UserRankEntity> foundRank = this.userRankService.findById(999999L);
+        final var foundRank = this.userRankService.findById(999999L);
         assertTrue(foundRank.isEmpty());
     }
 
@@ -185,7 +182,7 @@ class UserRankServiceTest {
         newRank.userDelete = false;
         this.userRankService.createRank(newRank);
 
-        final Optional<UserRankEntity> foundRank = this.userRankService.findByName("Find By Name Rank");
+        final var foundRank = this.userRankService.findByName("Find By Name Rank");
 
         assertTrue(foundRank.isPresent());
         assertEquals("Find By Name Rank", foundRank.get().name);
@@ -195,7 +192,7 @@ class UserRankServiceTest {
 
     @Test
     void testFindByNameNonExistent() {
-        final Optional<UserRankEntity> foundRank = this.userRankService.findByName("Non Existent Rank");
+        final var foundRank = this.userRankService.findByName("Non Existent Rank");
         assertTrue(foundRank.isEmpty());
     }
 
@@ -223,7 +220,7 @@ class UserRankServiceTest {
         noUserRank.postDelete = true;
         this.userRankService.createRank(noUserRank);
 
-        final List<UserRankEntity> userPermissionRanks = this.userRankService.getAllRanks().stream()
+        final var userPermissionRanks = this.userRankService.getAllRanks().stream()
                 .filter(rank -> rank.userAdd || rank.userEdit || rank.userDelete)
                 .toList();
 
@@ -258,7 +255,7 @@ class UserRankServiceTest {
         noPostRank.postDelete = false;
         this.userRankService.createRank(noPostRank);
 
-        final List<UserRankEntity> postPermissionRanks = this.userRankService.getAllRanks().stream()
+        final var postPermissionRanks = this.userRankService.getAllRanks().stream()
                 .filter(rank -> rank.postAdd || rank.postEdit || rank.postDelete)
                 .toList();
 

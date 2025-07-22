@@ -7,14 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.rest.dto.PaymentDto;
-import de.vptr.midas.api.rest.dto.PaymentResponseDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -56,7 +53,7 @@ class PaymentServiceTest {
 
     @Test
     void testGetAllPayments() {
-        final List<PaymentResponseDto> payments = this.paymentService.getAllPayments();
+        final var payments = this.paymentService.getAllPayments();
         assertNotNull(payments);
     }
 
@@ -132,7 +129,7 @@ class PaymentServiceTest {
         final var deleted = this.paymentService.deletePayment(paymentId);
 
         assertTrue(deleted);
-        final Optional<PaymentResponseDto> deletedPayment = this.paymentService.findById(paymentId);
+        final var deletedPayment = this.paymentService.findById(paymentId);
         assertTrue(deletedPayment.isEmpty());
     }
 
@@ -155,7 +152,7 @@ class PaymentServiceTest {
         newPaymentDto.amount = new BigDecimal("200.00");
         final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
-        final Optional<PaymentResponseDto> foundPayment = this.paymentService.findById(createdPayment.id);
+        final var foundPayment = this.paymentService.findById(createdPayment.id);
 
         assertTrue(foundPayment.isPresent());
         assertEquals(createdPayment.id, foundPayment.get().id);
@@ -165,7 +162,7 @@ class PaymentServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<PaymentResponseDto> foundPayment = this.paymentService.findById(999999L);
+        final var foundPayment = this.paymentService.findById(999999L);
         assertTrue(foundPayment.isEmpty());
     }
 
@@ -182,7 +179,7 @@ class PaymentServiceTest {
         newPaymentDto.amount = new BigDecimal("150.00");
         this.paymentService.createPayment(newPaymentDto);
 
-        final List<PaymentResponseDto> userPayments = this.paymentService.findByUserId(this.testUser.id);
+        final var userPayments = this.paymentService.findByUserId(this.testUser.id);
 
         assertNotNull(userPayments);
         assertFalse(userPayments.isEmpty());
@@ -209,7 +206,7 @@ class PaymentServiceTest {
         newPaymentDto.amount = new BigDecimal("100.00");
         this.paymentService.createPayment(newPaymentDto);
 
-        final List<PaymentResponseDto> paymentsInRange = this.paymentService.findByDateRange(startDate, endDate);
+        final var paymentsInRange = this.paymentService.findByDateRange(startDate, endDate);
 
         assertNotNull(paymentsInRange);
         assertFalse(paymentsInRange.isEmpty());

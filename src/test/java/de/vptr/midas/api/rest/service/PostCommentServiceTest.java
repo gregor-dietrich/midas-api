@@ -6,9 +6,6 @@ import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +60,7 @@ class PostCommentServiceTest {
 
     @Test
     void testGetAllComments() {
-        final List<PostCommentEntity> comments = this.postCommentService.getAllComments();
+        final var comments = this.postCommentService.getAllComments();
         assertNotNull(comments);
     }
 
@@ -122,7 +119,7 @@ class PostCommentServiceTest {
         final var deleted = this.postCommentService.deleteComment(commentId);
 
         assertTrue(deleted);
-        final Optional<PostCommentEntity> deletedComment = this.postCommentService.findById(commentId);
+        final var deletedComment = this.postCommentService.findById(commentId);
         assertTrue(deletedComment.isEmpty());
     }
 
@@ -143,7 +140,7 @@ class PostCommentServiceTest {
         final PostCommentEntity createdComment = this.postCommentService.createComment(newComment,
                 this.testUser.username);
 
-        final Optional<PostCommentEntity> foundComment = this.postCommentService.findById(createdComment.id);
+        final var foundComment = this.postCommentService.findById(createdComment.id);
 
         assertTrue(foundComment.isPresent());
         assertEquals("Find By ID Comment", foundComment.get().content);
@@ -151,7 +148,7 @@ class PostCommentServiceTest {
 
     @Test
     void testFindByIdNonExistent() {
-        final Optional<PostCommentEntity> foundComment = this.postCommentService.findById(999999L);
+        final var foundComment = this.postCommentService.findById(999999L);
         assertTrue(foundComment.isEmpty());
     }
 
@@ -171,7 +168,7 @@ class PostCommentServiceTest {
         comment2.post = this.testPost;
         this.postCommentService.createComment(comment2, this.testUser.username);
 
-        final List<PostCommentEntity> postComments = this.postCommentService.findByPostId(this.testPost.id);
+        final var postComments = this.postCommentService.findByPostId(this.testPost.id);
 
         assertNotNull(postComments);
         assertTrue(postComments.size() >= 2);
@@ -198,7 +195,7 @@ class PostCommentServiceTest {
         comment2.post = this.testPost;
         this.postCommentService.createComment(comment2, this.testUser.username);
 
-        final List<PostCommentEntity> userComments = this.postCommentService.findByUserId(this.testUser.id);
+        final var userComments = this.postCommentService.findByUserId(this.testUser.id);
 
         assertNotNull(userComments);
         assertTrue(userComments.size() >= 2);
@@ -219,7 +216,7 @@ class PostCommentServiceTest {
         comment1.post = this.testPost;
         this.postCommentService.createComment(comment1, this.testUser.username);
 
-        final List<PostCommentEntity> recentComments = this.postCommentService.findRecentComments(10);
+        final var recentComments = this.postCommentService.findRecentComments(10);
 
         assertNotNull(recentComments);
         assertTrue(recentComments.size() >= 1);
