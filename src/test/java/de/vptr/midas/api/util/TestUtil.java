@@ -1,8 +1,5 @@
 package de.vptr.midas.api.util;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
-
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
@@ -103,54 +100,76 @@ public class TestUtil {
     }
 
     /**
-     * Tests authorized GET request expecting either 200 or 404 (resource may not
-     * exist)
+     * Tests authorized GET request expecting 200 OK (resource exists)
      */
-    public static ValidatableResponse testAuthorizedGetWithOptionalResource(final String endpoint) {
+    public static ValidatableResponse testAuthorizedGetWithExistingResource(final String endpoint) {
         return authenticatedRequest()
                 .when()
                 .get(endpoint)
                 .then()
-                .statusCode(anyOf(is(200), is(404)));
+                .statusCode(200);
     }
 
     /**
-     * Tests authorized GET request expecting either 200 or 404 (resource may not
-     * exist) with JSON content
+     * Tests authorized GET request expecting 404 (resource does not exist)
      */
-    public static ValidatableResponse testAuthorizedGetWithOptionalResourceAndJson(final String endpoint) {
+    public static ValidatableResponse testAuthorizedGetWithNonExistentResource(final String endpoint) {
         return authenticatedRequest()
                 .when()
                 .get(endpoint)
                 .then()
-                .statusCode(anyOf(is(200), is(404)))
+                .statusCode(404);
+    }
+
+    /**
+     * Tests authorized GET request expecting 200 OK with JSON content (resource
+     * exists)
+     */
+    public static ValidatableResponse testAuthorizedGetWithExistingResourceAndJson(final String endpoint) {
+        return authenticatedRequest()
+                .when()
+                .get(endpoint)
+                .then()
+                .statusCode(200)
                 .contentType(ContentType.JSON);
     }
 
     /**
-     * Tests authorized POST request expecting either 201 or 403 (role-based access)
+     * Tests authorized POST request expecting 201 (successful creation)
      */
-    public static ValidatableResponse testAuthorizedPostWithRoleCheck(final String endpoint, final String jsonBody) {
+    public static ValidatableResponse testAuthorizedPostWithCreation(final String endpoint, final String jsonBody) {
         return authenticatedJsonRequest()
                 .body(jsonBody)
                 .when()
                 .post(endpoint)
                 .then()
-                .statusCode(anyOf(is(201), is(403)));
+                .statusCode(201);
     }
 
     /**
-     * Tests authorized POST request expecting either 201, 403, or 500 (role-based
-     * access with validation)
+     * Tests authorized POST request expecting 403 (insufficient role)
      */
-    public static ValidatableResponse testAuthorizedPostWithRoleCheckAndValidation(final String endpoint,
+    public static ValidatableResponse testAuthorizedPostWithInsufficientRole(final String endpoint,
             final String jsonBody) {
         return authenticatedJsonRequest()
                 .body(jsonBody)
                 .when()
                 .post(endpoint)
                 .then()
-                .statusCode(anyOf(is(201), is(403), is(500)));
+                .statusCode(403);
+    }
+
+    /**
+     * Tests authorized POST request expecting 400 (bad request/validation error)
+     */
+    public static ValidatableResponse testAuthorizedPostWithValidationError(final String endpoint,
+            final String jsonBody) {
+        return authenticatedJsonRequest()
+                .body(jsonBody)
+                .when()
+                .post(endpoint)
+                .then()
+                .statusCode(400);
     }
 
     /**
@@ -255,17 +274,9 @@ public class TestUtil {
     }
 
     /**
-     * Tests a POST request with authentication that should return 201 (created)
+     * Tests a POST request with authentication that should return 201 (created) -
+     * duplicate removed
      */
-    public static ValidatableResponse testAuthorizedPostWithCreation(final String endpoint, final String requestBody) {
-        return authenticatedRequest()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .when()
-                .post(endpoint)
-                .then()
-                .statusCode(201);
-    }
 
     /**
      * Tests a PATCH request with authentication that should return 200 with JSON

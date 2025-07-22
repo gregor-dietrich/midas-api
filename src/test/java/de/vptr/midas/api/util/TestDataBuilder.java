@@ -145,27 +145,33 @@ public class TestDataBuilder {
     /**
      * Creates a user group JSON for testing
      */
-    public static String createUserGroupJson(final String name, final String description) {
+    public static String createUserGroupJson(final String name) {
         return String.format("""
                 {
-                    "name": "%s",
-                    "description": "%s"
+                    "name": "%s"
                 }
-                """, name, description);
+                """, name);
     }
 
     /**
      * Creates a default test user group JSON
      */
     public static String createDefaultUserGroupJson() {
-        return createUserGroupJson("Test Group", "Test description");
+        return createUserGroupJson("Test Group");
     }
 
     /**
      * Creates an updated user group JSON for testing updates
      */
     public static String createUpdatedUserGroupJson() {
-        return createUserGroupJson("Updated Group", "Updated description");
+        return createUserGroupJson("Updated Group");
+    }
+
+    /**
+     * Creates an invalid user group JSON for testing updates
+     */
+    public static String createInvalidUserGroupJson() {
+        return createUserGroupJson("");
     }
 
     /**

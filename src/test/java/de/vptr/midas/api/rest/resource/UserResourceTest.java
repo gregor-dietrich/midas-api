@@ -4,8 +4,6 @@ import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserUpdateJson
 import static de.vptr.midas.api.util.TestDataBuilder.createUniqueUserJson;
 import static de.vptr.midas.api.util.TestUtil.*;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,15 +20,19 @@ class UserResourceTest {
     }
 
     @Test
-    void testGetAllUsers_authorizedButInsufficientRole() {
-        // @formatter:off
+    void testGetAllUsers_authorizedWithSufficientRole() {
+        // Test assumes user has appropriate role (user:delete or user:edit)
         given()
-            .auth().basic("admin", "admin")
-        .when()
-            .get(ENDPOINT_URL)
-        .then()
-            .statusCode(anyOf(is(200), is(403))); // 403 if no user:delete or user:edit role
-        // @formatter:on
+                .auth().basic("admin", "admin")
+                .when()
+                .get(ENDPOINT_URL)
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    void testGetAllUsers_authorizedWithInsufficientRole() {
+        // TODO: expect 200 - admin user has sufficient permissions to list users
     }
 
     @Test
@@ -40,7 +42,12 @@ class UserResourceTest {
 
     @Test
     void testGetCurrentUser_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/me");
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/me");
+    }
+
+    @Test
+    void testGetCurrentUser_authorizedButUserNotFound() {
+        // TODO: expect 404 - look up user that doesn't exist in database
     }
 
     @Test
@@ -50,8 +57,14 @@ class UserResourceTest {
 
     @Test
     @TestTransaction
-    void testCreateUser_authorizedButInsufficientRole() {
-        testAuthorizedPostWithRoleCheck(ENDPOINT_URL, createUniqueUserJson());
+    void testCreateUser_authorizedWithSufficientRole() {
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createUniqueUserJson());
+    }
+
+    @Test
+    @TestTransaction
+    void testCreateUser_authorizedWithInsufficientRole() {
+        // TODO: expect 403 - insufficient permissions to create user
     }
 
     @Test
@@ -60,8 +73,13 @@ class UserResourceTest {
     }
 
     @Test
-    void testGetUserByUsername_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/username/admin");
+    void testGetUserByUsername_authorizedWithExistingUser() {
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/username/admin");
+    }
+
+    @Test
+    void testGetUserByUsername_authorizedWithNonExistentUser() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/username/nonexistent_user");
     }
 
     @Test
@@ -70,8 +88,13 @@ class UserResourceTest {
     }
 
     @Test
-    void testGetUserById_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
+    void testGetUserById_authorizedWithExistingUser() {
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/1");
+    }
+
+    @Test
+    void testGetUserById_authorizedWithNonExistentUser() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test

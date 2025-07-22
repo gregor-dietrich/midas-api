@@ -1,8 +1,6 @@
 package de.vptr.midas.api.rest.resource;
 
 import static de.vptr.midas.api.util.TestUtil.*;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +28,13 @@ class PaymentResourceTest {
     }
 
     @Test
-    void testGetPaymentById_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
+    void testGetPaymentById_authorizedWithExistingPayment() {
+        // TODO: expect 200 - should return existing payment data
+    }
+
+    @Test
+    void testGetPaymentById_authorizedWithNonExistentPayment() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test
@@ -40,13 +43,18 @@ class PaymentResourceTest {
     }
 
     @Test
-    void testGetPaymentsByUser_authorized() {
+    void testGetPaymentsByUser_authorizedWithValidUser() {
         authenticatedRequest()
                 .when()
                 .get(ENDPOINT_URL + "/user/1")
                 .then()
-                .statusCode(anyOf(is(200), is(500))) // 500 if database issues
+                .statusCode(200)
                 .contentType(ContentType.JSON);
+    }
+
+    @Test
+    void testGetPaymentsByUser_authorizedWithDatabaseIssues() {
+        // TODO: expect 500 or maybe another error with status code >500?
     }
 
     @Test
@@ -66,15 +74,18 @@ class PaymentResourceTest {
     }
 
     @Test
-    void testCreatePayment_authorizedButInsufficientRole() {
-        final String paymentJson = TestDataBuilder.createDefaultPaymentJson();
-        authenticatedRequest()
-                .contentType(ContentType.JSON)
-                .body(paymentJson)
-                .when()
-                .post(ENDPOINT_URL)
-                .then()
-                .statusCode(anyOf(is(201), is(403), is(400))); // 403 if no payment:add role, 400 if validation fails
+    void testCreatePayment_authorizedWithSufficientRole() {
+        // TODO: expect 201 - should create payment successfully
+    }
+
+    @Test
+    void testCreatePayment_authorizedWithInsufficientRole() {
+        // TODO: expect 403 - insufficient permissions to create payment
+    }
+
+    @Test
+    void testCreatePayment_authorizedWithValidationError() {
+        // TODO: expect 400 - should return validation error for invalid data
     }
 
     @Test

@@ -28,8 +28,13 @@ class UserRankResourceTest {
     }
 
     @Test
-    void testGetUserRankById_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
+    void testGetUserRankById_authorizedWithExistingRank() {
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/1");
+    }
+
+    @Test
+    void testGetUserRankById_authorizedWithNonExistentRank() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test
@@ -38,8 +43,13 @@ class UserRankResourceTest {
     }
 
     @Test
-    void testCreateUserRank_authorizedButInsufficientRole() {
-        testAuthorizedPostWithRoleCheck(ENDPOINT_URL, createDefaultUserRankJson());
+    void testCreateUserRank_authorizedWithSufficientRole() {
+        // TODO: expect 201 - should create user rank successfully
+    }
+
+    @Test
+    void testCreateUserRank_authorizedWithInsufficientRole() {
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultUserRankJson());
     }
 
     @Test

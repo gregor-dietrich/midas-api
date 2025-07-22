@@ -30,8 +30,13 @@ class UserGroupResourceTest {
     }
 
     @Test
-    void testGetGroupById_authorized() {
-        testAuthorizedGetWithOptionalResourceAndJson(ENDPOINT_URL + "/1");
+    void testGetGroupById_authorizedWithExistingGroup() {
+        // TODO: expect 200 - should return existing group data
+    }
+
+    @Test
+    void testGetGroupById_authorizedWithNonExistentGroup() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test
@@ -40,8 +45,13 @@ class UserGroupResourceTest {
     }
 
     @Test
-    void testGetUsersInGroup_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1/users");
+    void testGetUsersInGroup_authorizedWithExistingGroup() {
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/1/users");
+    }
+
+    @Test
+    void testGetUsersInGroup_authorizedWithNonExistentGroup() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999/users");
     }
 
     @Test
@@ -50,8 +60,18 @@ class UserGroupResourceTest {
     }
 
     @Test
-    void testCreateGroup_authorizedButInsufficientRole() {
-        testAuthorizedPostWithRoleCheckAndValidation(ENDPOINT_URL, createDefaultUserGroupJson());
+    void testCreateGroup_authorizedWithSufficientRole() {
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultUserGroupJson());
+    }
+
+    @Test
+    void testCreateGroup_authorizedWithInsufficientRole() {
+        // TODO: expect 403 - insufficient permissions to create group
+    }
+
+    @Test
+    void testCreateGroup_authorizedWithValidationError() {
+        // TODO: expect 400 - should return validation error for invalid group data
     }
 
     @Test

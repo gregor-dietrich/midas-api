@@ -1,8 +1,5 @@
 package de.vptr.midas.api.rest.resource;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
-
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.util.TestDataBuilder;
@@ -31,13 +28,21 @@ class PostCommentResourceTest {
 
     @Test
     @TestTransaction
-    void testGetCommentById_authorized() {
-        // Since we can't guarantee a comment with ID 1 exists, test for 200 or 404
+    void testGetCommentById_authorizedWithExistingComment() {
+        // Create a comment first to ensure it exists
+        final Long postId = TestUtil.createTestPost();
+        final Long commentId = TestUtil.createTestComment(postId);
+
         TestUtil.authenticatedRequest()
                 .when()
-                .get(ENDPOINT_URL + "/1")
+                .get(ENDPOINT_URL + "/" + commentId)
                 .then()
-                .statusCode(anyOf(is(200), is(404))); // Comment might not exist in isolated test
+                .statusCode(200);
+    }
+
+    @Test
+    void testGetCommentById_authorizedWithNonExistentComment() {
+        TestUtil.testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test

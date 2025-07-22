@@ -1,8 +1,5 @@
 package de.vptr.midas.api.rest.resource;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
-
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.util.TestDataBuilder;
@@ -29,12 +26,13 @@ class PageResourceTest {
     }
 
     @Test
-    void testGetPageById_authorized() {
-        TestUtil.authenticatedRequest()
-                .when()
-                .get(ENDPOINT_URL + "/1")
-                .then()
-                .statusCode(anyOf(is(200), is(404)));
+    void testGetPageById_authorizedWithExistingPage() {
+        TestUtil.testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/1");
+    }
+
+    @Test
+    void testGetPageById_authorizedWithNonExistentPage() {
+        TestUtil.testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test
@@ -44,9 +42,14 @@ class PageResourceTest {
     }
 
     @Test
-    void testCreatePage_authorizedButInsufficientRole() {
+    void testCreatePage_authorizedWithSufficientRole() {
         final String pageJson = TestDataBuilder.createDefaultPageJson();
-        TestUtil.testAuthorizedPostWithRoleCheck(ENDPOINT_URL, pageJson); // 201 or 403
+        TestUtil.testAuthorizedPostWithCreation(ENDPOINT_URL, pageJson);
+    }
+
+    @Test
+    void testCreatePage_authorizedWithInsufficientRole() {
+        // expect 403 - insufficient permissions to create page
     }
 
     @Test

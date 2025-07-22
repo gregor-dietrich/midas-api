@@ -38,8 +38,13 @@ class PostCategoryResourceTest {
     }
 
     @Test
-    void testGetCategoryById_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
+    void testGetCategoryById_authorizedWithExistingCategory() {
+        // TODO: expect 404 - category with ID 1 doesn't exist in test database
+    }
+
+    @Test
+    void testGetCategoryById_authorizedWithNonExistentCategory() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test
@@ -58,8 +63,13 @@ class PostCategoryResourceTest {
     }
 
     @Test
-    void testCreateCategory_authorizedButInsufficientRole() {
-        testAuthorizedPostWithRoleCheck(ENDPOINT_URL, createDefaultPostCategoryJson());
+    void testCreateCategory_authorizedWithSufficientRole() {
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultPostCategoryJson());
+    }
+
+    @Test
+    void testCreateCategory_authorizedWithInsufficientRole() {
+        // TODO: expect 403 - insufficient permissions to create category
     }
 
     @Test

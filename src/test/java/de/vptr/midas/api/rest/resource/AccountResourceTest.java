@@ -29,8 +29,13 @@ class AccountResourceTest {
     }
 
     @Test
-    void testGetUserAccountById_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
+    void testGetUserAccountById_authorizedWithExistingAccount() {
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/1");
+    }
+
+    @Test
+    void testGetUserAccountById_authorizedWithNonExistentAccount() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test

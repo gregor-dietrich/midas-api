@@ -37,8 +37,13 @@ class PostResourceTest {
     }
 
     @Test
-    void testGetPost_authorized() {
-        testAuthorizedGetWithOptionalResource(ENDPOINT_URL + "/1");
+    void testGetPost_authorizedWithExistingPost() {
+        testAuthorizedGetWithExistingResource(ENDPOINT_URL + "/1");
+    }
+
+    @Test
+    void testGetPost_authorizedWithNonExistentPost() {
+        testAuthorizedGetWithNonExistentResource(ENDPOINT_URL + "/999");
     }
 
     @Test
@@ -67,8 +72,13 @@ class PostResourceTest {
     }
 
     @Test
-    void testCreatePost_authorizedButInsufficientRole() {
-        testAuthorizedPostWithRoleCheck(ENDPOINT_URL, createDefaultPostJson());
+    void testCreatePost_authorizedWithSufficientRole() {
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultPostJson());
+    }
+
+    @Test
+    void testCreatePost_authorizedWithInsufficientRole() {
+        // TODO: expect 403 - insufficient permissions to create post
     }
 
     @Test
