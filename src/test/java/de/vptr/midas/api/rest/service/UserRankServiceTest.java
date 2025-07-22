@@ -1,6 +1,5 @@
 package de.vptr.midas.api.rest.service;
 
-import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniqueUserRankDto;
 import static de.vptr.midas.api.util.ServiceTestUtil.assertServiceNotNull;
 import static de.vptr.midas.api.util.ServiceTestUtil.setupTestUser;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.UserRankDto;
 import de.vptr.midas.api.rest.entity.UserRankEntity;
+import de.vptr.midas.api.util.ServiceTestUtil;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -44,7 +43,15 @@ class UserRankServiceTest {
     @Test
     @Transactional
     void testCreateRank() {
-        final var newRank = createUniqueUserRankDto();
+        final var newRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                ServiceTestUtil.createUniqueTestName("Test Rank"), // always non-blank
+                true, // userAdd
+                true, // userEdit
+                false, // userDelete
+                true, // postAdd
+                false, // postEdit
+                false // postDelete
+        );
         // Override some permissions for testing
         newRank.userDelete = false;
         newRank.postEdit = false;
@@ -67,18 +74,16 @@ class UserRankServiceTest {
     @Transactional
     void testCreateRankWithExistingName() {
         // First create a rank
-        final var firstRank = createUniqueUserRankDto();
+        final var firstRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                ServiceTestUtil.createUniqueTestName("Test Rank"), false, false, false, true, true, true);
         firstRank.userAdd = false;
         firstRank.userEdit = false;
         firstRank.userDelete = false;
         final var createdRank = this.userRankService.createRank(firstRank);
 
         // Try to create another rank with the same name
-        final var secondRank = new UserRankDto();
-        secondRank.name = createdRank.name; // Use the same name as the first rank
-        secondRank.userAdd = true;
-        secondRank.userEdit = true;
-        secondRank.userDelete = true;
+        final var secondRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                createdRank.name, true, true, true, false, false, false);
 
         assertThrows(Exception.class, () -> {
             this.userRankService.createRank(secondRank);
@@ -89,14 +94,8 @@ class UserRankServiceTest {
     @TestTransaction
     void testUpdateRank() {
         // First create a rank
-        final var newRank = new UserRankDto();
-        newRank.name = "Update Test Rank";
-        newRank.userAdd = false;
-        newRank.userEdit = false;
-        newRank.userDelete = false;
-        newRank.postAdd = false;
-        newRank.postEdit = false;
-        newRank.postDelete = false;
+        final var newRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "Update Test Rank", false, false, false, false, false, false);
         final var createdRank = this.userRankService.createRank(newRank);
 
         // Update the rank
@@ -126,11 +125,8 @@ class UserRankServiceTest {
     @Transactional
     void testDeleteRank() {
         // First create a rank
-        final var newRank = new UserRankDto();
-        newRank.name = "Delete Test Rank";
-        newRank.userAdd = false;
-        newRank.userEdit = false;
-        newRank.userDelete = false;
+        final var newRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "Delete Test Rank", false, false, false, false, false, false);
         final var createdRank = this.userRankService.createRank(newRank);
 
         final Long rankId = createdRank.id;
@@ -152,11 +148,8 @@ class UserRankServiceTest {
     @TestTransaction
     void testFindById() {
         // First create a rank
-        final var newRank = new UserRankDto();
-        newRank.name = "Find By ID Rank";
-        newRank.userAdd = true;
-        newRank.userEdit = false;
-        newRank.userDelete = false;
+        final var newRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "Find By ID Rank", true, false, false, false, false, false);
         final var createdRank = this.userRankService.createRank(newRank);
 
         final var foundRank = this.userRankService.findById(createdRank.id);
@@ -176,11 +169,8 @@ class UserRankServiceTest {
     @TestTransaction
     void testFindByName() {
         // First create a rank
-        final var newRank = new UserRankDto();
-        newRank.name = "Find By Name Rank";
-        newRank.userAdd = false;
-        newRank.userEdit = true;
-        newRank.userDelete = false;
+        final var newRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "Find By Name Rank", false, true, false, false, false, false);
         this.userRankService.createRank(newRank);
 
         final var foundRank = this.userRankService.findByName("Find By Name Rank");
@@ -201,24 +191,12 @@ class UserRankServiceTest {
     @TestTransaction
     void testGetRanksWithUserPermissions() {
         // Create ranks with different user permissions
-        final var userRank = new UserRankDto();
-        userRank.name = "User Permission Rank";
-        userRank.userAdd = true;
-        userRank.userEdit = true;
-        userRank.userDelete = true;
-        userRank.postAdd = false;
-        userRank.postEdit = false;
-        userRank.postDelete = false;
+        final var userRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "User Permission Rank", true, true, true, false, false, false);
         this.userRankService.createRank(userRank);
 
-        final var noUserRank = new UserRankDto();
-        noUserRank.name = "No User Permission Rank";
-        noUserRank.userAdd = false;
-        noUserRank.userEdit = false;
-        noUserRank.userDelete = false;
-        noUserRank.postAdd = true;
-        noUserRank.postEdit = true;
-        noUserRank.postDelete = true;
+        final var noUserRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "No User Permission Rank", false, false, false, true, true, true);
         this.userRankService.createRank(noUserRank);
 
         final var userPermissionRanks = this.userRankService.getAllRanks().stream()
@@ -236,24 +214,12 @@ class UserRankServiceTest {
     @TestTransaction
     void testGetRanksWithPostPermissions() {
         // Create ranks with different post permissions
-        final var postRank = new UserRankDto();
-        postRank.name = "Post Permission Rank";
-        postRank.userAdd = false;
-        postRank.userEdit = false;
-        postRank.userDelete = false;
-        postRank.postAdd = true;
-        postRank.postEdit = true;
-        postRank.postDelete = true;
+        final var postRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "Post Permission Rank", false, false, false, true, true, true);
         this.userRankService.createRank(postRank);
 
-        final var noPostRank = new UserRankDto();
-        noPostRank.name = "No Post Permission Rank";
-        noPostRank.userAdd = true;
-        noPostRank.userEdit = true;
-        noPostRank.userDelete = true;
-        noPostRank.postAdd = false;
-        noPostRank.postEdit = false;
-        noPostRank.postDelete = false;
+        final var noPostRank = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankDto(
+                "No Post Permission Rank", true, true, true, false, false, false);
         this.userRankService.createRank(noPostRank);
 
         final var postPermissionRanks = this.userRankService.getAllRanks().stream()

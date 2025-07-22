@@ -64,10 +64,8 @@ class PostCommentServiceTest {
     @Test
     @Transactional
     void testCreateComment() {
-        final PostCommentEntity newComment = new PostCommentEntity();
-        newComment.content = "Test Comment Content";
-        newComment.user = this.testUser;
-        newComment.post = this.testPost;
+        final PostCommentEntity newComment = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "Test Comment Content", this.testUser, this.testPost);
 
         final PostCommentEntity createdComment = this.postCommentService.createComment(newComment,
                 this.testUser.username);
@@ -84,10 +82,8 @@ class PostCommentServiceTest {
     @Transactional
     void testUpdateComment() {
         // First create a comment
-        final PostCommentEntity newComment = new PostCommentEntity();
-        newComment.content = "Original Comment";
-        newComment.user = this.testUser;
-        newComment.post = this.testPost;
+        final PostCommentEntity newComment = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "Original Comment", this.testUser, this.testPost);
         final PostCommentEntity createdComment = this.postCommentService.createComment(newComment,
                 this.testUser.username);
 
@@ -108,10 +104,8 @@ class PostCommentServiceTest {
     @Transactional
     void testDeleteComment() {
         // First create a comment
-        final PostCommentEntity newComment = new PostCommentEntity();
-        newComment.content = "Comment to delete";
-        newComment.user = this.testUser;
-        newComment.post = this.testPost;
+        final PostCommentEntity newComment = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "Comment to delete", this.testUser, this.testPost);
         final PostCommentEntity createdComment = this.postCommentService.createComment(newComment,
                 this.testUser.username);
 
@@ -134,10 +128,8 @@ class PostCommentServiceTest {
     @Transactional
     void testFindById() {
         // First create a comment
-        final PostCommentEntity newComment = new PostCommentEntity();
-        newComment.content = "Find By ID Comment";
-        newComment.user = this.testUser;
-        newComment.post = this.testPost;
+        final PostCommentEntity newComment = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "Find By ID Comment", this.testUser, this.testPost);
         final PostCommentEntity createdComment = this.postCommentService.createComment(newComment,
                 this.testUser.username);
 
@@ -157,16 +149,12 @@ class PostCommentServiceTest {
     @Transactional
     void testFindByPostId() {
         // First create comments
-        final PostCommentEntity comment1 = new PostCommentEntity();
-        comment1.content = "First comment";
-        comment1.user = this.testUser;
-        comment1.post = this.testPost;
+        final PostCommentEntity comment1 = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "First comment", this.testUser, this.testPost);
         this.postCommentService.createComment(comment1, this.testUser.username);
 
-        final PostCommentEntity comment2 = new PostCommentEntity();
-        comment2.content = "Second comment";
-        comment2.user = this.testUser;
-        comment2.post = this.testPost;
+        final PostCommentEntity comment2 = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "Second comment", this.testUser, this.testPost);
         this.postCommentService.createComment(comment2, this.testUser.username);
 
         final var postComments = this.postCommentService.findByPostId(this.testPost.id);
@@ -184,20 +172,15 @@ class PostCommentServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create comments
-        final PostCommentEntity comment1 = new PostCommentEntity();
-        comment1.content = "User comment 1";
-        comment1.user = this.testUser;
-        comment1.post = this.testPost;
+        final PostCommentEntity comment1 = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "User comment 1", this.testUser, this.testPost);
         this.postCommentService.createComment(comment1, this.testUser.username);
 
-        final PostCommentEntity comment2 = new PostCommentEntity();
-        comment2.content = "User comment 2";
-        comment2.user = this.testUser;
-        comment2.post = this.testPost;
+        final PostCommentEntity comment2 = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "User comment 2", this.testUser, this.testPost);
         this.postCommentService.createComment(comment2, this.testUser.username);
 
         final var userComments = this.postCommentService.findByUserId(this.testUser.id);
-
         assertNotNull(userComments);
         assertTrue(userComments.size() >= 2);
 
@@ -211,10 +194,8 @@ class PostCommentServiceTest {
     @Transactional
     void testFindRecentComments() {
         // First create a comment
-        final PostCommentEntity comment1 = new PostCommentEntity();
-        comment1.content = "Recent comment";
-        comment1.user = this.testUser;
-        comment1.post = this.testPost;
+        final PostCommentEntity comment1 = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostCommentEntity(
+                "Recent comment", this.testUser, this.testPost);
         this.postCommentService.createComment(comment1, this.testUser.username);
 
         final var recentComments = this.postCommentService.findRecentComments(10);

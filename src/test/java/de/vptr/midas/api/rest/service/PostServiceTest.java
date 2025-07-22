@@ -1,6 +1,5 @@
 package de.vptr.midas.api.rest.service;
 
-import static de.vptr.midas.api.util.ServiceTestDataBuilder.createUniquePostDto;
 import static de.vptr.midas.api.util.ServiceTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,10 +7,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.PostDto;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import de.vptr.midas.api.rest.entity.PostEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
+import de.vptr.midas.api.util.ServiceTestDataBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -81,7 +80,7 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePost() {
-        final var newPost = createUniquePostDto(this.testUser.id, this.testCategory.id);
+        final var newPost = ServiceTestDataBuilder.createUniquePostDto(this.testUser.id, this.testCategory.id);
 
         final var createdPost = this.postService.createPost(newPost);
 
@@ -99,13 +98,13 @@ class PostServiceTest {
     @Test
     @Transactional
     void testCreatePostWithPublishedFlag() {
-        final var newPost = new PostDto();
-        newPost.title = "Published Test Post";
-        newPost.content = "Published test content";
-        newPost.published = true;
-        newPost.commentable = true;
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Published Test Post",
+                "Published test content",
+                true,
+                true,
+                this.testUser.id,
+                this.testCategory.id);
 
         final var createdPost = this.postService.createPost(newPost);
 
@@ -118,11 +117,13 @@ class PostServiceTest {
     @Transactional
     void testUpdatePost() {
         // First create a post
-        final var newPost = new PostDto();
-        newPost.title = "Original Title";
-        newPost.content = "Original content";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Original Title",
+                "Original content",
+                false,
+                false,
+                this.testUser.id,
+                this.testCategory.id);
         final var createdPost = this.postService.createPost(newPost);
 
         final var originalCreated = createdPost.created;
@@ -136,9 +137,13 @@ class PostServiceTest {
         }
 
         // Update the post
-        final var updateDto = new PostDto();
-        updateDto.title = "Updated Title";
-        updateDto.content = "Updated content";
+        final var updateDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Updated Title",
+                "Updated content",
+                false,
+                false,
+                null,
+                null);
 
         final var updatedPost = this.postService.updatePost(createdPost.id, updateDto);
 
@@ -153,16 +158,23 @@ class PostServiceTest {
     @Transactional
     void testPatchPost() {
         // First create a post
-        final var newPost = new PostDto();
-        newPost.title = "Original Title";
-        newPost.content = "Original content";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Original Title",
+                "Original content",
+                false,
+                false,
+                this.testUser.id,
+                this.testCategory.id);
         final var createdPost = this.postService.createPost(newPost);
 
         // Patch only the title
-        final var patchDto = new PostDto();
-        patchDto.title = "Patched Title";
+        final var patchDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Patched Title",
+                null,
+                false,
+                false,
+                null,
+                null);
 
         final var patchedPost = this.postService.patchPost(createdPost.id, patchDto);
 
@@ -175,11 +187,13 @@ class PostServiceTest {
     @Transactional
     void testDeletePost() {
         // First create a post
-        final var newPost = new PostDto();
-        newPost.title = "To Be Deleted";
-        newPost.content = "This post will be deleted";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "To Be Deleted",
+                "This post will be deleted",
+                false,
+                false,
+                this.testUser.id,
+                this.testCategory.id);
         final var createdPost = this.postService.createPost(newPost);
 
         final var postId = createdPost.id;
@@ -201,11 +215,13 @@ class PostServiceTest {
     @Transactional
     void testFindById() {
         // First create a post
-        final var newPost = new PostDto();
-        newPost.title = "Find By ID Test";
-        newPost.content = "Test content";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Find By ID Test",
+                "Test content",
+                false,
+                false,
+                this.testUser.id,
+                this.testCategory.id);
         final var createdPost = this.postService.createPost(newPost);
 
         final var foundPost = this.postService.findById(createdPost.id);
@@ -224,11 +240,13 @@ class PostServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create a post
-        final var newPost = new PostDto();
-        newPost.title = "User Post Test";
-        newPost.content = "Test content";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "User Post Test",
+                "Test content",
+                false,
+                false,
+                this.testUser.id,
+                this.testCategory.id);
         this.postService.createPost(newPost);
 
         final var userPosts = this.postService.findByUserId(this.testUser.id);
@@ -242,11 +260,13 @@ class PostServiceTest {
     @Transactional
     void testFindByCategoryId() {
         // First create a post
-        final var newPost = new PostDto();
-        newPost.title = "Category Post Test";
-        newPost.content = "Test content";
-        newPost.userId = this.testUser.id;
-        newPost.categoryId = this.testCategory.id;
+        final var newPost = de.vptr.midas.api.util.ServiceTestDataBuilder.createPostDto(
+                "Category Post Test",
+                "Test content",
+                false,
+                false,
+                this.testUser.id,
+                this.testCategory.id);
         this.postService.createPost(newPost);
 
         final var categoryPosts = this.postService.findByCategoryId(this.testCategory.id);

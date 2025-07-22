@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.rest.dto.PaymentDto;
 import de.vptr.midas.api.rest.entity.AccountEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -60,13 +59,13 @@ class PaymentServiceTest {
     @Test
     @Transactional
     void testCreatePayment() {
-        final var newPaymentDto = new PaymentDto();
-        newPaymentDto.targetAccountId = this.testTargetAccount.id;
-        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
-        newPaymentDto.userId = this.testUser.id;
-        newPaymentDto.comment = "Test payment";
-        newPaymentDto.date = LocalDate.now();
-        newPaymentDto.amount = new BigDecimal("100.50");
+        final var newPaymentDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "Test payment",
+                LocalDate.now(),
+                new BigDecimal("100.50"));
 
         final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
@@ -85,17 +84,17 @@ class PaymentServiceTest {
     @Transactional
     void testUpdatePayment() {
         // First create a payment
-        final var newPaymentDto = new PaymentDto();
-        newPaymentDto.targetAccountId = this.testTargetAccount.id;
-        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
-        newPaymentDto.userId = this.testUser.id;
-        newPaymentDto.comment = "Original comment";
-        newPaymentDto.date = LocalDate.now();
-        newPaymentDto.amount = new BigDecimal("50.00");
+        final var newPaymentDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "Original comment",
+                LocalDate.now(),
+                new BigDecimal("50.00"));
         final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         // Update the payment
-        final var updateDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentUpdateDto(
+        final var updateDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
                 this.testSourceAccount.id,
                 this.testTargetAccount.id,
                 this.testUser.id,
@@ -115,13 +114,13 @@ class PaymentServiceTest {
     @Transactional
     void testDeletePayment() {
         // First create a payment
-        final var newPaymentDto = new PaymentDto();
-        newPaymentDto.targetAccountId = this.testTargetAccount.id;
-        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
-        newPaymentDto.userId = this.testUser.id;
-        newPaymentDto.comment = "Delete test payment";
-        newPaymentDto.date = LocalDate.now();
-        newPaymentDto.amount = new BigDecimal("25.00");
+        final var newPaymentDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "Delete test payment",
+                LocalDate.now(),
+                new BigDecimal("25.00"));
         final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         final Long paymentId = createdPayment.id;
@@ -143,13 +142,13 @@ class PaymentServiceTest {
     @Transactional
     void testFindById() {
         // First create a payment
-        final var newPaymentDto = new PaymentDto();
-        newPaymentDto.targetAccountId = this.testTargetAccount.id;
-        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
-        newPaymentDto.userId = this.testUser.id;
-        newPaymentDto.comment = "Find test payment";
-        newPaymentDto.date = LocalDate.now();
-        newPaymentDto.amount = new BigDecimal("200.00");
+        final var newPaymentDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "Find test payment",
+                LocalDate.now(),
+                new BigDecimal("200.00"));
         final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         final var foundPayment = this.paymentService.findById(createdPayment.id);
@@ -170,13 +169,13 @@ class PaymentServiceTest {
     @Transactional
     void testFindByUserId() {
         // First create a payment
-        final var newPaymentDto = new PaymentDto();
-        newPaymentDto.targetAccountId = this.testTargetAccount.id;
-        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
-        newPaymentDto.userId = this.testUser.id;
-        newPaymentDto.comment = "User payment test";
-        newPaymentDto.date = LocalDate.now();
-        newPaymentDto.amount = new BigDecimal("150.00");
+        final var newPaymentDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "User payment test",
+                LocalDate.now(),
+                new BigDecimal("150.00"));
         this.paymentService.createPayment(newPaymentDto);
 
         final var userPayments = this.paymentService.findByUserId(this.testUser.id);
@@ -197,13 +196,13 @@ class PaymentServiceTest {
         final LocalDate endDate = LocalDate.now().plusDays(1);
 
         // First create a payment within the date range
-        final var newPaymentDto = new PaymentDto();
-        newPaymentDto.targetAccountId = this.testTargetAccount.id;
-        newPaymentDto.sourceAccountId = this.testSourceAccount.id;
-        newPaymentDto.userId = this.testUser.id;
-        newPaymentDto.comment = "Date range test payment";
-        newPaymentDto.date = LocalDate.now();
-        newPaymentDto.amount = new BigDecimal("100.00");
+        final var newPaymentDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "Date range test payment",
+                LocalDate.now(),
+                new BigDecimal("100.00"));
         this.paymentService.createPayment(newPaymentDto);
 
         final var paymentsInRange = this.paymentService.findByDateRange(startDate, endDate);
