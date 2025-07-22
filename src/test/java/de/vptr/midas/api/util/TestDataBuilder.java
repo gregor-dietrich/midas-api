@@ -26,7 +26,7 @@ public class TestDataBuilder {
      * Creates a unique user JSON for testing (avoids conflicts)
      */
     public static String createUniqueUserJson() {
-        final String suffix = TestUtil.generateUniqueSuffix();
+        final var suffix = TestUtil.generateUniqueSuffix();
         return createUserJson(
                 "testuser_" + suffix,
                 "test_" + suffix + "@example.com",
