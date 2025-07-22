@@ -143,4 +143,65 @@ public class ServiceTestDataBuilder {
         group.name = "Test Group " + suffix;
         return group;
     }
+
+    /**
+     * Creates a UserGroupDto for update operations with a custom name
+     */
+    public static UserGroupDto createUserGroupUpdateDto(final String name) {
+        final var group = new UserGroupDto();
+        group.name = name;
+        return group;
+    }
+
+    /**
+     * Creates a PaymentDto for update operations
+     */
+    public static de.vptr.midas.api.rest.dto.PaymentDto createPaymentUpdateDto(final Long sourceAccountId,
+            final Long targetAccountId, final Long userId, final String comment, final java.time.LocalDate date, final java.math.BigDecimal amount) {
+        final var dto = new de.vptr.midas.api.rest.dto.PaymentDto();
+        dto.sourceAccountId = sourceAccountId;
+        dto.targetAccountId = targetAccountId;
+        dto.userId = userId;
+        dto.comment = comment;
+        dto.date = date;
+        dto.amount = amount;
+        return dto;
+    }
+
+    /**
+     * Creates a PostCommentEntity for update operations with custom content
+     */
+    public static de.vptr.midas.api.rest.entity.PostCommentEntity createPostCommentUpdateEntity(final String content) {
+        final var entity = new de.vptr.midas.api.rest.entity.PostCommentEntity();
+        entity.content = content;
+        return entity;
+    }
+
+    /**
+     * Creates a PostDto for update operations with custom title and content
+     */
+    public static PostDto createPostUpdateDto(final String title, final String content, final Long userId, final Long categoryId) {
+        final var dto = new PostDto();
+        dto.title = title;
+        dto.content = content;
+        dto.userId = userId;
+        dto.categoryId = categoryId;
+        return dto;
+    }
+
+    /**
+     * Creates a UserRankDto for update operations with custom permissions
+     */
+    public static UserRankDto createUserRankUpdateDto(final String name, final boolean userAdd, final boolean userEdit,
+            final boolean userDelete, final boolean postAdd, final boolean postEdit, final boolean postDelete) {
+        final var dto = new UserRankDto();
+        dto.name = name;
+        dto.userAdd = userAdd;
+        dto.userEdit = userEdit;
+        dto.userDelete = userDelete;
+        dto.postAdd = postAdd;
+        dto.postEdit = postEdit;
+        dto.postDelete = postDelete;
+        return dto;
+    }
 }

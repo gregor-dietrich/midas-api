@@ -100,14 +100,15 @@ class UserRankServiceTest {
         final var createdRank = this.userRankService.createRank(newRank);
 
         // Update the rank
-        final var updateDto = new UserRankDto();
-        updateDto.name = "Updated Rank Name";
-        updateDto.userAdd = true;
-        updateDto.userEdit = true;
-        updateDto.postAdd = true;
-        updateDto.userDelete = false;
-        updateDto.postEdit = false;
-        updateDto.postDelete = false;
+        final var updateDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createUserRankUpdateDto(
+                "Updated Rank Name",
+                true, // userAdd
+                true, // userEdit
+                false, // userDelete
+                true, // postAdd
+                false, // postEdit
+                false // postDelete
+        );
 
         final var updatedRank = this.userRankService.updateRank(createdRank.id, updateDto);
 

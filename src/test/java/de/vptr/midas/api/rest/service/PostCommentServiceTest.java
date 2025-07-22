@@ -92,9 +92,13 @@ class PostCommentServiceTest {
                 this.testUser.username);
 
         // Update the comment
-        createdComment.content = "Updated Comment Content";
+        final PostCommentEntity updateEntity = de.vptr.midas.api.util.ServiceTestDataBuilder
+                .createPostCommentUpdateEntity("Updated Comment Content");
+        updateEntity.id = createdComment.id;
+        updateEntity.user = createdComment.user;
+        updateEntity.post = createdComment.post;
 
-        final PostCommentEntity updatedComment = this.postCommentService.updateComment(createdComment);
+        final PostCommentEntity updatedComment = this.postCommentService.updateComment(updateEntity);
 
         assertNotNull(updatedComment);
         assertEquals("Updated Comment Content", updatedComment.content);

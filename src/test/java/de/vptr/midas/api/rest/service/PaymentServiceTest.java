@@ -95,13 +95,13 @@ class PaymentServiceTest {
         final var createdPayment = this.paymentService.createPayment(newPaymentDto);
 
         // Update the payment
-        final var updateDto = new PaymentDto();
-        updateDto.targetAccountId = this.testTargetAccount.id;
-        updateDto.sourceAccountId = this.testSourceAccount.id;
-        updateDto.userId = this.testUser.id;
-        updateDto.comment = "Updated comment";
-        updateDto.date = LocalDate.now();
-        updateDto.amount = new BigDecimal("75.00");
+        final var updateDto = de.vptr.midas.api.util.ServiceTestDataBuilder.createPaymentUpdateDto(
+                this.testSourceAccount.id,
+                this.testTargetAccount.id,
+                this.testUser.id,
+                "Updated comment",
+                LocalDate.now(),
+                new BigDecimal("75.00"));
 
         final var updatedPayment = this.paymentService.updatePayment(createdPayment.id, updateDto);
 
