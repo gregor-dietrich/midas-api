@@ -210,8 +210,10 @@ public class ServiceTestDataBuilder {
     /**
      * Creates a PaymentDto with all fields set
      */
-    public static de.vptr.midas.api.rest.dto.PaymentDto createPaymentDto(final Long sourceAccountId, final Long targetAccountId,
-            final Long userId, final String comment, final java.time.LocalDate date, final java.math.BigDecimal amount) {
+    public static de.vptr.midas.api.rest.dto.PaymentDto createPaymentDto(final Long sourceAccountId,
+            final Long targetAccountId,
+            final Long userId, final String comment, final java.time.LocalDate date,
+            final java.math.BigDecimal amount) {
         final var dto = new de.vptr.midas.api.rest.dto.PaymentDto();
         dto.sourceAccountId = sourceAccountId;
         dto.targetAccountId = targetAccountId;
@@ -238,7 +240,8 @@ public class ServiceTestDataBuilder {
      * Creates a UserRankDto with all main permissions set
      */
     public static de.vptr.midas.api.rest.dto.UserRankDto createUserRankDto(final String name, final boolean userAdd,
-            final boolean userEdit, final boolean userDelete, final boolean postAdd, final boolean postEdit, final boolean postDelete) {
+            final boolean userEdit, final boolean userDelete, final boolean postAdd, final boolean postEdit,
+            final boolean postDelete) {
         final var dto = new de.vptr.midas.api.rest.dto.UserRankDto();
         dto.name = name;
         dto.userAdd = userAdd;
@@ -253,7 +256,8 @@ public class ServiceTestDataBuilder {
     /**
      * Creates a PostDto with all fields set
      */
-    public static de.vptr.midas.api.rest.dto.PostDto createPostDto(final String title, final String content, final boolean published,
+    public static de.vptr.midas.api.rest.dto.PostDto createPostDto(final String title, final String content,
+            final boolean published,
             final boolean commentable, final Long userId, final Long categoryId) {
         final var dto = new de.vptr.midas.api.rest.dto.PostDto();
         dto.title = title;
@@ -263,5 +267,36 @@ public class ServiceTestDataBuilder {
         dto.userId = userId;
         dto.categoryId = categoryId;
         return dto;
+    }
+
+    /**
+     * Creates a unique PageDto for testing
+     */
+    public static de.vptr.midas.api.rest.dto.PageDto createUniquePageDto() {
+        final var suffix = ServiceTestUtil.generateUniqueTestSuffix();
+        final var dto = new de.vptr.midas.api.rest.dto.PageDto();
+        dto.title = "Test Page " + suffix;
+        dto.content = "Test content " + suffix;
+        return dto;
+    }
+
+    /**
+     * Creates a PageDto with specified values
+     */
+    public static de.vptr.midas.api.rest.dto.PageDto createPageDto(final String title, final String content) {
+        final var dto = new de.vptr.midas.api.rest.dto.PageDto();
+        dto.title = title;
+        dto.content = content;
+        return dto;
+    }
+
+    /**
+     * Creates a unique PostCategoryDto for testing (needs to be created since it
+     * doesn't exist yet)
+     */
+    public static de.vptr.midas.api.rest.entity.PostCategoryEntity createUniquePostCategoryDto() {
+        final var entity = new de.vptr.midas.api.rest.entity.PostCategoryEntity();
+        entity.name = ServiceTestUtil.createUniqueTestName("Test Category");
+        return entity;
     }
 }
