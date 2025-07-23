@@ -69,7 +69,7 @@ class PostCategoryResourceTest {
 
     @Test
     void testCreateCategory_authorizedWithInsufficientRole() {
-        // TODO: expect 403 - insufficient permissions to create category
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultPostCategoryJson());
     }
 
     @Test

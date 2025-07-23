@@ -12,6 +12,9 @@ public class TestUtil {
     public static final String ADMIN_USERNAME = "admin";
     public static final String ADMIN_PASSWORD = "admin";
 
+    public static final String GUEST_USERNAME = "guest";
+    public static final String GUEST_PASSWORD = "guest";
+
     private TestUtil() {
         // Utility class
     }
@@ -25,7 +28,7 @@ public class TestUtil {
     }
 
     /**
-     * Creates a REST-assured request with basic authentication
+     * Creates a REST-assured request with basic authentication (admin)
      */
     public static RequestSpecification authenticatedRequest() {
         return given().auth().basic(ADMIN_USERNAME, ADMIN_PASSWORD);
@@ -33,10 +36,25 @@ public class TestUtil {
 
     /**
      * Creates a REST-assured request with basic authentication and JSON content
-     * type
+     * type (admin)
      */
     public static RequestSpecification authenticatedJsonRequest() {
         return authenticatedRequest().contentType(ContentType.JSON);
+    }
+
+    /**
+     * Creates a REST-assured request with basic authentication (guest)
+     */
+    public static RequestSpecification authenticatedGuestRequest() {
+        return given().auth().basic(GUEST_USERNAME, GUEST_PASSWORD);
+    }
+
+    /**
+     * Creates a REST-assured request with basic authentication and JSON content
+     * type (guest)
+     */
+    public static RequestSpecification authenticatedGuestJsonRequest() {
+        return authenticatedGuestRequest().contentType(ContentType.JSON);
     }
 
     /**
@@ -151,7 +169,7 @@ public class TestUtil {
      */
     public static ValidatableResponse testAuthorizedPostWithInsufficientRole(final String endpoint,
             final String jsonBody) {
-        return authenticatedJsonRequest()
+        return authenticatedGuestJsonRequest()
                 .body(jsonBody)
                 .when()
                 .post(endpoint)

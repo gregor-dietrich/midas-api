@@ -44,7 +44,7 @@ class UserRankResourceTest {
 
     @Test
     void testCreateUserRank_authorizedWithSufficientRole() {
-        // TODO: expect 201 - should create user rank successfully
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultUserRankJson());
     }
 
     @Test

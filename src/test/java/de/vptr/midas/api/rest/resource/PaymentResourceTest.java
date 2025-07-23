@@ -1,10 +1,11 @@
 package de.vptr.midas.api.rest.resource;
 
+import static de.vptr.midas.api.util.TestDataBuilder.createDefaultPaymentJson;
+import static de.vptr.midas.api.util.TestDataBuilder.createUpdatedPaymentJson;
 import static de.vptr.midas.api.util.TestUtil.*;
 
 import org.junit.jupiter.api.Test;
 
-import de.vptr.midas.api.util.TestDataBuilder;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
@@ -69,18 +70,17 @@ class PaymentResourceTest {
 
     @Test
     void testCreatePayment_unauthorized() {
-        final String paymentJson = TestDataBuilder.createDefaultPaymentJson();
-        testUnauthorizedPost(ENDPOINT_URL, paymentJson);
+        testUnauthorizedPost(ENDPOINT_URL, createDefaultPaymentJson());
     }
 
     @Test
     void testCreatePayment_authorizedWithSufficientRole() {
-        // TODO: expect 201 - should create payment successfully
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultPaymentJson());
     }
 
     @Test
     void testCreatePayment_authorizedWithInsufficientRole() {
-        // TODO: expect 403 - insufficient permissions to create payment
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultPaymentJson());
     }
 
     @Test
@@ -90,8 +90,7 @@ class PaymentResourceTest {
 
     @Test
     void testUpdatePayment_unauthorized() {
-        final String paymentJson = TestDataBuilder.createUpdatedPaymentJson();
-        testUnauthorizedPut(ENDPOINT_URL + "/1", paymentJson);
+        testUnauthorizedPut(ENDPOINT_URL + "/1", createUpdatedPaymentJson());
     }
 
     @Test

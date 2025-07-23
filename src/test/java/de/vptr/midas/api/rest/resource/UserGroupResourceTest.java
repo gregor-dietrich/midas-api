@@ -66,7 +66,7 @@ class UserGroupResourceTest {
 
     @Test
     void testCreateGroup_authorizedWithInsufficientRole() {
-        // TODO: expect 403 - insufficient permissions to create group
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultUserGroupJson());
     }
 
     @Test

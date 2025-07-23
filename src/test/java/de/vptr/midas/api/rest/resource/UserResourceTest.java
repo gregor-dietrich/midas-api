@@ -3,7 +3,6 @@ package de.vptr.midas.api.rest.resource;
 import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserUpdateJson;
 import static de.vptr.midas.api.util.TestDataBuilder.createUniqueUserJson;
 import static de.vptr.midas.api.util.TestUtil.*;
-import static io.restassured.RestAssured.given;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +21,7 @@ class UserResourceTest {
     @Test
     void testGetAllUsers_authorizedWithSufficientRole() {
         // Test assumes user has appropriate role (user:delete or user:edit)
-        given()
-                .auth().basic("admin", "admin")
+        authenticatedRequest()
                 .when()
                 .get(ENDPOINT_URL)
                 .then()
@@ -32,7 +30,11 @@ class UserResourceTest {
 
     @Test
     void testGetAllUsers_authorizedWithInsufficientRole() {
-        // TODO: expect 403 - insufficient permissions to see users
+        authenticatedGuestRequest()
+                .when()
+                .get(ENDPOINT_URL)
+                .then()
+                .statusCode(403);
     }
 
     @Test
@@ -64,7 +66,7 @@ class UserResourceTest {
     @Test
     @TestTransaction
     void testCreateUser_authorizedWithInsufficientRole() {
-        // TODO: expect 403 - insufficient permissions to create user
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createUniqueUserJson());
     }
 
     @Test

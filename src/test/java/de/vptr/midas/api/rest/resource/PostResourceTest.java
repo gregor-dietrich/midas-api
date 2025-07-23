@@ -78,7 +78,7 @@ class PostResourceTest {
 
     @Test
     void testCreatePost_authorizedWithInsufficientRole() {
-        // TODO: expect 403 - insufficient permissions to create post
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultPostJson());
     }
 
     @Test
