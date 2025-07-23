@@ -125,7 +125,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `salt`, `rank_id`, `activated
 (2, 'moderator', '4IV82pA2Q1BmNaIS+de+1yqS1UQSwSE21xU6kkSda6c=', '52Mdt2qexvXu99Gm+wB0iv8V3n5leK5XR1zGLNBeDQg=', 2, 1, 0, NULL),
 (3, 'user', 'KD+VrVb86w2Z7Ei8UjsHbbZ/awEnReWeC8t0656EqMM=', 'e3/FXXV1XuCaSHXxtwR1K0Lc5N/Al7rTJ6Kkpx1S2Uk=', 1, 1, 0, NULL),
 (4, 'bannedUser', 'tE04ap7GWryC2vCAzJpcFilsSGPozJsrAjRyZaXqeXM=', 'QLxT3YTXJuEFeaG71Shryr5BUkW+i4vocjmpKXT8h4k=', 1, 1, 1, NULL),
-(5, 'notActivatedUser', 'xA28JSHhTwUxoBfOS0RCTPfnMzkvzB5i724zzo25iYI=', 'BVCeBwQYMx/7sZ8tIiR9wCvQ/plNQzTwG0neblWWu3k=', 1, 0, 0, '21b8efb5-8eb0-4530-9d9a-cdbc33ba7164');
+(5, 'notActivatedUser', 'xA28JSHhTwUxoBfOS0RCTPfnMzkvzB5i724zzo25iYI=', 'BVCeBwQYMx/7sZ8tIiR9wCvQ/plNQzTwG0neblWWu3k=', 1, 0, 0, '21b8efb5-8eb0-4530-9d9a-cdbc33ba7164'),
+(6, 'guest', '1B+WWB3fopZvGiqUzwNWgI74mE5EaeryMlOoKNXvzhQ=', 'nNmZIEEzv7peVc+UqSbd+Q0g8KbTAgAa5RbhZwgUiOk=', 4, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -273,7 +274,8 @@ CREATE TABLE `user_ranks` (
 INSERT INTO `user_ranks` (`id`, `name`, `page_add`, `page_delete`, `page_edit`, `post_add`, `post_delete`, `post_edit`, `post_category_add`, `post_category_delete`, `post_category_edit`, `post_comment_add`, `post_comment_delete`, `post_comment_edit`, `user_add`, `user_delete`, `user_edit`, `user_group_add`, `user_group_delete`, `user_group_edit`, `user_account_add`, `user_account_delete`, `user_account_edit`, `user_rank_add`, `user_rank_delete`, `user_rank_edit`) VALUES
 (1, 'User', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (2, 'Moderator', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(3, 'Administrator', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+(3, 'Administrator', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+(4, 'Guest', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 --
 -- Indexes for exported tables
@@ -396,7 +398,7 @@ ALTER TABLE `post_comments`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `user_accounts`
@@ -432,7 +434,7 @@ ALTER TABLE `user_payments`
 -- AUTO_INCREMENT for table `user_ranks`
 --
 ALTER TABLE `user_ranks`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for exported tables

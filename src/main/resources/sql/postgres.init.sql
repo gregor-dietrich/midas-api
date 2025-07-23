@@ -151,7 +151,8 @@ CREATE TABLE user_payments (
 INSERT INTO user_ranks (id, name, page_add, page_delete, page_edit, post_add, post_delete, post_edit, post_category_add, post_category_delete, post_category_edit, post_comment_add, post_comment_delete, post_comment_edit, user_add, user_delete, user_edit, user_group_add, user_group_delete, user_group_edit, user_account_add, user_account_delete, user_account_edit, user_rank_add, user_rank_delete, user_rank_edit) VALUES
 (1, 'User', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
 (2, 'Moderator', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(3, 'Administrator', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
+(3, 'Administrator', TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
+(4, 'Guest', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
 
 -- Insert initial admin user
 INSERT INTO users (id, username, password, salt, rank_id, activated, banned, activation_key) VALUES
@@ -159,11 +160,12 @@ INSERT INTO users (id, username, password, salt, rank_id, activated, banned, act
 (2, 'moderator', '4IV82pA2Q1BmNaIS+de+1yqS1UQSwSE21xU6kkSda6c=', '52Mdt2qexvXu99Gm+wB0iv8V3n5leK5XR1zGLNBeDQg=', 2, TRUE, FALSE, NULL),
 (3, 'user', 'KD+VrVb86w2Z7Ei8UjsHbbZ/awEnReWeC8t0656EqMM=', 'e3/FXXV1XuCaSHXxtwR1K0Lc5N/Al7rTJ6Kkpx1S2Uk=', 1, TRUE, FALSE, NULL),
 (4, 'bannedUser', 'tE04ap7GWryC2vCAzJpcFilsSGPozJsrAjRyZaXqeXM=', 'QLxT3YTXJuEFeaG71Shryr5BUkW+i4vocjmpKXT8h4k=', 1, TRUE, TRUE, NULL),
-(5, 'notActivatedUser', 'xA28JSHhTwUxoBfOS0RCTPfnMzkvzB5i724zzo25iYI=', 'BVCeBwQYMx/7sZ8tIiR9wCvQ/plNQzTwG0neblWWu3k=', 1, FALSE, FALSE, '21b8efb5-8eb0-4530-9d9a-cdbc33ba7164');
+(5, 'notActivatedUser', 'xA28JSHhTwUxoBfOS0RCTPfnMzkvzB5i724zzo25iYI=', 'BVCeBwQYMx/7sZ8tIiR9wCvQ/plNQzTwG0neblWWu3k=', 1, FALSE, FALSE, '21b8efb5-8eb0-4530-9d9a-cdbc33ba7164'),
+(6, 'guest', '1B+WWB3fopZvGiqUzwNWgI74mE5EaeryMlOoKNXvzhQ=', 'nNmZIEEzv7peVc+UqSbd+Q0g8KbTAgAa5RbhZwgUiOk=', 4, TRUE, FALSE, NULL);
 
 -- Update sequences to continue from current max values
-SELECT setval('user_ranks_id_seq', 3);
-SELECT setval('users_id_seq', 5);
+SELECT setval('user_ranks_id_seq', 4);
+SELECT setval('users_id_seq', 6);
 
 -- Create triggers for automatic last_edit updates
 CREATE OR REPLACE FUNCTION update_last_edit()
