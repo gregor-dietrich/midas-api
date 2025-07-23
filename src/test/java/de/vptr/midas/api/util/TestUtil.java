@@ -277,6 +277,30 @@ public class TestUtil {
     }
 
     /**
+     * Creates a test account and returns its ID
+     */
+    public static Long createTestAccount() {
+        final var accountJson = TestDataBuilder.createDefaultAccountJson();
+        final var response = authenticatedRequest()
+                .contentType(ContentType.JSON)
+                .body(accountJson)
+                .when()
+                .post("/api/v1/accounts");
+        final Integer id = response.then().statusCode(201).extract().path("id");
+        return id != null ? id.longValue() : null;
+    }
+
+    /**
+     * Creates payment JSON with test accounts
+     */
+    public static String createPaymentJsonWithTestAccounts() {
+        final Long targetAccountId = createTestAccount();
+        final Long sourceAccountId = createTestAccount();
+        return TestDataBuilder.createPaymentJson(targetAccountId, sourceAccountId, 1L, "100.00", "Test payment",
+                "2024-01-01");
+    }
+
+    /**
      * Tests unauthorized access with specific HTTP method
      */
     public static ValidatableResponse testUnauthorizedAccess(final String endpoint, final String httpMethod) {

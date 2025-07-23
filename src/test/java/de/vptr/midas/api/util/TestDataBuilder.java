@@ -281,7 +281,7 @@ public class TestDataBuilder {
                     "targetAccountId": %d,
                     "sourceAccountId": %d,
                     "userId": %d,
-                    "amount": "%s",
+                    "amount": %s,
                     "comment": "%s",
                     "date": "%s"
                 }

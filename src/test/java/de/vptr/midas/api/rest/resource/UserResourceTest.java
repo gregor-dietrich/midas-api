@@ -48,11 +48,6 @@ class UserResourceTest {
     }
 
     @Test
-    void testGetCurrentUser_authorizedButUserNotFound() {
-        // TODO: expect 404 - look up user that doesn't exist in database
-    }
-
-    @Test
     void testCreateUser_unauthorized() {
         testUnauthorizedPost(ENDPOINT_URL, createUniqueUserJson());
     }

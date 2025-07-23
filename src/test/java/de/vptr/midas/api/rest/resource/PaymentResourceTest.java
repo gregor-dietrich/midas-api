@@ -75,7 +75,7 @@ class PaymentResourceTest {
 
     @Test
     void testCreatePayment_authorizedWithSufficientRole() {
-        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultPaymentJson());
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createPaymentJsonWithTestAccounts());
     }
 
     @Test
