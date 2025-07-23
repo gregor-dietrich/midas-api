@@ -47,7 +47,7 @@ public class UserRankResource {
     }
 
     @POST
-    @RolesAllowed({ "user_rank:add" })
+    @RolesAllowed({ "user-rank:add" })
     public Response createRank(@Valid final UserRankDto rankDto) {
         final UserRankResponseDto created = this.rankService.createRank(rankDto);
         return ResponseUtil.created(created);
@@ -55,7 +55,7 @@ public class UserRankResource {
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed({ "user_rank:edit" })
+    @RolesAllowed({ "user-rank:edit" })
     public Response updateRank(@PathParam("id") final Long id, @Valid final UserRankDto rankDto) {
         final UserRankResponseDto updated = this.rankService.updateRank(id, rankDto);
         return ResponseUtil.ok(updated);
@@ -63,7 +63,7 @@ public class UserRankResource {
 
     @PATCH
     @Path("/{id}")
-    @RolesAllowed({ "user_rank:edit" })
+    @RolesAllowed({ "user-rank:edit" })
     public Response patchRank(@PathParam("id") final Long id, final UserRankDto rankDto) {
         final UserRankResponseDto updated = this.rankService.patchRank(id, rankDto);
         return ResponseUtil.ok(updated);
@@ -71,7 +71,7 @@ public class UserRankResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({ "user_rank:delete" })
+    @RolesAllowed({ "user-rank:delete" })
     public Response deleteRank(@PathParam("id") final Long id) {
         final boolean deleted = this.rankService.deleteRank(id);
         if (deleted) {
