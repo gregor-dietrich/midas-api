@@ -54,11 +54,6 @@ class PaymentResourceTest {
     }
 
     @Test
-    void testGetPaymentsByUser_authorizedWithDatabaseIssues() {
-        // TODO: expect 500 or maybe another error with status code >500?
-    }
-
-    @Test
     void testGetRecentPayments_unauthorized() {
         testUnauthorizedAccess(ENDPOINT_URL + "/recent?limit=10");
     }

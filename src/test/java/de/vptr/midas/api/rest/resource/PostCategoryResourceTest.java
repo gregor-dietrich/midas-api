@@ -73,6 +73,11 @@ class PostCategoryResourceTest {
     }
 
     @Test
+    void testCreateCategory_authorizedWithValidationError() {
+        // TODO: expect 400 - should return validation error for invalid data
+    }
+
+    @Test
     void testUpdateCategory_unauthorized() {
         testUnauthorizedPut(ENDPOINT_URL + "/1", createUpdatedPostCategoryJson());
     }
