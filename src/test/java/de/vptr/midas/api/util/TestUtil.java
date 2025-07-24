@@ -178,7 +178,21 @@ public class TestUtil {
     }
 
     /**
-     * Tests authorized POST request expecting 400 (bad request/validation error)
+     * Tests authorized POST request expecting 400 (bad request/syntax error)
+     */
+    public static ValidatableResponse testAuthorizedPostWithSyntaxError(final String endpoint,
+            final String jsonBody) {
+        return authenticatedJsonRequest()
+                .body(jsonBody)
+                .when()
+                .post(endpoint)
+                .then()
+                .statusCode(400);
+    }
+
+    /**
+     * Tests authorized POST request expecting 422 (unprocessable entity/validation
+     * error)
      */
     public static ValidatableResponse testAuthorizedPostWithValidationError(final String endpoint,
             final String jsonBody) {
@@ -187,7 +201,7 @@ public class TestUtil {
                 .when()
                 .post(endpoint)
                 .then()
-                .statusCode(400);
+                .statusCode(422);
     }
 
     /**

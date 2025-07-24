@@ -1,7 +1,6 @@
 package de.vptr.midas.api.rest.resource;
 
-import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserGroupJson;
-import static de.vptr.midas.api.util.TestDataBuilder.createUpdatedUserGroupJson;
+import static de.vptr.midas.api.util.TestDataBuilder.*;
 import static de.vptr.midas.api.util.TestUtil.*;
 import static io.restassured.RestAssured.given;
 
@@ -70,8 +69,18 @@ class UserGroupResourceTest {
     }
 
     @Test
-    void testCreateGroup_authorizedWithValidationError() {
-        // TODO: expect 400 - should return validation error for invalid group data
+    void testCreateGroup_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreateGroup_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreateGroup_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

@@ -168,10 +168,34 @@ public class TestDataBuilder {
     }
 
     /**
-     * Creates an invalid user group JSON for testing updates
+     * Creates an invalid JSON for testing
      */
-    public static String createInvalidUserGroupJson() {
-        return createUserGroupJson("");
+    public static String createEmptyJson() {
+        return "{}";
+    }
+
+    /**
+     * Creates an invalid JSON for testing
+     */
+    public static String createInvalidJson() {
+        return """
+                {
+                    "id": "1",
+                    "_non_existing_attribute_28520528u=280*20": ""
+                }
+                """;
+    }
+
+    /**
+     * Creates a malformed JSON for testing
+     */
+    public static String createMalformedJson() {
+        return """
+                {
+                    name: "Test
+                    "description": "Test",
+                }
+                """;
     }
 
     /**
