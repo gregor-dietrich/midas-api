@@ -37,4 +37,8 @@ public class ResponseUtil {
     public static Response unauthorized() {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
+
+    public static Response unprocessable(final Object entity) {
+        return Response.status(422).entity(entity).build();
+    }
 }
