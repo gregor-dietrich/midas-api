@@ -82,6 +82,21 @@ class PostResourceTest {
     }
 
     @Test
+    void testCreatePost_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreatePost_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreatePost_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
+    }
+
+    @Test
     void testUpdatePost_unauthorized() {
         testUnauthorizedPut(ENDPOINT_URL + "/1", createUpdatedPostJson());
     }

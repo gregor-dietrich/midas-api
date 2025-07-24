@@ -1,7 +1,6 @@
 package de.vptr.midas.api.rest.resource;
 
-import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserUpdateJson;
-import static de.vptr.midas.api.util.TestDataBuilder.createUniqueUserJson;
+import static de.vptr.midas.api.util.TestDataBuilder.*;
 import static de.vptr.midas.api.util.TestUtil.*;
 
 import org.junit.jupiter.api.Test;
@@ -62,6 +61,21 @@ class UserResourceTest {
     @TestTransaction
     void testCreateUser_authorizedWithInsufficientRole() {
         testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createUniqueUserJson());
+    }
+
+    @Test
+    void testCreateUser_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreateUser_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreateUser_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

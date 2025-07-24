@@ -1,7 +1,6 @@
 package de.vptr.midas.api.rest.resource;
 
-import static de.vptr.midas.api.util.TestDataBuilder.createDefaultPostCategoryJson;
-import static de.vptr.midas.api.util.TestDataBuilder.createUpdatedPostCategoryJson;
+import static de.vptr.midas.api.util.TestDataBuilder.*;
 import static de.vptr.midas.api.util.TestUtil.*;
 
 import org.junit.jupiter.api.Test;
@@ -73,8 +72,18 @@ class PostCategoryResourceTest {
     }
 
     @Test
-    void testCreateCategory_authorizedWithValidationError() {
-        // TODO: expect 400 - should return validation error for invalid data
+    void testCreateCategory_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreateCategory_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreateCategory_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

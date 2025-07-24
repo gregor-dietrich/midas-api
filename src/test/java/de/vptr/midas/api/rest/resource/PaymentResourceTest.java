@@ -1,7 +1,6 @@
 package de.vptr.midas.api.rest.resource;
 
-import static de.vptr.midas.api.util.TestDataBuilder.createDefaultPaymentJson;
-import static de.vptr.midas.api.util.TestDataBuilder.createUpdatedPaymentJson;
+import static de.vptr.midas.api.util.TestDataBuilder.*;
 import static de.vptr.midas.api.util.TestUtil.*;
 
 import org.junit.jupiter.api.Test;
@@ -79,8 +78,18 @@ class PaymentResourceTest {
     }
 
     @Test
-    void testCreatePayment_authorizedWithValidationError() {
-        // TODO: expect 400 - should return validation error for invalid data
+    void testCreatePayment_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreatePayment_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreatePayment_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

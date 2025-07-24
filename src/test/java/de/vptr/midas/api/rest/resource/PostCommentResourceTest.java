@@ -1,5 +1,7 @@
 package de.vptr.midas.api.rest.resource;
 
+import static de.vptr.midas.api.util.TestDataBuilder.*;
+
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.util.TestDataBuilder;
@@ -66,6 +68,28 @@ class PostCommentResourceTest {
         final Long postId = TestUtil.createTestPost();
         final String commentJson = TestDataBuilder.createDefaultPostCommentJson(postId);
         TestUtil.testAuthorizedPostWithCreation(ENDPOINT_URL, commentJson);
+    }
+
+    @Test
+    void testCreateComment_authorizedWithInsufficientRole() {
+        final Long postId = TestUtil.createTestPost();
+        final String commentJson = TestDataBuilder.createDefaultPostCommentJson(postId);
+        TestUtil.testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, commentJson);
+    }
+
+    @Test
+    void testCreateComment_authorizedWithEmptyJson() {
+        TestUtil.testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreateComment_authorizedWithInvalidJson() {
+        TestUtil.testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreateComment_authorizedWithMalformedJson() {
+        TestUtil.testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

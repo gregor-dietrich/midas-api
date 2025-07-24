@@ -1,13 +1,11 @@
 package de.vptr.midas.api.rest.resource;
 
-import static de.vptr.midas.api.util.TestDataBuilder.createDefaultAccountJson;
+import static de.vptr.midas.api.util.TestDataBuilder.*;
 import static de.vptr.midas.api.util.TestUtil.*;
-import static io.restassured.RestAssured.given;
 
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
 
 @QuarkusTest
 class AccountResourceTest {
@@ -45,28 +43,27 @@ class AccountResourceTest {
 
     @Test
     void testCreateUserAccount_authorized() {
-        // @formatter:off
-        authenticatedJsonRequest()
-            .body(createDefaultAccountJson())
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(201);
-        // @formatter:on
+        testAuthorizedPostWithCreation(ENDPOINT_URL, createDefaultAccountJson());
     }
 
     @Test
-    void testCreateUserAccount_forbidden() {
-        // @formatter:off
-        given()
-            .auth().basic("user", "user")
-            .contentType(ContentType.JSON)
-            .body(createDefaultAccountJson())
-        .when()
-            .post(ENDPOINT_URL)
-        .then()
-            .statusCode(403);
-        // @formatter:on
+    void testCreateUserAccount_authorizedWithInsufficientRole() {
+        testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultAccountJson());
+    }
+
+    @Test
+    void testCreateUserAccount_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreateUserAccount_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreateUserAccount_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

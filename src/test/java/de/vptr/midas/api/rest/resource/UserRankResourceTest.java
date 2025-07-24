@@ -1,7 +1,6 @@
 package de.vptr.midas.api.rest.resource;
 
-import static de.vptr.midas.api.util.TestDataBuilder.createDefaultUserRankJson;
-import static de.vptr.midas.api.util.TestDataBuilder.createUpdatedUserRankJson;
+import static de.vptr.midas.api.util.TestDataBuilder.*;
 import static de.vptr.midas.api.util.TestUtil.*;
 
 import org.junit.jupiter.api.Test;
@@ -50,6 +49,21 @@ class UserRankResourceTest {
     @Test
     void testCreateUserRank_authorizedWithInsufficientRole() {
         testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, createDefaultUserRankJson());
+    }
+
+    @Test
+    void testCreateUserRank_authorizedWithEmptyJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreateUserRank_authorizedWithInvalidJson() {
+        testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreateUserRank_authorizedWithMalformedJson() {
+        testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test

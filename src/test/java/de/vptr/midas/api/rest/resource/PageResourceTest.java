@@ -1,5 +1,7 @@
 package de.vptr.midas.api.rest.resource;
 
+import static de.vptr.midas.api.util.TestDataBuilder.*;
+
 import org.junit.jupiter.api.Test;
 
 import de.vptr.midas.api.util.TestDataBuilder;
@@ -49,7 +51,23 @@ class PageResourceTest {
 
     @Test
     void testCreatePage_authorizedWithInsufficientRole() {
-        // expect 403 - insufficient permissions to create page
+        final String pageJson = TestDataBuilder.createDefaultPageJson();
+        TestUtil.testAuthorizedPostWithInsufficientRole(ENDPOINT_URL, pageJson);
+    }
+
+    @Test
+    void testCreatePage_authorizedWithEmptyJson() {
+        TestUtil.testAuthorizedPostWithValidationError(ENDPOINT_URL, createEmptyJson());
+    }
+
+    @Test
+    void testCreatePage_authorizedWithInvalidJson() {
+        TestUtil.testAuthorizedPostWithValidationError(ENDPOINT_URL, createInvalidJson());
+    }
+
+    @Test
+    void testCreatePage_authorizedWithMalformedJson() {
+        TestUtil.testAuthorizedPostWithSyntaxError(ENDPOINT_URL, createMalformedJson());
     }
 
     @Test
