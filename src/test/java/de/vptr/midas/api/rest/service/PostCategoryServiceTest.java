@@ -11,6 +11,7 @@ import de.vptr.midas.api.util.ServiceTestUtil;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.WebApplicationException;
 
 @QuarkusTest
@@ -83,7 +84,7 @@ class PostCategoryServiceTest {
         final var category = new PostCategoryEntity();
         category.name = ""; // blank name
 
-        assertThrows(WebApplicationException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             this.postCategoryService.createCategory(category);
         });
     }
@@ -94,7 +95,7 @@ class PostCategoryServiceTest {
         final var category = new PostCategoryEntity();
         category.name = null;
 
-        assertThrows(WebApplicationException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             this.postCategoryService.createCategory(category);
         });
     }
@@ -105,7 +106,7 @@ class PostCategoryServiceTest {
         final var category = new PostCategoryEntity();
         category.name = "   "; // whitespace only
 
-        assertThrows(WebApplicationException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             this.postCategoryService.createCategory(category);
         });
     }
@@ -212,7 +213,7 @@ class PostCategoryServiceTest {
         updateCategory.id = createdCategory.id;
         updateCategory.name = ""; // blank name
 
-        assertThrows(WebApplicationException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             this.postCategoryService.updateCategory(updateCategory);
         });
     }
@@ -229,7 +230,7 @@ class PostCategoryServiceTest {
         updateCategory.id = createdCategory.id;
         updateCategory.name = null;
 
-        assertThrows(WebApplicationException.class, () -> {
+        assertThrows(ValidationException.class, () -> {
             this.postCategoryService.updateCategory(updateCategory);
         });
     }

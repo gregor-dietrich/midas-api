@@ -6,6 +6,7 @@ import java.util.Optional;
 import de.vptr.midas.api.rest.entity.PostCategoryEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
@@ -32,8 +33,7 @@ public class PostCategoryService {
     public PostCategoryEntity createCategory(final PostCategoryEntity category) {
         // Validate name is provided for creation
         if (category.name == null || category.name.trim().isEmpty()) {
-            throw new WebApplicationException("Name is required for creating a category",
-                    Response.Status.BAD_REQUEST);
+            throw new ValidationException("Name is required for creating a category");
         }
 
         // Validate parent exists if provided
@@ -58,8 +58,7 @@ public class PostCategoryService {
 
         // Validate name is provided for complete replacement (PUT)
         if (category.name == null || category.name.trim().isEmpty()) {
-            throw new WebApplicationException("Name is required for updating a category",
-                    Response.Status.BAD_REQUEST);
+            throw new ValidationException("Name is required for updating a category");
         }
 
         // Complete replacement (PUT semantics) - don't change parent in PUT

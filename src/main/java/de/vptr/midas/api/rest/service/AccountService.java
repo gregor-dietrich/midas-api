@@ -11,6 +11,7 @@ import de.vptr.midas.api.rest.entity.UserAccountMetaEntity;
 import de.vptr.midas.api.rest.entity.UserEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
@@ -82,8 +83,7 @@ public class AccountService {
     public AccountEntity createAccount(final AccountEntity account) {
         // Validate name is provided for creation
         if (account.name == null || account.name.trim().isEmpty()) {
-            throw new WebApplicationException("Name is required for creating an account",
-                    Response.Status.BAD_REQUEST);
+            throw new ValidationException("Name is required for creating an account");
         }
 
         account.persist();
@@ -106,8 +106,7 @@ public class AccountService {
 
         // Validate name is provided for complete replacement (PUT)
         if (account.name == null || account.name.trim().isEmpty()) {
-            throw new WebApplicationException("Name is required for updating an account",
-                    Response.Status.BAD_REQUEST);
+            throw new ValidationException("Name is required for updating an account");
         }
 
         // Complete replacement (PUT semantics)

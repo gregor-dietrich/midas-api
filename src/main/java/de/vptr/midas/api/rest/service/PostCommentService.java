@@ -9,6 +9,7 @@ import de.vptr.midas.api.rest.entity.PostEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
@@ -42,8 +43,7 @@ public class PostCommentService {
     public PostCommentEntity createComment(final PostCommentEntity comment, final String currentUsername) {
         // Validate content is provided for creation
         if (comment.content == null || comment.content.trim().isEmpty()) {
-            throw new WebApplicationException("Content is required for creating a comment",
-                    Response.Status.BAD_REQUEST);
+            throw new ValidationException("Content is required for creating a comment");
         }
 
         // Validate post exists
@@ -108,8 +108,7 @@ public class PostCommentService {
 
         // Validate content is provided for complete replacement (PUT)
         if (comment.content == null || comment.content.trim().isEmpty()) {
-            throw new WebApplicationException("Content is required for updating a comment",
-                    Response.Status.BAD_REQUEST);
+            throw new ValidationException("Content is required for updating a comment");
         }
 
         // Only update content field for PUT (since we only allow content in DTO)
